@@ -1,0 +1,248 @@
+---
+title: "Dutch Election Observatory Dashboard"
+output:
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    source_code: embed
+    theme: readable
+runtime: shiny
+---
+
+  
+
+```{r global, include=FALSE}
+
+
+
+library(flexdashboard)
+knitr::opts_chunk$set(echo = F, message = F, warning = F)
+
+library(shiny)
+library(janitor)
+library(data.table)
+library(magrittr)
+library(glue)
+library(highcharter)
+library(lubridate)
+library(ggrepel)
+library(knitr)
+library(shinyWidgets)
+library(tidyverse)
+library(htmltools)
+
+ggl_ads <- readRDS("data/ggl_ads.RDS")
+```
+
+Google Ads {data-icon="fa-google"}
+=========================================
+
+Column {.tabset .tabset-fade}
+-----------------------------------------------------------------------
+
+### Ad Counts
+
+```{r, eval=T}
+ad_counts <- ggl_ads  %>% 
+  count(date_range_start, advertiser_name) %>%
+  mutate(date_range_start = as.Date(date_range_start)) %>% 
+  complete(advertiser_name, date_range_start = seq.Date(min(date_range_start), max(date_range_start), by="day"), fill = list(n = 0))
+
+ad_counts %>% 
+  hchart("line", hcaes(x = date_range_start, y = n, group = advertiser_name)) %>%
+    hc_title(
+      text = ""
+    ) %>%
+    hc_yAxis(
+      align = "left",
+      title = list(text = "Number of Ads")
+    ) %>% 
+    hc_xAxis(
+      align = "left",
+      title = list(text = "Date (daily)")
+    ) %>% 
+    hc_exporting(
+      enabled = TRUE
+    ) %>% 
+    hc_plotOptions(
+      area = list(
+        stacking = "normal",
+        # lineColor = "white",
+        lineWidth = 1,
+        marker = list(
+          lineWidth = 0.5,
+          lineColor = "white"
+        )
+      )
+    ) 
+```
+
+
+### Ad Impressions I
+
+```{r}
+
+heatmap_impressions <- ggl_ads %>% 
+  count(date_range_start, advertiser_name, impressions) %>%
+  mutate(date_range_start = as.Date(date_range_start)) %>% 
+  # complete(advertiser_name, impressions, date_range_start = seq.Date(min(date_range_start), max(date_range_start), by="day"), fill = list(n = 0))%>% 
+  mutate(impressions2 = fct_relevel(impressions, c("≤ 10k", "10k-100k", "100k-1M")) %>% as.numeric)
+
+hchart(
+  heatmap_impressions, 
+  "bubble", 
+  hcaes(
+    x = date_range_start,
+    y = n, 
+    size = impressions2,
+    group = advertiser_name
+    ), 
+maxSize = '10%'
+  ) %>%
+    hc_title(
+      text = ""
+    ) %>%
+    hc_yAxis(
+      align = "left",
+      title = list(text = "Number of Ads")
+    ) %>% 
+    hc_xAxis(
+      align = "left",
+      title = list(text = "Date (daily)")
+    ) %>% 
+    hc_exporting(
+      enabled = TRUE
+    ) 
+```
+
+
+### Ad Impressions II
+
+```{r, eval = T}
+
+heatmap_impressions <- ggl_ads %>% 
+  count(advertiser_name, impressions) %>%
+  complete(advertiser_name, impressions, fill = list(n = 0)) %>% 
+  mutate(impressions = fct_relevel(impressions, c("≤ 10k", "10k-100k", "100k-1M")))%>% 
+  group_by(advertiser_name) %>% 
+  mutate(perc = round(n/sum(n)*100, 2)) 
+
+fntltp <- JS("function(){
+  return this.point.x + ' ' +  this.series.yAxis.categories[this.point.y] + ': ' + this.point.value;
+}")
+
+hchart(
+  heatmap_impressions, 
+  "heatmap", 
+  hcaes(
+    x = impressions,
+    y = advertiser_name, 
+    value = perc
+    )
+  ) %>%
+  hc_colorAxis(
+    stops = color_stops(4, viridisLite::inferno(4, direction = -1))
+  ) %>%
+    hc_title(
+      text = ""
+    ) %>%
+    hc_yAxis(
+      align = "left",
+      title = list(text = "Advertiser Name")
+    ) %>% 
+    hc_xAxis(
+      align = "left",
+      title = list(text = "Impressions")
+    ) %>% 
+    hc_exporting(
+      enabled = TRUE
+    ) 
+```
+
+### Gender Targeting
+
+```{r}
+ggl_ads %>% 
+  mutate(gender_targeting = ifelse(str_detect(gender_targeting, "Male") & str_detect(gender_targeting, "Female"), "Not targeted", gender_targeting)) %>% 
+  count(advertiser_name, gender_targeting) %>% 
+  group_by(advertiser_name) %>% 
+  mutate(perc = round(n/sum(n)*100, 2)) %>% 
+  hchart("bar", hcaes(x = advertiser_name, y = perc, group = gender_targeting))%>%
+    hc_xAxis(
+      align = "left",
+      title = list(text = "Advertiser Name")
+    ) %>% 
+    hc_yAxis(
+      align = "left",
+      title = list(text = "Percentage of Ads")
+    ) %>% 
+    hc_exporting(
+      enabled = TRUE
+    )
+```
+
+
+### Age Targeting
+
+```{r}
+ggl_ads %>% 
+  mutate(age_targeting2 = case_when(
+    str_detect(age_targeting, "18-24, 25-34, 35-44, 45-54, 55-64, ≥65") ~ "Not targeted",
+    T ~ age_targeting
+  )) %>% 
+  count(advertiser_name, age_targeting2) %>% 
+  complete(advertiser_name, age_targeting2, fill = list(n = 0)) %>%
+  group_by(advertiser_name) %>% 
+  mutate(perc = round(n/sum(n)*100, 2)) %>% 
+  hchart("bar", hcaes(x = advertiser_name, y = perc, group = age_targeting2)) %>% 
+    hc_xAxis(
+      align = "left",
+      title = list(text = "Advertiser Name")
+    ) %>% 
+    hc_yAxis(
+      align = "left",
+      title = list(text = "Percentage of Ads")
+    ) %>% 
+    hc_exporting(
+      enabled = TRUE
+    )
+```
+
+
+### Geo Targeting
+
+```{r}
+ggl_ads %>% 
+  mutate(geo_targeting_included = case_when(
+    str_count(geo_targeting_included, ",") >= 11 ~ "Not targeted",
+    str_detect(geo_targeting_included, "Netherlands") ~ "Not targeted",
+    T ~ geo_targeting_included
+  )) %>% 
+  count(advertiser_name, geo_targeting_included) %>% 
+  complete(advertiser_name, geo_targeting_included, fill = list(n = 0)) %>%
+  group_by(advertiser_name) %>% 
+  mutate(perc = round(n/sum(n)*100, 2)) %>% 
+  hchart("bar", hcaes(x = advertiser_name, y = perc, group = geo_targeting_included)) %>% 
+    hc_xAxis(
+      align = "left",
+      title = list(text = "Advertiser Name")
+    ) %>% 
+    hc_yAxis(
+      align = "left",
+      title = list(text = "Percentage of Ads")
+    ) %>% 
+    hc_exporting(
+      enabled = TRUE
+    )
+```
+
+
+Facebook {data-icon="fa-facebook-square"}
+=========================================
+
+Nothing here (yet!).
+
+
+Snapchat {data-icon="fa-snapchat-ghost"}
+=========================================
+
+Nothing here (yet!).

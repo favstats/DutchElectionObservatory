@@ -1,0 +1,191 @@
+---
+title: "Tidy Template"
+author: "Fabio Votta"
+date: "The Date"
+output: html_document
+---
+
+This script is about:
+
+
+
+## Packages and Folders
+
+```{r}
+# Install these packages if you don't have them yet
+# if (!require("pacman")) install.packages("pacman")
+# devtools::install_github("favstats/tidytemplate")
+
+pacman::p_load(tidyverse, tidytemplate, rvest, data.table, janitor)
+
+# Creates folders
+# tidytemplate::data_dir()
+# tidytemplate::images_dir()
+```
+
+
+## Load Data
+
+```{r, data}
+
+get_ggl_data <- function() {
+  ggl_link <- "https://storage.googleapis.com/transparencyreport/google-political-ads-transparency-bundle.zip"
+  
+  ggl_file <- "data/ggl.zip"
+  
+  download.file(ggl_link, ggl_file, mode="wb")
+  unzip(ggl_file, exdir = "data")
+  
+  unlink(ggl_file)
+  
+  dir("data/google-political-ads-transparency-bundle", full.names =   T) %>% 
+    discard(~str_detect(.x,"creative")) %>% 
+    walk(file.remove)  
+  
+  dutch_parties <- c("D66", "VVD", "GroenLinks", "SP (Socialistische Partij)", "Volt Nederland", "Christen Democratisch Appèl", "Partij van de Arbeid")
+  
+  ggl_ads <- data.table::fread("data/google-political-ads-transparency-bundle/google-political-ads-creative-stats.csv") %>% 
+    # filter(str_detect(Regions, "NL")) %>% 
+  janitor::clean_names() %>% 
+  filter(advertiser_name %in% dutch_parties) %>% 
+  filter(date_range_start >= as.Date("2020-09-01"))
+  
+  return(ggl_ads)
+}
+
+ggl_ads <- get_ggl_data()
+
+tidytemplate::save_it(ggl_ads)
+
+  
+
+```
+```{r}
+
+ggl_ads  %>% 
+  count(date_range_start, advertiser_name) %>%
+  mutate(date_range_start = as.Date(date_range_start)) %>% 
+  complete(advertiser_name, date_range_start = seq.Date(min(date_range_start), max(date_range_start), by="day"), fill = list(n = 0)) %>% 
+  ggplot(aes(date_range_start, n, color = advertiser_name)) +
+  geom_line()
+```
+
+
+## Analysis / Dataviz
+
+```{r, analysis}
+ggl_ads %>% 
+  count(geo_targeting_included)
+
+heatmap_impressions <- ggl_ads %>% 
+  count(date_range_start, advertiser_name, impressions) %>%
+  mutate(date_range_start = as.Date(date_range_start)) %>% 
+  # complete(advertiser_name, impressions, date_range_start = seq.Date(min(date_range_start), max(date_range_start), by="day"), fill = list(n = 0))%>% 
+  mutate(impressions2 = fct_relevel(impressions, c("≤ 10k", "10k-100k", "100k-1M")) %>% as.numeric)
+
+hchart(
+  heatmap_impressions, 
+  "bubble", 
+  hcaes(
+    x = date_range_start,
+    y = n, 
+    size = impressions2,
+    group = advertiser_name
+    ), 
+maxSize = '10%'
+  ) %>%
+    hc_title(
+      text = ""
+    ) %>%
+    hc_yAxis(
+      align = "left",
+      title = list(text = "Number of Ads")
+    ) %>% 
+    hc_xAxis(
+      align = "left",
+      title = list(text = "Date (daily)")
+    ) %>% 
+    hc_exporting(
+      enabled = TRUE
+    ) 
+
+```
+```{r}
+ggl_ads %>% 
+  mutate(gender_targeting = ifelse(str_detect(gender_targeting, "Male") & str_detect(gender_targeting, "Female"), "Not targeted", gender_targeting)) %>% 
+  count(advertiser_name, gender_targeting) %>% 
+  group_by(advertiser_name) %>% 
+  mutate(perc = round(n/sum(n)*100, 2)) %>% 
+  hchart("bar", hcaes(x = advertiser_name, y = perc, group = gender_targeting))
+  
+```
+
+```{r}
+ggl_ads %>% 
+  # mutate(gender_targeting = ifelse(str_detect(gender_targeting, "Male") & str_detect(gender_targeting, "Female"), "Not targeted", gender_targeting)) %>% 
+  mutate(age_targeting2 = case_when(
+    str_detect(age_targeting, "18-24, 25-34, 35-44, 45-54, 55-64, ≥65") ~ "Not targeted",
+    T ~ age_targeting
+  )) %>% 
+  count(advertiser_name, age_targeting2) %>% 
+  complete(advertiser_name, age_targeting2, fill = list(n = 0)) %>%
+  group_by(advertiser_name) %>% 
+  mutate(perc = round(n/sum(n)*100, 2)) %>% 
+  hchart("bar", hcaes(x = advertiser_name, y = perc, group = age_targeting2))
+  
+```
+
+```{r}
+ggl_ads %>% 
+  mutate(geo_targeting_included = case_when(
+    str_count(geo_targeting_included, ",") >= 11 ~ "Not targeted",
+    str_detect(geo_targeting_included, "Netherlands") ~ "Not targeted",
+    T ~ geo_targeting_included
+  )) %>% 
+  count(advertiser_name, geo_targeting_included) %>% 
+  complete(advertiser_name, geo_targeting_included, fill = list(n = 0)) %>%
+  group_by(advertiser_name) %>% 
+  mutate(perc = round(n/sum(n)*100, 2)) %>% 
+  hchart("bar", hcaes(x = advertiser_name, y = perc, group = geo_targeting_included))
+  
+ 	
+heatmap_impressions <- ggl_ads %>% 
+  count(advertiser_name, impressions) %>%
+  complete(advertiser_name, impressions, fill = list(n = 0)) %>% 
+  mutate(impressions = fct_relevel(impressions, c("≤ 10k", "10k-100k", "100k-1M")))%>% 
+  group_by(advertiser_name) %>% 
+  mutate(perc = round(n/sum(n)*100, 2)) 
+
+fntltp <- JS("function(){
+  return this.point.x + ' ' +  this.series.yAxis.categories[this.point.y] + ': ' + this.point.value;
+}")
+
+hchart(
+  heatmap_impressions, 
+  "heatmap", 
+  hcaes(
+    x = impressions,
+    y = advertiser_name, 
+    value = perc
+    )
+  ) %>%
+  hc_colorAxis(
+    stops = color_stops(4, viridisLite::inferno(4, direction = -1))
+  ) %>%
+    hc_title(
+      text = ""
+    ) %>%
+    hc_yAxis(
+      align = "left",
+      title = list(text = "Advertiser Name")
+    ) %>% 
+    hc_xAxis(
+      align = "left",
+      title = list(text = "Impressions")
+    ) %>% 
+    hc_exporting(
+      enabled = TRUE
+    ) 
+```
+
+## Conclusion
