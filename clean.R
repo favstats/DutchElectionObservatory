@@ -21,7 +21,7 @@ get_ggl_data <- function() {
   ggl_ads <- data.table::fread("data/google-political-ads-transparency-bundle/google-political-ads-creative-stats.csv") %>% 
     # filter(str_detect(Regions, "NL")) %>% 
     janitor::clean_names() %>% 
-    # filter(advertiser_name %in% dutch_parties) %>% 
+    filter(advertiser_name %in% dutch_parties) %>%
     filter(date_range_start >= as.Date("2020-09-01"))
   
   return(ggl_ads)
