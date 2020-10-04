@@ -31,6 +31,9 @@ library(tidyverse)
 library(htmltools)
 
 ggl_ads <- readRDS("data/ggl_ads.RDS")
+
+
+snap_ads <- readRDS("data/snap_ads.RDS")
 ```
 
 Google Ads {data-icon="fa-google"}
@@ -62,17 +65,6 @@ ad_counts %>%
     ) %>% 
     hc_exporting(
       enabled = TRUE
-    ) %>% 
-    hc_plotOptions(
-      area = list(
-        stacking = "normal",
-        # lineColor = "white",
-        lineWidth = 1,
-        marker = list(
-          lineWidth = 0.5,
-          lineColor = "white"
-        )
-      )
     ) 
 ```
 
@@ -245,4 +237,74 @@ Nothing here (yet!).
 Snapchat {data-icon="fa-snapchat-ghost"}
 =========================================
 
-Nothing here (yet!).
+Column {.tabset .tabset-fade}
+-----------------------------------------------------------------------
+
+### Ad Counts
+
+
+```{r}
+
+
+ad_counts <- snap_ads  %>% 
+  count(start_date, paying_advertiser_name) %>%
+  mutate(start_date = as.Date(start_date)) %>% 
+  complete(paying_advertiser_name, start_date = seq.Date(min(start_date), max(start_date), by="day"), fill = list(n = 0))
+
+ad_counts %>% 
+  hchart("line", hcaes(x = start_date, y = n, group = paying_advertiser_name)) %>%
+    hc_title(
+      text = ""
+    ) %>%
+    hc_yAxis(
+      align = "left",
+      title = list(text = "Number of Ads")
+    ) %>% 
+    hc_xAxis(
+      align = "left",
+      title = list(text = "Date (daily)")
+    ) %>% 
+    hc_exporting(
+      enabled = TRUE
+    ) 
+```
+
+
+### Ad Impressions
+
+
+```{r}
+
+
+ad_impressions <- snap_ads  %>% 
+  group_by(start_date, paying_advertiser_name) %>% 
+  summarize(n = n(),
+            impressions = sum(impressions)) %>% 
+  mutate(start_date = lubridate::as_date(start_date)) 
+
+hchart(
+  ad_impressions, 
+  "bubble", 
+  hcaes(
+    x = start_date,
+    y = n, 
+    size = impressions,
+    group = paying_advertiser_name
+    ), 
+maxSize = '10%'
+  ) %>%
+    hc_title(
+      text = ""
+    ) %>%
+    hc_yAxis(
+      align = "left",
+      title = list(text = "Number of Ads")
+    ) %>% 
+    hc_xAxis(
+      align = "left",
+      title = list(text = "Date (daily)")
+    ) %>% 
+    hc_exporting(
+      enabled = TRUE
+    ) 
+```
