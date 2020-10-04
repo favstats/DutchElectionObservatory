@@ -61,7 +61,7 @@ ad_counts %>%
     ) %>% 
     hc_xAxis(
       align = "left",
-      title = list(text = "Date (daily)")
+      title = list(text = "Start Date of Ad")
     ) %>% 
     hc_exporting(
       enabled = TRUE
@@ -99,7 +99,7 @@ maxSize = '10%'
     ) %>% 
     hc_xAxis(
       align = "left",
-      title = list(text = "Date (daily)")
+      title = list(text = "Start Date of Ad")
     ) %>% 
     hc_exporting(
       enabled = TRUE
@@ -262,7 +262,7 @@ ad_counts %>%
     ) %>% 
     hc_xAxis(
       align = "left",
-      title = list(text = "Date (daily)")
+      title = list(text = "Start Date of Ad")
     ) %>% 
     hc_exporting(
       enabled = TRUE
@@ -302,7 +302,7 @@ maxSize = '10%'
     ) %>% 
     hc_xAxis(
       align = "left",
-      title = list(text = "Date (daily)")
+      title = list(text = "Start Date of Ad")
     ) %>% 
     hc_exporting(
       enabled = TRUE

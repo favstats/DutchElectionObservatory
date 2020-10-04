@@ -5,6 +5,6 @@ account: favstats
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 2935130
-bundleId: 3700947
+bundleId: 3701665
 url: https://favstats.shinyapps.io/election_dashboard/
-when: 1601819016.23325
+when: 1601840874.54393
