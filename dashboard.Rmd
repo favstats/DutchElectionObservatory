@@ -34,6 +34,8 @@ ggl_ads <- readRDS("data/ggl_ads.RDS")
 
 
 snap_ads <- readRDS("data/snap_ads.RDS")
+
+fb_dat_parties <- readRDS("fb_dat/fb_dat_parties.rds")
 ```
 
 Google Ads {data-icon="fa-google"}
@@ -231,7 +233,35 @@ ggl_ads %>%
 Facebook {data-icon="fa-facebook-square"}
 =========================================
 
-Nothing here (yet!).
+Column {.tabset .tabset-fade}
+-----------------------------------------------------------------------
+
+### Ad Counts
+
+
+```{r}
+ad_counts <- fb_dat_parties  %>% 
+  count(ad_delivery_start_time, page_name) %>%
+  mutate(ad_delivery_start_time = as.Date(ad_delivery_start_time)) %>% 
+  complete(page_name, ad_delivery_start_time = seq.Date(min(ad_delivery_start_time), max(ad_delivery_start_time), by="day"), fill = list(n = 0))
+
+ad_counts %>% 
+  hchart("line", hcaes(x = ad_delivery_start_time, y = n, group = page_name)) %>%
+    hc_title(
+      text = ""
+    ) %>%
+    hc_yAxis(
+      align = "left",
+      title = list(text = "Number of Ads")
+    ) %>% 
+    hc_xAxis(
+      align = "left",
+      title = list(text = "Start Date of Ad")
+    ) %>% 
+    hc_exporting(
+      enabled = TRUE
+    ) 
+```
 
 
 Snapchat {data-icon="fa-snapchat-ghost"}

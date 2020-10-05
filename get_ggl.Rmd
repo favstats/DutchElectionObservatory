@@ -188,4 +188,130 @@ hchart(
     ) 
 ```
 
+```{r}
+devtools::install_github("facebookresearch/Radlibrary")
+
+
+```
+```{r}
+library(Radlibrary)
+library(httr)
+
+get_fb_ads <- function() {
+  
+token <- token_get()$token
+
+
+#link to fb api
+my_link<- "https://graph.facebook.com"
+
+#define fields you are interested in
+search_fields=c("ad_creation_time", 
+                "ad_delivery_start_time",
+                "ad_delivery_stop_time",
+                "ad_creative_link_caption",
+                "ad_creative_link_description",
+                "ad_creative_link_title",
+                "currency",
+                "ad_creative_body", 
+                "page_id",
+                "page_name",
+                "spend",
+                "demographic_distribution",
+                "funding_entity",
+                "impressions",
+                "region_distribution") %>% 
+  stringr::str_c(., collapse=", ")
+
+#get the data from the first 'page' of data the api provides
+page_one_response <- GET(my_link,
+                         path = "/ads_archive",
+                         query = list(access_token = token,
+                                      limit=100,
+                                      ad_active_status="ALL",
+                                      search_terms="''",
+                                      impression_condition = 'HAS_IMPRESSIONS_LAST_7_DAYS',
+                                      fields=search_fields,
+                                      # token = token,
+                                      ad_reached_countries="NL"))
+page_one_content<- content(page_one_response)
+
+x <- tibble(data=page_one_content$data)
+df_imp <- x %>% 
+  unnest_wider(data) 
+
+#get the link refering to the next page
+next_link <- page_one_content$paging$`next`
+
+page <- 1
+
+#iterate over all pages until there is no further page
+while(length(next_link)>0) {
+# while(T) {
+  
+  print(page)
+  
+  next_response <- GET(next_link)
+  next_content<- content(next_response)
+  
+  y <- tibble(data=next_content$data)
+  df_next <- y %>% 
+    unnest_wider(data) 
+  
+  df_imp <- bind_rows(df_imp, df_next)  
+  
+  next_link <- next_content$paging$`next`
+  
+  page <- page + 1
+  
+}
+
+dutch_parties <- c("VVD", "D66", "Forum voor Democratie -FVD", "SP", "GroenLinks", "Volt Nederland", "Partij van de Arbeid (PvdA)", "CDA", "Partij voor de Dieren", "ChristenUnie")
+
+fb_dat <- readRDS("fb_dat/fb_dat.rds")
+
+fb_dat <- df_imp %>% 
+  bind_rows(fb_dat) %>% 
+  distinct(id, .keep_all = T)
+
+saveRDS(fb_dat, "fb_dat/fb_dat.rds")
+
+fb_dat_parties <- fb_dat %>% 
+  mutate(ad_delivery_start_time = as.Date(ad_delivery_start_time)) %>% 
+  filter(ad_delivery_start_time >= as.Date("2020-09-01")) %>% 
+  filter(page_name %in% dutch_parties) 
+
+saveRDS(fb_dat_parties, "fb_dat/fb_dat_parties.rds")
+
+return(fb_dat)
+
+}
+```
+
+
+```{r}
+ad_counts <- fb_dat_parties  %>% 
+  count(ad_delivery_start_time, page_name) %>%
+  mutate(ad_delivery_start_time = as.Date(ad_delivery_start_time)) %>% 
+  complete(page_name, ad_delivery_start_time = seq.Date(min(ad_delivery_start_time), max(ad_delivery_start_time), by="day"), fill = list(n = 0))
+
+ad_counts %>% 
+  hchart("line", hcaes(x = ad_delivery_start_time, y = n, group = page_name)) %>%
+    hc_title(
+      text = ""
+    ) %>%
+    hc_yAxis(
+      align = "left",
+      title = list(text = "Number of Ads")
+    ) %>% 
+    hc_xAxis(
+      align = "left",
+      title = list(text = "Start Date of Ad")
+    ) %>% 
+    hc_exporting(
+      enabled = TRUE
+    ) 
+```
+
+
 ## Conclusion
