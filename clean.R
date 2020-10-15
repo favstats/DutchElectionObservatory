@@ -2,7 +2,31 @@ pacman::p_load(tidyverse, janitor)
 
 dir.create("data")
 
+get_mid <- function(spend_upper_bound, spend_lower_bound) {
+  # (spend_upper_bound-spend_lower_bound)/2+spend_lower_bound
+  (spend_upper_bound+spend_lower_bound)/2
+}
+
+
+assign_colors <- function(dat, n = 12) {
+  
+  color_sample <- colorspace::divergingx_hcl(n)
+  
+  lenght <- dat$color[is.na(dat$color)] %>% length
+  
+  if(lenght==0) return(invisible())
+  
+  cols <- sample(color_sample, lenght, replace = T)
+  
+  dat$color[is.na(dat$color)] <- cols
+  
+  return(dat)
+  
+}
+
 get_ggl_data <- function() {
+  
+  
   ggl_link <- "https://storage.googleapis.com/transparencyreport/google-political-ads-transparency-bundle.zip"
   
   ggl_file <- "data/ggl.zip"
@@ -16,13 +40,48 @@ get_ggl_data <- function() {
     discard(~str_detect(.x,"creative")) %>% 
     walk(file.remove)  
   
-  dutch_parties <- c("D66", "VVD", "GroenLinks", "SP (Socialistische Partij)", "Volt Nederland", "Christen Democratisch Appèl", "Partij van de Arbeid", "FvD")
+  # dutch_parties <- c("D66", "VVD", "GroenLinks", "SP (Socialistische Partij)", "Volt Nederland", "Christen Democratisch Appèl", "Partij van de Arbeid", "FvD")
+  
+  color_dat <- tibble(
+    color = c("#00b13d", "#80c31c", "#cd503e", "#008067"),
+    advertiser_name = c("D66", "GroenLinks", "VVD", "Christen Democratisch Appèl"))
+  
   
   ggl_ads <- data.table::fread("data/google-political-ads-transparency-bundle/google-political-ads-creative-stats.csv") %>% 
-    # filter(str_detect(Regions, "NL")) %>% 
+    filter(str_detect(Regions, "NL")) %>%
     janitor::clean_names() %>% 
-    filter(advertiser_name %in% dutch_parties) %>%
+    # filter(advertiser_name %in% dutch_parties) %>%
     filter(date_range_start >= as.Date("2020-09-01"))
+  
+  
+  ggl_total <- ggl_ads %>% 
+    group_by(advertiser_name) %>% 
+    summarise(spend_range_min = sum(spend_range_min_eur),
+              spend_range_max = sum(spend_range_max_eur),
+              spend_range_mid = sum(get_mid(spend_range_max_eur, spend_range_min_eur)),
+              n = n()) %>% 
+    ungroup() %>% 
+    left_join(color_dat)  %>% 
+    assign_colors()
+  
+  tidytemplate::save_it(ggl_total)
+  
+  ggl_times <- ggl_ads  %>%
+    group_by(date_range_start, advertiser_name) %>% 
+    summarise(spend_range_min = sum(spend_range_min_eur),
+              spend_range_max = sum(spend_range_max_eur),
+              spend_range_mid = sum(get_mid(spend_range_max_eur, spend_range_min_eur)),
+              n = n()) %>% 
+    ungroup() %>% 
+    mutate(date_range_start = as.Date(date_range_start)) %>%
+    complete(advertiser_name, date_range_start = seq.Date(min(date_range_start), max(date_range_start), by="day"), fill = list(n = 0, spend_range_min = 0, spend_range_mid = 0, spend_range_max = 0)) %>% 
+    left_join(color_dat) %>% 
+    assign_colors()
+  
+  ggl_aggr <- list(total = ggl_total, times = ggl_times)
+  
+  tidytemplate::save_it(ggl_aggr)
+  
   
   return(ggl_ads)
 }
@@ -66,6 +125,7 @@ get_fb_ads <- function() {
   token <- token_get()$token
   
   
+  
   #link to fb api
   my_link<- "https://graph.facebook.com"
   
@@ -94,7 +154,7 @@ get_fb_ads <- function() {
                                         limit=100,
                                         ad_active_status="ALL",
                                         search_terms="''",
-                                        impression_condition = 'HAS_IMPRESSIONS_LAST_7_DAYS',
+                                        impression_condition = 'HAS_IMPRESSIONS_LAST_90_DAYS',
                                         fields=search_fields,
                                         # token = token,
                                         ad_reached_countries="NL"))
