@@ -1,6 +1,6 @@
 
 
-hc_plotter <- function(plot_dat, filters, plot_type = "Number of Ads", total_vs_overtime = "Total", targeting = "Geotargeting", mapdata = mapdata, platform) {
+hc_plotter <- function(plot_dat, filters, plot_type = "Number of Ads", total_vs_overtime = "Total", targeting = "Geo targeting", mapdata = mapdata, platform) {
   
   if (plot_type %in% c("Number of Ads", "Spent (in EUR)", "Impressions")) {
     if(total_vs_overtime == "Total"){
@@ -11,10 +11,12 @@ hc_plotter <- function(plot_dat, filters, plot_type = "Number of Ads", total_vs_
       return(invisible())
     }
   } else if (plot_type == "Targeted Ads"){
-    if(targeting == "Geotargeting"){
-      plot_dat_fin <- plot_dat$map_data
-    } else if (targeting == "Over Time"){
-      plot_dat_fin <- plot_dat$times
+    if(targeting == "Geo targeting"){
+      plot_dat_fin <- plot_dat$geo
+    } else if (targeting == "Gender targeting"){
+      plot_dat_fin <- plot_dat$gender
+    } else if (targeting == "Age targeting"){
+      plot_dat_fin <- plot_dat$age
     } else {
       return(invisible())
     }   
@@ -28,6 +30,11 @@ hc_plotter <- function(plot_dat, filters, plot_type = "Number of Ads", total_vs_
   } else if (platform == "Google"){
     credits_text <- "Source: Google Transparency Report. Ads since September 1st 2020."
     href_text <- "https://www.facebook.com/ads/library/"   
+  }
+  
+  
+  if(!is.null(plot_dat_fin$page_name)){
+    plot_dat_fin <- plot_dat_fin %>% rename(advertiser_name = page_name)
   }
   
   hc_data <- plot_dat_fin %>% 
@@ -208,23 +215,111 @@ hc_plotter <- function(plot_dat, filters, plot_type = "Number of Ads", total_vs_
     }
   } else if (plot_type == "Targeted Ads"){
     
-    # if(download_data){
-    #   fb_aggr %>%
-    #     hc_plotter(filters = filters,
-    #                plot_type = "Targeted Ads",
-    #                total_vs_overtime = "Total",
-    #                targeting = "Geotargeting",
-    #                platform = "Facebook")      
-    # }
+    if(targeting == "Geo targeting"){
+      
+      if(platform == "Facebook"){
+        n_cols <- length(unique(hc_data$advertiser_name))
+        
+        if(n_cols > 3){
+          # print("hello")
+          hc_fin <- tibble(text = "Please select up to 3 advertisers", value = 12) %>% 
+            hchart("wordcloud", hcaes(name = text, weight = value)) %>% hw_grid(ncol = 1) 
+          
+          return(hc_fin)
+        }
+        
+        hc_fin <- hc_data %>% 
+          group_split(advertiser_name) %>% 
+          map(~{chart_maps(.x, F)}) %>% hw_grid(ncol = n_cols) %>% 
+          htmltools::browsable()
+        
+        return(hc_fin)             
+      } else if (platform == "Google"){
+        
+        title_text <- glue::glue("Geo targeting with {platform} ads")
+        subtitle_text <- glue::glue("")
+        
+        
+        hc_plot <- hc_data %>% 
+          filter(n != 0) %>% 
+          hchart("bar", hcaes(x = advertiser_name, y = perc, group = geo_targeting_included)) %>%
+          hc_xAxis(
+            align = "left",
+            title = list(text = "Advertiser Name")
+          ) %>%
+          hc_yAxis(
+            align = "left",
+            title = list(text = "Percentage of Ads")
+          ) 
+        
+      }
+    } else if (targeting == "Gender targeting"){
+      
+      
+      title_text <- glue::glue("Gender targeting with {platform} ads")
+      subtitle_text <- glue::glue("")
+      
+      
+      if(platform == "Google"){
+        
+        hc_plot <- hc_data %>% 
+          # filter(n != 0) %>% 
+          hchart("bar", hcaes(x = advertiser_name, y = perc, group = gender_targeting))%>%
+          hc_xAxis(
+            align = "left",
+            title = list(text = "Advertiser Name")
+          ) %>%
+          hc_yAxis(
+            align = "left",
+            title = list(text = "Percentage of Ads")
+          ) 
+      } else if (platform == "Facebook"){
+        
+        
+        hc_data <- hc_data %>% 
+          data_to_boxplot(percentage, advertiser_name, gender)
+        
+        hc_plot <-  highchart() %>%
+          hc_xAxis(type = "category") %>%
+          hc_add_series_list(hc_data)%>%
+          hc_yAxis(reversed = F, min = 0, title = list(text = "% Audience of Ad"))  %>% 
+          hc_chart(inverted = TRUE)
+        
+      }
+    } else if (targeting == "Age targeting"){
+      
+      title_text <- glue::glue("Age targeting with {platform} ads")
+      subtitle_text <- glue::glue("")
+      
+      if(platform == "Google"){
+        
+        hc_plot <- hc_data %>% 
+          # filter(n != 0) %>% 
+          hchart("bar", hcaes(x = advertiser_name, y = perc, group = age_targeting2))%>%
+          hc_xAxis(
+            align = "left",
+            title = list(text = "Advertiser Name")
+          ) %>%
+          hc_yAxis(
+            align = "left",
+            title = list(text = "Percentage of Ads")
+          ) 
+      } else if (platform == "Facebook"){
+        
+        hc_data <- hc_data %>% 
+          data_to_boxplot(percentage, advertiser_name, age)
+          
+        
+        hc_plot <-  highchart() %>%
+          hc_xAxis(type = "category") %>%
+          hc_add_series_list(hc_data)%>%
+          hc_yAxis(reversed = F, min = 0, title = list(text = "% Audience of Ad"))  %>% 
+          hc_chart(inverted = TRUE)
+        
+      }
+    }
     
-    n_cols <- length(unique(hc_data$advertiser_name))
-    
-    hc_fin <- hc_data %>% 
-      group_split(advertiser_name) %>% 
-      map(~{chart_maps(.x, F)}) %>% hw_grid(ncol = n_cols) %>% 
-      htmltools::browsable()
-    
-    return(hc_fin)
+
   }
   
   hc_plot %>% 

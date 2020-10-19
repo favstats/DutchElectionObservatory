@@ -1,4 +1,4 @@
-pacman::p_load(tidyverse, janitor)
+pacman::p_load(tidyverse, janitor, highcharter)
 
 dir.create("data")
 
@@ -23,6 +23,27 @@ assign_colors <- function(dat, n = 12) {
   return(dat)
   
 }
+
+unnest_geos <- function(x) {
+  cat(glue::glue("{x$row_number} out of {nrow(age_gender_targeted_raw)} ({round(100*x$row_number/nrow(age_gender_targeted_raw), 2)}%)\n\n"))
+  x %>% 
+    pull(region_distribution) %>% 
+    flatten() %>% 
+    map_dfr(flatten) %>% 
+    mutate(id = x$id)%>% 
+    mutate(start_time = x$start_time)%>% 
+    mutate(page_name = x$page_name)
+}
+
+unnest_dems <- function(x) {
+  cat(glue::glue("{x$row_number} out of {nrow(age_gender_targeted_raw)} ({round(100*x$row_number/nrow(age_gender_targeted_raw), 2)}%)\n\n"))
+  x %>% 
+    pull(demographic_distribution) %>% 
+    flatten() %>% 
+    map_dfr(flatten) %>% 
+    mutate(id = x$id)
+}
+
 
 get_ggl_data <- function() {
   
@@ -55,10 +76,29 @@ get_ggl_data <- function() {
   
   
   ggl_total <- ggl_ads %>% 
+    mutate(impressions_lower_bound = case_when(
+      impressions == "≤ 10k" ~ 1,
+      impressions == "10k-100k" ~ 10000,
+      impressions == "100k-1M" ~ 100000,
+      impressions == "1M-10M" ~ 1000000,
+      # impressions == "> 10M" ~ 10000000,
+      T ~ 0
+    )) %>% 
+    mutate(impressions_upper_bound = case_when(
+      impressions == "≤ 10k" ~ 10000,
+      impressions == "10k-100k" ~ 100000,
+      impressions == "100k-1M" ~ 1000000,
+      impressions == "1M-10M" ~ 10000000,
+      # impressions == "> 10M" ~ 20000000,
+      T ~ 0
+    )) %>% 
     group_by(advertiser_name) %>% 
     summarise(spend_range_min = sum(spend_range_min_eur),
               spend_range_max = sum(spend_range_max_eur),
               spend_range_mid = sum(get_mid(spend_range_max_eur, spend_range_min_eur)),
+              impressions_range_min = sum(impressions_lower_bound),
+              impressions_range_max = sum(impressions_upper_bound),
+              impressions_range_mid = sum(get_mid(impressions_lower_bound, impressions_upper_bound)),
               n = n()) %>% 
     ungroup() %>% 
     left_join(color_dat)  %>% 
@@ -67,14 +107,33 @@ get_ggl_data <- function() {
   # tidytemplate::save_it(ggl_total)
   
   ggl_times <- ggl_ads  %>%
+    mutate(impressions_lower_bound = case_when(
+      impressions == "≤ 10k" ~ 1,
+      impressions == "10k-100k" ~ 10000,
+      impressions == "100k-1M" ~ 100000,
+      impressions == "1M-10M" ~ 1000000,
+      # impressions == "> 10M" ~ 10000000,
+      T ~ 0
+    )) %>% 
+    mutate(impressions_upper_bound = case_when(
+      impressions == "≤ 10k" ~ 10000,
+      impressions == "10k-100k" ~ 100000,
+      impressions == "100k-1M" ~ 1000000,
+      impressions == "1M-10M" ~ 10000000,
+      # impressions == "> 10M" ~ 20000000,
+      T ~ 0
+    )) %>% 
     group_by(date_range_start, advertiser_name) %>% 
     summarise(spend_range_min = sum(spend_range_min_eur),
               spend_range_max = sum(spend_range_max_eur),
               spend_range_mid = sum(get_mid(spend_range_max_eur, spend_range_min_eur)),
+              impressions_range_min = sum(impressions_lower_bound),
+              impressions_range_max = sum(impressions_upper_bound),
+              impressions_range_mid = sum(get_mid(impressions_lower_bound, impressions_upper_bound)),
               n = n()) %>% 
     ungroup() %>% 
     mutate(date_range_start = as.Date(date_range_start)) %>%
-    complete(advertiser_name, date_range_start = seq.Date(min(date_range_start), max(date_range_start), by="day"), fill = list(n = 0, spend_range_min = 0, spend_range_mid = 0, spend_range_max = 0)) %>% 
+    complete(advertiser_name, date_range_start = seq.Date(min(date_range_start), max(date_range_start), by="day"), fill = list(n = 0, spend_range_min = 0, spend_range_mid = 0, spend_range_max = 0, impressions_range_min = 0, impressions_range_mid = 0, impressions_range_max = 0)) %>% 
     left_join(color_dat) %>% 
     assign_colors()
   
@@ -83,6 +142,7 @@ get_ggl_data <- function() {
     count(advertiser_name, gender_targeting) %>%
     group_by(advertiser_name) %>%
     mutate(perc = round(n/sum(n)*100, 2)) %>% 
+    ungroup() %>% 
     left_join(color_dat) %>% 
     assign_colors()
   
@@ -95,6 +155,7 @@ get_ggl_data <- function() {
     complete(advertiser_name, age_targeting2, fill = list(n = 0)) %>%
     group_by(advertiser_name) %>%
     mutate(perc = round(n/sum(n)*100, 2))%>% 
+    ungroup() %>% 
     left_join(color_dat) %>% 
     assign_colors()
   
@@ -108,6 +169,7 @@ get_ggl_data <- function() {
     complete(advertiser_name, geo_targeting_included, fill = list(n = 0)) %>%
     group_by(advertiser_name) %>%
     mutate(perc = round(n/sum(n)*100, 2))%>% 
+    ungroup() %>% 
     left_join(color_dat) %>% 
     assign_colors()
   
@@ -155,9 +217,9 @@ library(httr)
 
 get_fb_ads <- function() {
   
-  token <- token_get()$token
+  readRenviron(".Renviron")
   
-  
+  token <- Sys.getenv("fb_token")
   
   #link to fb api
   my_link<- "https://graph.facebook.com"
@@ -187,7 +249,7 @@ get_fb_ads <- function() {
                                         limit=100,
                                         ad_active_status="ALL",
                                         search_terms="''",
-                                        impression_condition = 'HAS_IMPRESSIONS_LAST_90_DAYS',
+                                        impression_condition = 'HAS_IMPRESSIONS_LAST_30_DAYS',
                                         fields=search_fields,
                                         # token = token,
                                         ad_reached_countries="NL"))
@@ -233,12 +295,156 @@ get_fb_ads <- function() {
   
   saveRDS(fb_dat, "fb_dat/fb_dat.rds")
   
-  fb_dat_parties <- fb_dat %>% 
-    mutate(ad_delivery_start_time = as.Date(ad_delivery_start_time)) %>% 
-    filter(ad_delivery_start_time >= as.Date("2020-09-01")) %>% 
-    filter(page_name %in% dutch_parties) 
+
   
-  saveRDS(fb_dat_parties, "fb_dat/fb_dat_parties.rds")
+  color_dat <- tibble(
+    color = c("#00b13d", "#80c31c", "#cd503e", "#008067", "#6f2421", "#e3101c", "#e01003", "#036b2c", "#02a6e9", "#562883"),
+    advertiser_name = c("D66", "GroenLinks", "VVD", "CDA", "Forum voor Democratie -FVD", "Partij van de Arbeid (PvdA)", "SP", "Partij voor de Dieren", "ChristenUnie", "Volt Nederland"))
+  
+  fb_total <- fb_dat %>% 
+    mutate(date_range_start = as.Date(ad_delivery_start_time)) %>%
+    filter(date_range_start >= as.Date("2020-09-01")) %>% 
+    unnest_wider(spend, names_sep = "_") %>%
+    unnest_wider(impressions, names_sep = "_") %>%
+    mutate_at(vars(spend_lower_bound, spend_upper_bound, impressions_lower_bound, impressions_upper_bound), as.numeric) %>% 
+    rename(advertiser_name = page_name) %>% 
+    # drop_na(spend_lower_bound, spend_upper_bound, impressions_lower_bound, impressions_upper_bound) %>% 
+    mutate(impressions_lower_bound = case_when(
+      is.na(impressions_upper_bound) ~ 0, 
+      is.na(impressions_lower_bound) ~ 0,
+      T ~ impressions_lower_bound)) %>% 
+    mutate(impressions_upper_bound = case_when(
+      is.na(impressions_upper_bound) ~ 0, 
+      is.na(impressions_lower_bound) ~ 0,
+      T ~ impressions_upper_bound)) %>% 
+    group_by(advertiser_name) %>% 
+    summarise(spend_range_min = sum(spend_lower_bound),
+              spend_range_max = sum(spend_upper_bound),
+              spend_range_mid = sum(get_mid(spend_lower_bound, spend_upper_bound)),
+              impressions_range_min = sum(impressions_lower_bound),
+              impressions_range_max = sum(impressions_upper_bound),
+              impressions_range_mid = sum(get_mid(impressions_lower_bound, impressions_upper_bound)),
+              n = n()) %>% 
+    ungroup() %>% 
+    left_join(color_dat)  %>% 
+    assign_colors()
+  
+  # tidytemplate::save_it(fb_total)
+  
+  fb_times <- fb_dat %>% 
+    mutate(date_range_start = as.Date(ad_delivery_start_time)) %>%
+    filter(date_range_start >= as.Date("2020-09-01")) %>% 
+    unnest_wider(spend, names_sep = "_") %>%
+    unnest_wider(impressions, names_sep = "_") %>%
+    mutate_at(vars(spend_lower_bound, spend_upper_bound, impressions_lower_bound, impressions_upper_bound), as.numeric) %>% 
+    rename(advertiser_name = page_name) %>% 
+    # drop_na(spend_lower_bound, spend_upper_bound, impressions_lower_bound, impressions_upper_bound) %>% 
+    group_by(date_range_start, advertiser_name) %>% 
+    summarise(spend_range_min = sum(spend_lower_bound),
+              spend_range_max = sum(spend_upper_bound),
+              spend_range_mid = sum(get_mid(spend_lower_bound, spend_upper_bound)),
+              impressions_range_min = sum(impressions_lower_bound),
+              impressions_range_max = sum(impressions_upper_bound),
+              impressions_range_mid = sum(get_mid(impressions_lower_bound, impressions_upper_bound)),
+              n = n()) %>% 
+    ungroup() %>% 
+    complete(advertiser_name, date_range_start = seq.Date(min(date_range_start), max(date_range_start), by="day"), fill = list(n = 0, spend_range_min = 0, spend_range_mid = 0, spend_range_max = 0, impressions_range_min = 0, impressions_range_mid = 0, impressions_range_max = 0)) %>% 
+    left_join(color_dat) %>% 
+    assign_colors() 
+  
+  age_gender_targeted_raw <- fb_dat %>% 
+    mutate(start_time = lubridate::as_datetime(ad_delivery_start_time) %>% lubridate::floor_date("day")) %>% 
+    mutate(start_time = as.Date(start_time)) %>% 
+    mutate(date_range_start = as.Date(ad_delivery_start_time)) %>%
+    filter(date_range_start >= as.Date("2020-09-01")) 
+  
+  age_gender_targeted <- age_gender_targeted_raw %>% 
+    mutate(row_number = 1:n()) %>% 
+    split(1:nrow(.)) %>% 
+    map_dfr(unnest_dems) %>% 
+    right_join(age_gender_targeted_raw)
+  
+  gender_targeted_plot <- age_gender_targeted  %>% 
+    # filter(page_name %in% dutch_parties) %>% 
+    mutate(percentage = as.numeric(percentage)) %>% 
+    mutate(gender_age = paste(gender, age)) %>% 
+    filter(!str_detect(gender_age, "unknown")) %>% 
+    filter(!str_detect(gender_age, "13-17")) %>% 
+    complete(gender, age, fill = list(percentage = 0)) %>% 
+    group_by(id, gender, page_name) %>% 
+    summarize(percentage = sum(percentage)) %>% 
+    ungroup()
+  
+  fb_gender <- gender_targeted_plot %>% 
+    mutate(percentage = percentage * 100) #%>% 
+  # data_to_boxplot(percentage, page_name, gender) 
+  
+  
+  
+  age_targeted_plot <- age_gender_targeted  %>% 
+    mutate(percentage = as.numeric(percentage)) %>% 
+    mutate(gender_age = paste(gender, age)) %>% 
+    filter(!str_detect(gender_age, "unknown")) %>% 
+    filter(!str_detect(gender_age, "13-17")) %>% 
+    complete(gender, age, fill = list(percentage = 0)) %>% 
+    group_by(id, age, page_name) %>% 
+    summarize(percentage = sum(percentage)) %>% 
+    ungroup()
+  
+  
+  fb_age <- age_targeted_plot %>% 
+    mutate(percentage = percentage * 100)# %>% 
+  # data_to_boxplot(percentage, page_name, age)
+  
+  
+  
+  geo_targeted <- age_gender_targeted_raw %>% 
+    mutate(row_number = 1:n()) %>% 
+    # slice(1:10) %>% 
+    split(1:nrow(.)) %>% 
+    map_dfr(unnest_geos) 
+  
+  
+  dutch_regions <- geo_targeted %>% 
+    count(region, sort = T) %>% 
+    slice(1:12) %>% pull(region)
+  
+  geo_targeted <- geo_targeted  %>% 
+    filter(start_time >= as.Date("2020-09-01")) %>% 
+    # filter(page_name %in% dutch_parties) %>% 
+    filter(region %in% dutch_regions) %>% 
+    mutate(percentage = as.numeric(percentage)) %>% 
+    complete(region, fill = list(percentage = 0)) %>% 
+    group_by(id, region, page_name) %>% 
+    summarize(percentage = sum(percentage)) %>% 
+    ungroup()
+  
+  mapdata <- get_data_from_map(download_map_data("https://code.highcharts.com/mapdata/countries/nl/nl-all.js"))
+  
+  fb_geo <- mapdata %>% 
+    left_join(geo_targeted %>% 
+                rename(name = region,
+                       advertiser_name = page_name) %>% 
+                # filter(page_name == "D66") %>% 
+                group_by(name, advertiser_name) %>% 
+                summarize(percentage = median(percentage, na.rm = T)) %>% 
+                mutate(name = ifelse(name == "North Brabant", "Noord-Brabant", name))) %>% 
+    mutate(percentage = round(100*percentage, 2)) %>% 
+    ungroup() %>% 
+    left_join(color_dat) %>% 
+    rename(colorful = color)
+  
+
+  fb_aggr <- list(total = fb_total, times = fb_times, geo = fb_geo, gender = fb_gender, age = fb_age)
+  
+  tidytemplate::save_it(fb_aggr)
+  
+  # fb_dat_parties <- fb_dat %>% 
+  #   mutate(ad_delivery_start_time = as.Date(ad_delivery_start_time)) %>% 
+  #   filter(ad_delivery_start_time >= as.Date("2020-09-01")) %>% 
+  #   filter(page_name %in% dutch_parties) 
+  # 
+  # saveRDS(fb_dat_parties, "fb_dat/fb_dat_parties.rds")
   
   return(fb_dat)
   

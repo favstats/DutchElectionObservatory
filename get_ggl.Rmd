@@ -595,6 +595,7 @@ dat <- gender_targeted_plot %>%
   data_to_boxplot(percentage, page_name, gender) 
 
 
+
 highchart() %>%
   hc_xAxis(type = "category") %>%
   hc_add_series_list(dat)%>%
@@ -768,8 +769,15 @@ ausmap <- highchart(type = "map") %>%
 ausmap %>% list
 
 fb_aggr <- readRDS("data/fb_aggr.RDS")
+final_map_dat <- readRDS("data/final_map_dat.RDS")
+
  
-fb_aggr$map_data <- final_map_dat
+# fb_aggr$map_data <- final_map_dat
+
+# fb_aggr$map_data <- NULL
+
+fb_aggr$geo <- final_map_dat
+
 
 tidytemplate::save_it(fb_aggr)
 
@@ -777,6 +785,14 @@ final_map_dat %>%
   filter(advertiser_name %in% c("D66", "SP", "VVD")) %>% 
   group_split(advertiser_name) %>% 
   map(chart_maps) %>% hw_grid(ncol = 3)
+
+debugonce(hc_plotter)
+
+  ggl_aggr %>%
+    hc_plotter(filters = dutch_parties,
+                plot_type = "Targeted Ads",
+                total_vs_overtime = "Age targeting",
+               platform = "Google") %>% list
 ```
 
 

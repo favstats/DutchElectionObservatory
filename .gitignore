@@ -5,3 +5,8 @@
 *.csv
 *.rds
 fb_dat
+.Renviron
+*.Renviron
+*.RDS
+.RDS
+data
