@@ -43,8 +43,8 @@ get_ggl_data <- function() {
   # dutch_parties <- c("D66", "VVD", "GroenLinks", "SP (Socialistische Partij)", "Volt Nederland", "Christen Democratisch Appèl", "Partij van de Arbeid", "FvD")
   
   color_dat <- tibble(
-    color = c("#00b13d", "#80c31c", "#cd503e", "#008067"),
-    advertiser_name = c("D66", "GroenLinks", "VVD", "Christen Democratisch Appèl"))
+    color = c("#00b13d", "#80c31c", "#cd503e", "#008067", "#e01003", "#e3101c", "#6f2421"),
+    advertiser_name = c("D66", "GroenLinks", "VVD", "Christen Democratisch Appèl", "SP (Socialistische Partij)", "Partij van de Arbeid", "FvD"))
   
   
   ggl_ads <- data.table::fread("data/google-political-ads-transparency-bundle/google-political-ads-creative-stats.csv") %>% 
@@ -64,7 +64,7 @@ get_ggl_data <- function() {
     left_join(color_dat)  %>% 
     assign_colors()
   
-  tidytemplate::save_it(ggl_total)
+  # tidytemplate::save_it(ggl_total)
   
   ggl_times <- ggl_ads  %>%
     group_by(date_range_start, advertiser_name) %>% 
@@ -78,7 +78,40 @@ get_ggl_data <- function() {
     left_join(color_dat) %>% 
     assign_colors()
   
-  ggl_aggr <- list(total = ggl_total, times = ggl_times)
+  ggl_gender <- ggl_ads %>%
+    mutate(gender_targeting = ifelse(str_detect(gender_targeting, "Male") & str_detect(gender_targeting, "Female"), "Not targeted", gender_targeting)) %>%
+    count(advertiser_name, gender_targeting) %>%
+    group_by(advertiser_name) %>%
+    mutate(perc = round(n/sum(n)*100, 2)) %>% 
+    left_join(color_dat) %>% 
+    assign_colors()
+  
+  ggl_age <- ggl_ads %>%
+    mutate(age_targeting2 = case_when(
+      str_detect(age_targeting, "18-24, 25-34, 35-44, 45-54, 55-64, ≥65") ~ "Not targeted",
+      T ~ age_targeting
+    )) %>%
+    count(advertiser_name, age_targeting2) %>%
+    complete(advertiser_name, age_targeting2, fill = list(n = 0)) %>%
+    group_by(advertiser_name) %>%
+    mutate(perc = round(n/sum(n)*100, 2))%>% 
+    left_join(color_dat) %>% 
+    assign_colors()
+  
+  ggl_geo <-  ggl_ads %>%
+    mutate(geo_targeting_included = case_when(
+      str_count(geo_targeting_included, ",") >= 11 ~ "Not targeted",
+      str_detect(geo_targeting_included, "Netherlands") ~ "Not targeted",
+      T ~ geo_targeting_included
+    )) %>%
+    count(advertiser_name, geo_targeting_included) %>%
+    complete(advertiser_name, geo_targeting_included, fill = list(n = 0)) %>%
+    group_by(advertiser_name) %>%
+    mutate(perc = round(n/sum(n)*100, 2))%>% 
+    left_join(color_dat) %>% 
+    assign_colors()
+  
+  ggl_aggr <- list(total = ggl_total, times = ggl_times, gender = ggl_gender, age = ggl_age, geo = ggl_geo)
   
   tidytemplate::save_it(ggl_aggr)
   

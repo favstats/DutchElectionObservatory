@@ -81,6 +81,8 @@ ggl_ads  %>%
   complete(advertiser_name, date_range_start = seq.Date(min(date_range_start), max(date_range_start), by="day"), fill = list(n = 0)) %>% 
   ggplot(aes(date_range_start, n, color = advertiser_name)) +
   geom_line()
+
+ggl_ads %>% count(advertiser_name, sort = T)
 ```
 
 ```{r}
@@ -489,6 +491,8 @@ fb_times <- fb_dat %>%
   tidytemplate::save_it(fb_aggr)
 ```
 
+### Targeting
+
 ```{r}
 unnest_it <- function(x) {
    x   %>% 
@@ -497,39 +501,282 @@ unnest_it <- function(x) {
 }
 
 unnest_dems <- function(x) {
+  cat(glue::glue("{x$row_number} out of {nrow(age_gender_targeted_raw)} ({round(100*x$row_number/nrow(age_gender_targeted_raw), 2)}%)\n\n"))
   x %>% 
   pull(demographic_distribution) %>% 
-  flatten() 
+  flatten() %>% 
+  map_dfr(flatten) %>% 
+  mutate(id = x$id)
 }
 
 age_gender_targeted_raw <- fb_dat %>% 
   mutate(start_time = lubridate::as_datetime(ad_delivery_start_time) %>% lubridate::floor_date("day")) %>% 
   mutate(start_time = as.Date(start_time))
 
-fb_dat %>% 
-  slice(1) %>% 
-  unnest_dems() %>% 
-  map_dfr(flatten)
-  flatten() %>% #tibble()
-  enframe()
-  
-library(future)
+age_gender_targeted <- age_gender_targeted_raw %>% 
+  mutate(row_number = 1:n()) %>% 
+  split(1:nrow(.)) %>% 
+  map_dfr(unnest_dems) %>% 
+  right_join(age_gender_targeted_raw)
+```
 
-plan(multisession, workers = 4)
 
-split_data <- function(x, n = 1000) {
-  split(x, rep(1:n, length.out = nrow(x), each = ceiling(nrow(x)/n)))
+```{r}
+age_gender_targeted  %>% 
+  filter(page_name %in% dutch_parties) %>% 
+    mutate(date_range_start = as.Date(ad_delivery_start_time)) %>%
+    filter(date_range_start >= as.Date("2020-09-01")) %>% 
+  mutate(percentage = as.numeric(percentage)) %>% 
+  mutate(gender_age = paste(gender, age)) %>% 
+  filter(!str_detect(gender_age, "unknown")) %>% 
+  filter(!str_detect(gender_age, "13-17")) %>% 
+  complete(gender, age, fill = list(percentage = 0)) %>% 
+  ggplot(aes(gender_age, percentage)) +
+  geom_boxplot() +
+  theme_minimal() +
+  facet_wrap(~page_name, ncol = 3) +
+  coord_flip() 
+
+
+
+
+age_gender_targeted  %>% 
+  filter(page_name %in% dutch_parties) %>% 
+  mutate(date_range_start = as.Date(ad_delivery_start_time)) %>%
+  filter(date_range_start >= as.Date("2020-09-01")) %>% 
+  mutate(percentage = as.numeric(percentage)) %>% 
+  mutate(gender_age = paste(gender, age)) %>% 
+  filter(!str_detect(gender_age, "unknown")) %>% 
+  filter(!str_detect(gender_age, "13-17")) %>% 
+  complete(gender, age, fill = list(percentage = 0)) %>% 
+  group_by(id, gender, page_name) %>% 
+  summarize(percentage = sum(percentage)) %>% 
+  ggplot(aes(gender, percentage)) +
+  geom_boxplot() +
+  theme_minimal() +
+  facet_wrap(~page_name, ncol = 3) +
+  coord_flip() 
+
+age_gender_targeted  %>% 
+  filter(page_name %in% dutch_parties) %>% 
+  mutate(date_range_start = as.Date(ad_delivery_start_time)) %>%
+  filter(date_range_start >= as.Date("2020-09-01"))  %>% 
+  mutate(percentage = as.numeric(percentage)) %>% 
+  mutate(gender_age = paste(gender, age)) %>% 
+  filter(!str_detect(gender_age, "unknown")) %>% 
+  filter(!str_detect(gender_age, "13-17")) %>% 
+  complete(gender, age, fill = list(percentage = 0)) %>% 
+  group_by(id, age, page_name) %>% 
+  summarize(percentage = sum(percentage)) %>% 
+  ggplot(aes(age, percentage)) +
+  geom_boxplot() +
+  theme_minimal() +
+  facet_wrap(~page_name, ncol = 3) +
+  coord_flip() 
+
+
+gender_targeted_plot <- age_gender_targeted  %>% 
+  filter(page_name %in% dutch_parties) %>% 
+  mutate(date_range_start = as.Date(ad_delivery_start_time)) %>%
+  filter(date_range_start >= as.Date("2020-09-01")) %>% 
+  mutate(percentage = as.numeric(percentage)) %>% 
+  mutate(gender_age = paste(gender, age)) %>% 
+  filter(!str_detect(gender_age, "unknown")) %>% 
+  filter(!str_detect(gender_age, "13-17")) %>% 
+  complete(gender, age, fill = list(percentage = 0)) %>% 
+  group_by(id, gender, page_name) %>% 
+  summarize(percentage = sum(percentage)) %>% 
+  ungroup()
+
+library(highcharter)
+
+dat <- gender_targeted_plot %>% 
+  mutate(percentage = percentage * 100) %>% 
+  data_to_boxplot(percentage, page_name, gender) 
+
+
+highchart() %>%
+  hc_xAxis(type = "category") %>%
+  hc_add_series_list(dat)%>%
+  hc_yAxis(reversed = F, min = 0, title = list(text = "% Audience of Ad"))  %>% 
+  hc_chart(inverted = TRUE)
+
+
+age_targeted_plot <- age_gender_targeted  %>% 
+  filter(page_name %in% dutch_parties) %>% 
+  mutate(date_range_start = as.Date(ad_delivery_start_time)) %>%
+  filter(date_range_start >= as.Date("2020-09-01")) %>% 
+  mutate(percentage = as.numeric(percentage)) %>% 
+  mutate(gender_age = paste(gender, age)) %>% 
+  filter(!str_detect(gender_age, "unknown")) %>% 
+  filter(!str_detect(gender_age, "13-17")) %>% 
+  complete(gender, age, fill = list(percentage = 0)) %>% 
+  group_by(id, age, page_name) %>% 
+  summarize(percentage = sum(percentage)) %>% 
+  ungroup()
+
+
+dat <- age_targeted_plot %>% 
+  data_to_boxplot(percentage, page_name, age)
+
+
+highchart() %>%
+  hc_xAxis(type = "category") %>%
+  hc_add_series_list(dat)%>%
+  hc_yAxis(reversed = F, min = 0, title = list(text = "€ spent on Ads"))  %>% 
+  hc_chart(inverted = TRUE)
+```
+
+## Geo Maps
+
+```{r}
+age_gender_targeted_raw <- fb_dat %>% 
+  mutate(start_time = lubridate::as_datetime(ad_delivery_start_time) %>% lubridate::floor_date("day")) %>% 
+  mutate(start_time = as.Date(start_time))
+
+unnest_geos <- function(x) {
+  cat(glue::glue("{x$row_number} out of {nrow(age_gender_targeted_raw)} ({round(100*x$row_number/nrow(age_gender_targeted_raw), 2)}%)\n\n"))
+  x %>% 
+  pull(region_distribution) %>% 
+  flatten() %>% 
+  map_dfr(flatten) %>% 
+  mutate(id = x$id)%>% 
+  mutate(start_time = x$start_time)%>% 
+  mutate(page_name = x$page_name)
 }
 
+geo_targeted <- age_gender_targeted_raw %>% 
+  mutate(row_number = 1:n()) %>% 
+  # slice(1:10) %>% 
+  split(1:nrow(.)) %>% 
+  map_dfr(unnest_geos) 
 
-age_gender_targeted <- age_gender_targeted_raw %>% 
-  # slice(1:1000) %>% 
-  split_data() %>% 
-  furrr::future_map_dfr(unnest_it, .progress = T)
-  
 
-age_gender_targeted <- split(age_gender_targeted_raw, rep(1:1000, length.out = nrow(age_gender_targeted_raw), each = ceiling(nrow(age_gender_targeted_raw)/1000))) %>% 
-  furrr::future_map_dfr(unnest_it, .progress = T)
+dutch_regions <- geo_targeted %>% 
+  count(region, sort = T) %>% 
+  slice(1:12) %>% pull(region)
+
+region_targeted_plot <- geo_targeted  %>% 
+  filter(start_time >= as.Date("2020-09-01")) %>% 
+  filter(page_name %in% dutch_parties) %>% 
+  filter(region %in% dutch_regions) %>% 
+  mutate(percentage = as.numeric(percentage)) %>% 
+  complete(region, fill = list(percentage = 0)) %>% 
+  group_by(id, region, page_name) %>% 
+  summarize(percentage = sum(percentage)) %>% 
+  ungroup()
+
+library(highcharter)
+
+dat <- region_targeted_plot %>% 
+  data_to_boxplot(percentage, page_name, region)
+
+highchart() %>%
+  hc_xAxis(type = "category") %>%
+  hc_add_series_list(dat)%>%
+  hc_yAxis(reversed = F, min = 0, title = list(text = "€ spent on Ads"))  %>% 
+  hc_chart(inverted = TRUE)
+```
+```{r}
+require(dplyr)
+
+mapdata <- get_data_from_map(download_map_data("https://code.highcharts.com/mapdata/countries/nl/nl-all.js"))
+
+json_map <- download_map_data("https://code.highcharts.com/mapdata/countries/nl/nl-all.js")
+
+glimpse(mapdata)
+
+hcmap(mapdata)
+
+highchart(type = "map") %>%
+  hc_add_series(mapData = mapdata, showInLegend = FALSE)
+
+highchart(type = "map") %>%
+  hc_chart(backgroundColor = "#161C20") %>%
+  hc_add_series(
+    mapData = mapdata,
+    showInLegend = FALSE,
+    nullColor = "#424242",
+    borderWidth = 0
+  )
+
+data_fake <- mapdata %>%
+  select(code = `hc-a2`) %>%
+  mutate(value = 1e5 * abs(rt(nrow(.), df = 10)))
+
+glimpse(data_fake)
+```
+
+
+```{r}
+final_map_dat <- mapdata %>% 
+  left_join(region_targeted_plot %>% 
+              rename(name = region,
+                     advertiser_name = page_name) %>% 
+              # filter(page_name == "D66") %>% 
+              group_by(name, advertiser_name) %>% 
+              summarize(percentage = median(percentage, na.rm = T)) %>% 
+              mutate(name = ifelse(name == "North Brabant", "Noord-Brabant", name))) %>% 
+  mutate(percentage = round(100*percentage, 2)) %>% 
+  ungroup() %>% 
+  left_join(color_dat) %>% 
+  rename(colorful = color)
+
+tidytemplate::save_it(final_map_dat)
+
+library(httr)
+library(jsonlite)
+
+ausgeojson <- fromJSON("https://code.highcharts.com/mapdata/countries/nl/nl-all.geo.json")
+  content() %>%
+  # jsonlite::from()
+  # read_json()
+  fromJSON(simplifyVector = FALSE)# %>%
+  as.json()
+
+chart_maps <- function(x) {
+  hcmap(
+  "https://code.highcharts.com/mapdata/countries/nl/nl-all.js",
+  data = x,
+  value = "percentage",
+  joinBy = c("name", "name"),
+  name = "Median Ad Audience",
+  dataLabels = list(enabled = TRUE, format = "{point.name}"),
+  borderColor = "#FAFAFA",
+  borderWidth = 0.1,
+  tooltip = list(
+    valueDecimals = 2,
+    valueSuffix = "%"
+    )
+  ) %>% 
+  hc_colorAxis(
+    minColor = "white",
+    maxColor = unique(x$colorful)
+  )%>% 
+    hc_title(
+      text = unique(x$advertiser_name)
+    ) %>%
+    hc_exporting(
+      enabled = TRUE
+    )
+}
+
+ausgeojson
+
+ausmap <- highchart(type = "map") %>%
+  hc_add_series(mapData = ausgeojson, showInLegend = FALSE)
+ausmap %>% list
+
+fb_aggr <- readRDS("data/fb_aggr.RDS")
+ 
+fb_aggr$map_data <- final_map_dat
+
+tidytemplate::save_it(fb_aggr)
+
+final_map_dat %>% 
+  filter(advertiser_name %in% c("D66", "SP", "VVD")) %>% 
+  group_split(advertiser_name) %>% 
+  map(chart_maps) %>% hw_grid(ncol = 3)
 ```
 
 

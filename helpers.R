@@ -1,14 +1,26 @@
 
 
-hc_plotter <- function(plot_dat, filters, plot_type = "Number of Ads", total_vs_overtime = "Total", platform) {
+hc_plotter <- function(plot_dat, filters, plot_type = "Number of Ads", total_vs_overtime = "Total", targeting = "Geotargeting", mapdata = mapdata, platform) {
   
-  if(total_vs_overtime == "Total"){
-    plot_dat_fin <- plot_dat$total
-  } else if (total_vs_overtime == "Over Time"){
-    plot_dat_fin <- plot_dat$times
+  if (plot_type %in% c("Number of Ads", "Spent (in EUR)", "Impressions")) {
+    if(total_vs_overtime == "Total"){
+      plot_dat_fin <- plot_dat$total
+    } else if (total_vs_overtime == "Over Time"){
+      plot_dat_fin <- plot_dat$times
+    } else {
+      return(invisible())
+    }
+  } else if (plot_type == "Targeted Ads"){
+    if(targeting == "Geotargeting"){
+      plot_dat_fin <- plot_dat$map_data
+    } else if (targeting == "Over Time"){
+      plot_dat_fin <- plot_dat$times
+    } else {
+      return(invisible())
+    }   
   } else {
     return(invisible())
-  }
+  }  
   
   if(platform == "Facebook"){
     credits_text <- "Source: Facebook Ad Library. Ads since September 1st 2020."
@@ -194,6 +206,25 @@ hc_plotter <- function(plot_dat, filters, plot_type = "Number of Ads", total_vs_
         ) %>% 
         hc_colors(unique(hc_data$color))     
     }
+  } else if (plot_type == "Targeted Ads"){
+    
+    # if(download_data){
+    #   fb_aggr %>%
+    #     hc_plotter(filters = filters,
+    #                plot_type = "Targeted Ads",
+    #                total_vs_overtime = "Total",
+    #                targeting = "Geotargeting",
+    #                platform = "Facebook")      
+    # }
+    
+    n_cols <- length(unique(hc_data$advertiser_name))
+    
+    hc_fin <- hc_data %>% 
+      group_split(advertiser_name) %>% 
+      map(~{chart_maps(.x, F)}) %>% hw_grid(ncol = n_cols) %>% 
+      htmltools::browsable()
+    
+    return(hc_fin)
   }
   
   hc_plot %>% 
@@ -210,5 +241,84 @@ hc_plotter <- function(plot_dat, filters, plot_type = "Number of Ads", total_vs_
     )  %>%
     hc_exporting(
       enabled = TRUE
-    )
+    ) %>% hw_grid(ncol = 1) 
 }
+
+
+chart_maps <- function(x, download_data = T) {
+  hc <- hcmap2(
+    "https://code.highcharts.com/mapdata/countries/nl/nl-all.js",
+    custom_map = mapdata,
+    data = x,
+    download_map_data = F,
+    value = "percentage",
+    joinBy = c("name", "name"),
+    name = "Median Ad Audience",
+    dataLabels = list(enabled = TRUE, format = "{point.name}"),
+    borderColor = "#FAFAFA",
+    borderWidth = 0.1,
+    tooltip = list(
+      valueDecimals = 2,
+      valueSuffix = "%"
+    )
+  ) %>% 
+    hc_colorAxis(
+      minColor = "white",
+      maxColor = unique(x$colorful)
+    )%>% 
+    hc_title(
+      text = unique(x$advertiser_name)
+    ) %>%
+    hc_exporting(
+      enabled = TRUE
+    )
+  
+  download_data <<- F
+  
+  return(hc)
+}
+
+hcmap2 <- function(map = "custom/world",
+                  data = NULL, joinBy = "hc-key", value = NULL,
+                  download_map_data = FALSE, custom_map = NULL, ...) {
+  
+  url <- "https://code.highcharts.com/mapdata"
+  map <- str_replace(map, "\\.js", "")
+  map <- str_replace(map, "https://code\\.highcharts\\.com/mapdata/", "")
+  mapfile <- sprintf("%s.js", map)
+  
+  hc <- highchart(type = "map")
+  
+  if(download_map_data) {
+    
+    mapdata <- download_map_data(file.path(url, mapfile))
+    
+  } else {
+    
+    mapdata <- custom_map
+    
+  }
+  
+  if(is.null(data)) {
+    
+    hc <- hc %>% 
+      highcharter:::hc_add_series.default(
+        mapData = mapdata, ...)
+    
+  } else {
+    
+    stopifnot(joinBy %in% names(data))
+    data <- mutate_(data, "value" = value)
+    
+    hc <- hc %>% 
+      highcharter:::hc_add_series.default(
+        mapData = mapdata,
+        data = list_parse(data), joinBy = joinBy, ...) %>% 
+      hc_colorAxis(auxpar = NULL)
+    
+  }
+  
+  hc
+  
+}
+

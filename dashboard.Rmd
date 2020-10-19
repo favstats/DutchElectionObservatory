@@ -2,16 +2,16 @@
 title: "Dutch Election Observatory Dashboard"
 output:
   flexdashboard::flex_dashboard:
-    orientation: columns
+    orientation: row
+    vertical_layout: scroll
+    smooth_scroll: true
     source_code: embed
     theme: readable
 runtime: shiny
 ---
 
-  
 
-```{r global, include=FALSE}
-
+```{r global, include=FALSE, echo=F, results='hide'}
 
 
 library(flexdashboard)
@@ -39,11 +39,18 @@ fb_aggr <- readRDS("data/fb_aggr.RDS")
 
 snap_ads <- readRDS("data/snap_ads.RDS")
 
+mapdata <- readRDS("data/mapdata.RDS")
+
+
 # fb_dat_parties <- readRDS("fb_dat/fb_dat_parties.rds")
 
 
+# tags$script("https://code.highcharts.com/mapdata/countries/nl/nl-all.js")
+
 
 source("helpers.R")
+
+# download_data <- T
 ```
 
 Google Ads {data-icon="fa-google"}
@@ -130,14 +137,17 @@ Column
 
 hc_plotter <- possibly(hc_plotter, otherwise = NULL, quiet = F)
 
-renderHighchart({
 
+ output$ggl_chart <-  shiny::renderUI({
+  
   ggl_aggr %>% 
     hc_plotter(filters = input$advertisers__ggl,
            plot_type = input$plot_type_ggl,
            total_vs_overtime = input$total_vs_overtime_ggl, 
            platform = "Google")
-})
+  })
+ 
+  htmlOutput('ggl_chart')   
 
 # ggl_aggr$ggl_times
 
@@ -270,85 +280,89 @@ renderHighchart({
 
 <!-- ### Gender Targeting -->
 
-<!-- ```{r} -->
-<!-- ggl_ads %>%  -->
-<!--   mutate(gender_targeting = ifelse(str_detect(gender_targeting, "Male") & str_detect(gender_targeting, "Female"), "Not targeted", gender_targeting)) %>%  -->
-<!--   count(advertiser_name, gender_targeting) %>%  -->
-<!--   group_by(advertiser_name) %>%  -->
-<!--   mutate(perc = round(n/sum(n)*100, 2)) %>%  -->
-<!--   hchart("bar", hcaes(x = advertiser_name, y = perc, group = gender_targeting))%>% -->
-<!--     hc_xAxis( -->
-<!--       align = "left", -->
-<!--       title = list(text = "Advertiser Name") -->
-<!--     ) %>%  -->
-<!--     hc_yAxis( -->
-<!--       align = "left", -->
-<!--       title = list(text = "Percentage of Ads") -->
-<!--     ) %>%  -->
-<!--     hc_exporting( -->
-<!--       enabled = TRUE -->
-<!--     ) -->
-<!-- ``` -->
+```{r}
+ggl_ads %>%
+  mutate(gender_targeting = ifelse(str_detect(gender_targeting, "Male") & str_detect(gender_targeting, "Female"), "Not targeted", gender_targeting)) %>%
+  count(advertiser_name, gender_targeting) %>%
+  group_by(advertiser_name) %>%
+  mutate(perc = round(n/sum(n)*100, 2)) 
+
+
+  hchart("bar", hcaes(x = advertiser_name, y = perc, group = gender_targeting))%>%
+    hc_xAxis(
+      align = "left",
+      title = list(text = "Advertiser Name")
+    ) %>%
+    hc_yAxis(
+      align = "left",
+      title = list(text = "Percentage of Ads")
+    ) %>%
+    hc_exporting(
+      enabled = TRUE
+    )
+```
 
 
 <!-- ### Age Targeting -->
 
-<!-- ```{r} -->
-<!-- ggl_ads %>%  -->
-<!--   mutate(age_targeting2 = case_when( -->
-<!--     str_detect(age_targeting, "18-24, 25-34, 35-44, 45-54, 55-64, ≥65") ~ "Not targeted", -->
-<!--     T ~ age_targeting -->
-<!--   )) %>%  -->
-<!--   count(advertiser_name, age_targeting2) %>%  -->
-<!--   complete(advertiser_name, age_targeting2, fill = list(n = 0)) %>% -->
-<!--   group_by(advertiser_name) %>%  -->
-<!--   mutate(perc = round(n/sum(n)*100, 2)) %>%  -->
-<!--   hchart("bar", hcaes(x = advertiser_name, y = perc, group = age_targeting2)) %>%  -->
-<!--     hc_xAxis( -->
-<!--       align = "left", -->
-<!--       title = list(text = "Advertiser Name") -->
-<!--     ) %>%  -->
-<!--     hc_yAxis( -->
-<!--       align = "left", -->
-<!--       title = list(text = "Percentage of Ads") -->
-<!--     ) %>%  -->
-<!--     hc_exporting( -->
-<!--       enabled = TRUE -->
-<!--     ) -->
-<!-- ``` -->
+```{r}
+# ggl_ads %>%
+#   mutate(age_targeting2 = case_when(
+#     str_detect(age_targeting, "18-24, 25-34, 35-44, 45-54, 55-64, ≥65") ~ "Not targeted",
+#     T ~ age_targeting
+#   )) %>%
+#   count(advertiser_name, age_targeting2) %>%
+#   complete(advertiser_name, age_targeting2, fill = list(n = 0)) %>%
+#   group_by(advertiser_name) %>%
+#   mutate(perc = round(n/sum(n)*100, 2)) %>%
+  hchart("bar", hcaes(x = advertiser_name, y = perc, group = age_targeting2)) %>%
+    hc_xAxis(
+      align = "left",
+      title = list(text = "Advertiser Name")
+    ) %>%
+    hc_yAxis(
+      align = "left",
+      title = list(text = "Percentage of Ads")
+    ) %>%
+    hc_exporting(
+      enabled = TRUE
+    )
+```
 
 
 <!-- ### Geo Targeting -->
 
-<!-- ```{r} -->
-<!-- ggl_ads %>%  -->
-<!--   mutate(geo_targeting_included = case_when( -->
-<!--     str_count(geo_targeting_included, ",") >= 11 ~ "Not targeted", -->
-<!--     str_detect(geo_targeting_included, "Netherlands") ~ "Not targeted", -->
-<!--     T ~ geo_targeting_included -->
-<!--   )) %>%  -->
-<!--   count(advertiser_name, geo_targeting_included) %>%  -->
-<!--   complete(advertiser_name, geo_targeting_included, fill = list(n = 0)) %>% -->
-<!--   group_by(advertiser_name) %>%  -->
-<!--   mutate(perc = round(n/sum(n)*100, 2)) %>%  -->
-<!--   hchart("bar", hcaes(x = advertiser_name, y = perc, group = geo_targeting_included)) %>%  -->
-<!--     hc_xAxis( -->
-<!--       align = "left", -->
-<!--       title = list(text = "Advertiser Name") -->
-<!--     ) %>%  -->
-<!--     hc_yAxis( -->
-<!--       align = "left", -->
-<!--       title = list(text = "Percentage of Ads") -->
-<!--     ) %>%  -->
-<!--     hc_exporting( -->
-<!--       enabled = TRUE -->
-<!--     ) -->
-<!-- ``` -->
+```{r}
+ggl_ads %>%
+  mutate(geo_targeting_included = case_when(
+    str_count(geo_targeting_included, ",") >= 11 ~ "Not targeted",
+    str_detect(geo_targeting_included, "Netherlands") ~ "Not targeted",
+    T ~ geo_targeting_included
+  )) %>%
+  count(advertiser_name, geo_targeting_included) %>%
+  complete(advertiser_name, geo_targeting_included, fill = list(n = 0)) %>%
+  group_by(advertiser_name) %>%
+  mutate(perc = round(n/sum(n)*100, 2)) %>%
+  hchart("bar", hcaes(x = advertiser_name, y = perc, group = geo_targeting_included)) %>%
+    hc_xAxis(
+      align = "left",
+      title = list(text = "Advertiser Name")
+    ) %>%
+    hc_yAxis(
+      align = "left",
+      title = list(text = "Percentage of Ads")
+    ) %>%
+    hc_exporting(
+      enabled = TRUE
+    )
+```
 
 
 Facebook {data-icon="fa-facebook-square"}
 =========================================
 
+<!-- Metrics {data-icon="fa-facebook-square" data-navmenu="Facebook"} -->
+<!-- ========================================= -->
 
 Sidebar {.sidebar}
 -------------------------------
@@ -358,7 +372,7 @@ Sidebar {.sidebar}
 prettyRadioButtons(
    inputId = "plot_type_fb",
    label = "Select Metric: ",
-   choices = c("Number of Ads", "Spent (in EUR)", "Impressions"), 
+   choices = c("Number of Ads", "Spent (in EUR)", "Impressions", "Targeted Ads"), 
    selected = "Number of Ads",
    # icon = icon("check"), 
    status = "info",
@@ -378,9 +392,9 @@ defaults_fb <- advertiser_names_fb %>%
 
 
 
-# renderUI({
+renderUI({
 
-   # if (input$plot_type_fb %in% c("Number of Ads", "Spent (in EUR)")) {
+   if (input$plot_type_fb %in% c("Number of Ads", "Spent (in EUR)", "Impressions")) {
 
      # HTML("Show number of ads per advertiser")
 
@@ -390,25 +404,31 @@ defaults_fb <- advertiser_names_fb %>%
             selected = "Total")
      
 
-   # } else if (input$plot_type_ggl == "LOL") {
-   # 
-   #   # selectInput("pol_polar",
-   #   #        label = "Variables of Interest",
-   #   #        choices = pol_polar_choices %>%
-   #   #          purrr::discard(~str_detect(.x, "Q10")),
-   #   #        selected = pol_polar_choices[6])
-   # 
-   # } else if (input$plot_type_ggl == "V5/V5.1") {
-   # 
-   #   # selectInput("pol_polar",
-   #   #        label = "Variables of Interest",
-   #   #        choices = pol_polar_choices ,
-   #   #        selected = pol_polar_choices[6])
-   # 
-   # }
+   } else if (input$plot_type_fb == "Targeted Ads") {
 
-# })
+     selectInput("targeting_fb",
+            label = "Target",
+            choices = c("Geotargeting"),
+            selected = "Geotargeting")
 
+   } else if (input$plot_type_ggl == "V5/V5.1") {
+
+     # selectInput("pol_polar",
+     #        label = "Variables of Interest",
+     #        choices = pol_polar_choices ,
+     #        selected = pol_polar_choices[6])
+
+   }
+
+})
+
+
+
+# renderUI({
+# 
+#    if (input$plot_type_fb %in% c("Number of Ads", "Spent (in EUR)", "Impressions")) {
+
+     # HTML("Show number of ads per advertiser")
 
 selectInput("advertisers__fb", "Select Advertisers", 
             choices = advertiser_names_fb, 
@@ -416,6 +436,42 @@ selectInput("advertisers__fb", "Select Advertisers",
             selectize = TRUE, 
             width = NULL, 
             size = NULL)
+     
+
+#    } else if (input$plot_type_fb == "Targeted Ads") {
+#      
+#      # my_max <- 3
+#      # my_min <- 1
+# 
+# selectInput("advertisers__fb", "Select Advertisers (please don't select more than 3)", 
+#             choices = advertiser_names_fb, 
+#             selected = defaults_fb[1:3], multiple = T,
+#             selectize = TRUE, 
+#             width = NULL, 
+#             size = NULL)
+#      
+#   #   observe({
+#   #   if(length(input$advertisers_fb) > my_max){
+#   #     updateCheckboxGroupInput(session, "advertisers__fb", selected= tail(input$advertisers__fb,my_max))
+#   #   }
+#   #   if(length(input$advertisers__fb) < my_min){
+#   #     updateCheckboxGroupInput(session, "advertisers__fb", selected= "a1")
+#   #   }
+#   # })
+# 
+#    } else if (input$plot_type_ggl == "V5/V5.1") {
+# 
+#      # selectInput("pol_polar",
+#      #        label = "Variables of Interest",
+#      #        choices = pol_polar_choices ,
+#      #        selected = pol_polar_choices[6])
+# 
+#    }
+# 
+# })
+
+
+
 ```
 
 Column 
@@ -425,23 +481,59 @@ Column
 
 ```{r}
 
-
-
-
 # debugonce(hc_ggl)
 
-hc_plotter <- possibly(hc_plotter, otherwise = NULL, quiet = F)
+# hc_plotter <- possibly(hc_plotter, otherwise = NULL, quiet = F)
 
-renderHighchart({
+# shiny::reactiveUI({
+#   
+#   if(input$plot_type_fb != "Targeted Ads"){
+  
+ output$fb_chart <-  shiny::renderUI({
 
-  fb_aggr %>% 
-    hc_plotter(filters = input$advertisers__fb,
-           plot_type = input$plot_type_fb,
-           total_vs_overtime = input$total_vs_overtime_fb, 
-           platform = "Facebook")
-})
+    fb_aggr %>%
+      hc_plotter(filters = input$advertisers__fb,
+             plot_type = input$plot_type_fb,
+             total_vs_overtime = input$total_vs_overtime_fb,
+             targeting = input$targeting_fb,
+             platform = "Facebook")
+  })
+  # } else if (input$plot_type_fb == "Targeted Ads") {
+  # output$chart1 <- renderUI({
+  #   fb_aggr %>% 
+  #     hc_plotter(filters = input$advertisers__fb,
+  #            plot_type = input$plot_type_fb,
+  #            total_vs_overtime = input$total_vs_overtime_fb, 
+  #            targeting = input$targeting_fb,
+  #            platform = "Facebook")
+  # })
 
+     # div(style = 'height: 500px; overflow-y: auto; ', htmlOutput('fb_chart') )
+     
+    
+htmlOutput('fb_chart')
+  # }
+  
+  
+# })
+
+
+
+  # fb_aggr %>% 
+  #   hc_plotter(filters = "D66",
+  #          plot_type = "Targeted Ads",
+  #          total_vs_overtime = "Total", 
+  #          targeting = "Geotargeting",
+  #          platform = "Facebook")
+# debugonce(hc_plotter)
+#   fb_aggr %>%
+#     hc_plotter(filters = "D66",
+#            plot_type = "Impressions",
+#            total_vs_overtime = "Total",
+#            targeting = "Geotargeting",
+#            platform = "Facebook")
 ```
+
 
 
 Snapchat {data-icon="fa-snapchat-ghost"}
