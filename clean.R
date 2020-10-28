@@ -1,4 +1,4 @@
-pacman::p_load(tidyverse, janitor, highcharter)
+pacman::p_load(tidyverse, janitor, highcharter, httr, Radlibrary)
 
 dir.create("data")
 
@@ -25,7 +25,7 @@ assign_colors <- function(dat, n = 12) {
 }
 
 unnest_geos <- function(x) {
-  cat(glue::glue("{x$row_number} out of {nrow(age_gender_targeted_raw)} ({round(100*x$row_number/nrow(age_gender_targeted_raw), 2)}%)\n\n"))
+  # cat(glue::glue("{x$row_number} out of {nrow(age_gender_targeted_raw)} ({round(100*x$row_number/nrow(age_gender_targeted_raw), 2)}%)\n\n"))
   x %>% 
     pull(region_distribution) %>% 
     flatten() %>% 
@@ -36,7 +36,7 @@ unnest_geos <- function(x) {
 }
 
 unnest_dems <- function(x) {
-  cat(glue::glue("{x$row_number} out of {nrow(age_gender_targeted_raw)} ({round(100*x$row_number/nrow(age_gender_targeted_raw), 2)}%)\n\n"))
+  # cat(glue::glue("{x$row_number} out of {nrow(age_gender_targeted_raw)} ({round(100*x$row_number/nrow(age_gender_targeted_raw), 2)}%)\n\n"))
   x %>% 
     pull(demographic_distribution) %>% 
     flatten() %>% 
@@ -65,14 +65,21 @@ get_ggl_data <- function() {
   
   color_dat <- tibble(
     color = c("#00b13d", "#80c31c", "#cd503e", "#008067", "#e01003", "#e3101c", "#6f2421"),
-    advertiser_name = c("D66", "GroenLinks", "VVD", "Christen Democratisch Appèl", "SP (Socialistische Partij)", "Partij van de Arbeid", "FvD"))
+    advertiser_name = c("D66", "GroenLinks", "VVD", "CDA", "SP", "Partij van de Arbeid", "FvD"))
   
   
   ggl_ads <- data.table::fread("data/google-political-ads-transparency-bundle/google-political-ads-creative-stats.csv") %>% 
     filter(str_detect(Regions, "NL")) %>%
     janitor::clean_names() %>% 
     # filter(advertiser_name %in% dutch_parties) %>%
-    filter(date_range_start >= as.Date("2020-09-01"))
+    filter(date_range_start >= as.Date("2020-09-01")) %>% 
+    mutate(advertiser_name = case_when(
+      advertiser_name == 'Christen Democratisch Appèl' ~ "CDA",
+      advertiser_name == 'SP (Socialistische Partij)' ~ "SP",
+      advertiser_name == 'Partij van de Arbeid' ~ "PvdA",
+      advertiser_name == 'Forum voor Democratie' ~ "FvD",
+      T ~ advertiser_name
+    ))
   
   
   ggl_total <- ggl_ads %>% 
@@ -295,6 +302,7 @@ get_fb_ads <- function() {
   
   saveRDS(fb_dat, "fb_dat/fb_dat.rds")
   
+  # fb_dat <- readRDS("fb_dat/fb_dat.rds")
 
   
   color_dat <- tibble(

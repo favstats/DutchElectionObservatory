@@ -282,8 +282,8 @@ hc_plotter <- function(plot_dat, filters, plot_type = "Number of Ads", total_vs_
         hc_plot <-  highchart() %>%
           hc_xAxis(type = "category") %>%
           hc_add_series_list(hc_data)%>%
-          hc_yAxis(reversed = F, min = 0, title = list(text = "% Audience of Ad"))  %>% 
-          hc_chart(inverted = TRUE)
+          hc_yAxis(reversed = F, min = 0, title = list(text = "% Audience of Ad")) # %>% 
+          # hc_chart(inverted = TRUE)
         
       }
     } else if (targeting == "Age targeting"){
@@ -294,6 +294,13 @@ hc_plotter <- function(plot_dat, filters, plot_type = "Number of Ads", total_vs_
       if(platform == "Google"){
         
         hc_plot <- hc_data %>% 
+          mutate(age_targeting2 = case_when(
+            age_targeting2 == "18-24, 25-34, 35-44, 45-54, 55-64" ~ "18-65",
+            age_targeting2 == "18-24, 35-44, 45-54, 55-64, ≥65" ~ "18-24, 35-65+",
+            age_targeting2 == "18-24, 45-54, 55-64, ≥65" ~ "18-24, 45-65+",
+            age_targeting2 == "25-34, 35-44, 45-54, 55-64, ≥65" ~ "25-65+",
+            T ~ age_targeting2
+          )) %>% 
           # filter(n != 0) %>% 
           hchart("bar", hcaes(x = advertiser_name, y = perc, group = age_targeting2))%>%
           hc_xAxis(
@@ -313,8 +320,8 @@ hc_plotter <- function(plot_dat, filters, plot_type = "Number of Ads", total_vs_
         hc_plot <-  highchart() %>%
           hc_xAxis(type = "category") %>%
           hc_add_series_list(hc_data)%>%
-          hc_yAxis(reversed = F, min = 0, title = list(text = "% Audience of Ad"))  %>% 
-          hc_chart(inverted = TRUE)
+          hc_yAxis(reversed = F, min = 0, title = list(text = "% Audience of Ad")) # %>% 
+          # hc_chart(inverted = TRUE)
         
       }
     }
