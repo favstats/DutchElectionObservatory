@@ -1,6 +1,6 @@
 
 
-hc_plotter <- function(plot_dat, filters, plot_type = "Number of Ads", total_vs_overtime = "Total", targeting = "Geo targeting", mapdata = mapdata, platform) {
+hc_plotter <- function(plot_dat, filters, plot_type = "Number of Ads", total_vs_overtime = "Total", targeting = "Geo targeting", mapdata = mapdata, platform, js_scrip) {
   
   if (plot_type %in% c("Number of Ads", "Spent (in EUR)", "Impressions")) {
     if(total_vs_overtime == "Total"){
@@ -104,7 +104,7 @@ hc_plotter <- function(plot_dat, filters, plot_type = "Number of Ads", total_vs_
   } else if (plot_type == "Spent (in EUR)") {
     
     title_text <- glue::glue("Total spending on {platform} ads")
-    subtitle_text <- glue::glue("{platform} only provides lower & upper bound of Euros spend")
+    subtitle_text <- glue::glue("{platform} only provides lower & upper bound of Euros spent")
     
     if(total_vs_overtime == "Total"){
     
@@ -113,6 +113,26 @@ hc_plotter <- function(plot_dat, filters, plot_type = "Number of Ads", total_vs_
       pull(advertiser_name) %>% 
       levels() %>% 
       rev()
+    
+    
+    # js_scrip <- "function() { return '<a target=\"_top\" href=\"https://www.france-politique.fr/election-presidentielle-1965.htm\">' + this.value + '</a>';}"
+    
+
+    # var obj = {
+    #   key1: "xd",
+    #   key2: "xw",
+    #   GroenLinks: "AR148211418645135360"
+    # };
+    # 
+    # var getProperty = function (propertyName) {
+    #   return obj[propertyName];
+    # };
+    # 
+    # document.write(getProperty("GroenLinks"));
+    # 
+    # getProperty("key1");
+    # getProperty("key2");
+    
     
     hc_plot <- hc_data %>% 
       hchart(
@@ -134,10 +154,22 @@ hc_plotter <- function(plot_dat, filters, plot_type = "Number of Ads", total_vs_
         name = "Euros spent",
         tooltip = list(pointFormat = "<b>Lower bound:</b> {point.spend_range_min}€<br><b>Mid point:</b> {point.spend_range_mid}€<br><b>Upper bound:</b> {point.spend_range_max}€<br><br><b>Number of Ads:</b> {point.n}"))%>%
       hc_yAxis(reversed = F, min = 0, title = list(text = "€ spent on Ads"))  %>% 
-      hc_xAxis(categories = lvls, title = list(text = "")) %>% 
-      hc_chart(inverted = TRUE)      
-      }
+      hc_xAxis(categories = lvls, title = list(text = ""),  
+               labels = list(
+                 formatter = JS(js_scrip)
+               )
+               ) %>% 
+      hc_chart(inverted = TRUE)  
+    }
     
+
+    # return '<a target="_top" href=" '+ categoryLinks[this.value] + '">' + this.value + '</a>';
+    # 
+    # JS("function(){
+    #   
+    #                   return '<a  href=" '+ categoryLinks[this.value] + '">' + this.value + '</a>';
+    #                   }")
+    # 
     if(total_vs_overtime == "Over Time"){
       hc_plot <- hc_data %>%
         hchart("line", hcaes(x = date_range_start, 

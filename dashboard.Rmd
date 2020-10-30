@@ -108,8 +108,9 @@ observe({
 #     imageUrl = "",
 #     animation = TRUE
 #   )
+  Sys.sleep(1)
   sendSweetAlert(session,     
-                 title = "Welcome to Dutch Election Observatory Dashboard",
+                 title = "Welcome to the Dutch Election Observatory Dashboard",
     text = "Note: the data shown in this dashboard is based on the platform's respective ad libraries. For this reason the data shown here might not reflect the full picture nor all political ads that were targeted at voters.")
 
  }) 
@@ -149,7 +150,7 @@ radioTooltip(id = "plot_type_fb", choice = "Targeted Ads", title = 'This option 
 
 # bsTooltip("radio_A", title="Tooltip for A")
 
-  dutch_parties_fb <- c("VVD", "D66", "Forum voor Democratie -FVD", "SP", "GroenLinks", "Volt Nederland", "Partij van de Arbeid (PvdA)", "CDA", "Partij voor de Dieren", "ChristenUnie")
+  dutch_parties_fb <- c("VVD", "D66", "FvD", "SP", "GroenLinks", "Volt Nederland", "PvdA", "CDA", "PvdD", "ChristenUnie")
 
 
 advertiser_names_fb <- fb_aggr$times %>%
@@ -160,6 +161,19 @@ defaults_fb <- advertiser_names_fb %>%
   keep(~magrittr::is_in(.x, dutch_parties_fb))
 
 
+var_objs_fb <- fb_aggr$total %>% 
+  mutate(java_script = paste0("'", advertiser_name, "': ", "'https://www.facebook.com/", advertiser_id, "'")) %>% 
+  pull(java_script) %>% 
+  paste0(collapse = ",")
+
+js_scrip_fb <- glue::glue("function() { 
+            var obj = {
+                     <<var_objs_fb>>
+                   }; 
+                  var getProperty = function (propertyName) {
+                  return obj[propertyName]; 
+                  };
+            return '<a target=\"_top\" href=\"'+ getProperty(this.value) + '\">' + this.value + '</a>';}", .open = "<<", .close = ">>")%>% as.character()
 
 
 renderUI({
@@ -200,12 +214,24 @@ renderUI({
 
      # HTML("Show number of ads per advertiser")
 
-selectInput("advertisers__fb", "Select Advertisers", 
+selectizeInput("advertisers__fb", "Select Advertisers", 
             choices = advertiser_names_fb, 
             selected = defaults_fb, multiple = T,
-            selectize = TRUE, 
+            # selectize = TRUE, 
             width = NULL, 
             size = NULL)
+
+  # updateSelectizeInput(session = session,inputId ="advertisers__fb",choices=sort(unique(mtcars$cyl)),selected=sort(unique(mtcars$cyl))[1], server = TRUE)
+
+  # df_filtered= reactive({
+  #   mtcars %>%
+  #   {if (is.null(input$cyl)) . else filter(., cyl %in% input$cyl)}
+  # })
+  # output$tab= renderTable(df_filtered())
+# observeEvent( onclick("advertisers__fb", {
+#     # updateSelectizeInput(session, "cyl", selected = "")
+#     input$cyl
+#   })
      
 
 #    } else if (input$plot_type_fb == "Targeted Ads") {
@@ -296,12 +322,46 @@ htmlOutput('fb_chart')
   #          targeting = "Geotargeting",
   #          platform = "Facebook")
 # debugonce(hc_plotter)
-#   fb_aggr %>%
-#     hc_plotter(filters = "D66",
-#            plot_type = "Impressions",
-#            total_vs_overtime = "Total",
-#            targeting = "Geotargeting",
-#            platform = "Facebook")
+
+  # fb_aggr %>%
+  #   hc_plotter(filters = c("D66", "GroenLinks"),
+  #          plot_type = "Spent (in EUR)",
+  #          total_vs_overtime = "Total",
+  #          targeting = "Geotargeting",
+  #          platform = "Facebook")
+  
+  
+  # get_url <- function(variables) {
+  #   
+  # }
+  # 
+  # library(rvest)
+  # 
+  # doc.retd    <- read_xml("data/retract.xml")
+  # 
+  # 
+  # dat <- doc.retd %>% 
+  # xml_find_all("//PubmedData/History/PubMedPubDate[@PubStatus='entrez']/Year") %>% 
+  # xml_text() %>% 
+  # as_tibble() %>% 
+  # mutate(year = as.numeric(value)) %>% 
+  # count(year) %>% 
+  # right_join(tibble(year = min(.$year):max(.$year))) %>% 
+  # arrange(year)
+  # 
+  # highchart() %>% 
+  # hc_add_series(dat, "column", hcaes(x = year, y = n)) %>%
+  # hc_legend(enabled = FALSE) %>%
+  # hc_title(text = "Retracted publications by year of Entrez record creation") %>%
+  # hc_xAxis(title = list(text = "year"),
+  #          labels = list(rotation = 90,
+  #                        formatter = JS("function() { return '<a href=\"http://www.pubmed.gov/?term=%22retracted%20publication%22[PTYP] AND ' + escape(this.value) + '[CRDT]\" target=\"_blank\">' + this.value + '</a>'; }"),
+  #                        useHTML = TRUE,
+  #                        style = list(fontSize = "10px")),
+  #          tickInterval = 1,
+  #          type = "linear") %>%
+  # hc_yAxis(title = list(text = "retracted publications")) %>%
+  # hc_tooltip(pointFormat = '{point.y} records')
 ```
 
 
@@ -343,7 +403,19 @@ advertiser_names_ggl <- ggl_aggr$total %>%
 defaults_ggl <- advertiser_names_ggl %>% 
   keep(~magrittr::is_in(.x, dutch_parties))
 
+var_objs_ggl <- ggl_aggr$total %>% 
+  mutate(java_script = paste0("'", advertiser_name, "': ", "'https://transparencyreport.google.com/political-ads/advertiser/", advertiser_id, "'")) %>% 
+  pull(java_script) %>% 
+  paste0(collapse = ",")
 
+js_scrip_ggl <- glue::glue("function() { 
+            var obj = {
+                     <<var_objs_ggl>>
+                   }; 
+                  var getProperty = function (propertyName) {
+                  return obj[propertyName]; 
+                  };
+            return '<a target=\"_top\" href=\"'+ getProperty(this.value) + '\">' + this.value + '</a>';}", .open = "<<", .close = ">>")%>% as.character()
 
 renderUI({
 
@@ -376,10 +448,10 @@ renderUI({
 })
 
 
-selectInput("advertisers__ggl", "Select Advertisers", 
+selectizeInput("advertisers__ggl", "Select Advertisers", 
             choices = advertiser_names_ggl, 
             selected = defaults_ggl, multiple = T,
-            selectize = TRUE, 
+            # selectize = TRUE, 
             width = NULL, 
             size = NULL)
 ```
@@ -406,7 +478,8 @@ hc_plotter <- possibly(hc_plotter, otherwise = NULL, quiet = F)
            plot_type = input$plot_type_ggl,
            total_vs_overtime = input$total_vs_overtime_ggl, 
            targeting = input$targeting_ggl,
-           platform = "Google")
+           platform = "Google",
+           js_scrip_ggl)
   })
  
   htmlOutput('ggl_chart')   

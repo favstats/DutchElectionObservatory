@@ -32,7 +32,7 @@ unnest_geos <- function(x) {
     map_dfr(flatten) %>% 
     mutate(id = x$id)%>% 
     mutate(start_time = x$start_time)%>% 
-    mutate(page_name = x$page_name)
+    mutate(advertiser_name = x$advertiser_name)
 }
 
 unnest_dems <- function(x) {
@@ -65,7 +65,7 @@ get_ggl_data <- function() {
   
   color_dat <- tibble(
     color = c("#00b13d", "#80c31c", "#cd503e", "#008067", "#e01003", "#e3101c", "#6f2421"),
-    advertiser_name = c("D66", "GroenLinks", "VVD", "CDA", "SP", "Partij van de Arbeid", "FvD"))
+    advertiser_name = c("D66", "GroenLinks", "VVD", "CDA", "SP", "PvdA", "FvD"))
   
   
   ggl_ads <- data.table::fread("data/google-political-ads-transparency-bundle/google-political-ads-creative-stats.csv") %>% 
@@ -292,22 +292,29 @@ get_fb_ads <- function() {
     
   }
   
-  dutch_parties <- c("VVD", "D66", "Forum voor Democratie -FVD", "SP", "GroenLinks", "Volt Nederland", "Partij van de Arbeid (PvdA)", "CDA", "Partij voor de Dieren", "ChristenUnie")
+  dutch_parties <- c("VVD", "D66", "FvD", "SP", "GroenLinks", "Volt Nederland", "PvdA", "CDA", "PvdD", "ChristenUnie")
   
   fb_dat <- readRDS("fb_dat/fb_dat.rds")
   
   fb_dat <- df_imp %>% 
     bind_rows(fb_dat) %>% 
-    distinct(id, .keep_all = T)
+    distinct(id, .keep_all = T) %>% 
+    rename(advertiser_name = page_name) %>% 
+    mutate(advertiser_name = case_when(
+      advertiser_name == 'Partij voor de Dieren' ~ "PvdD",
+      advertiser_name == 'Partij van de Arbeid (PvdA)' ~ "PvdA",
+      advertiser_name == 'Forum voor Democratie -FVD' ~ "FvD",
+      T ~ advertiser_name
+    ))
   
   saveRDS(fb_dat, "fb_dat/fb_dat.rds")
   
   # fb_dat <- readRDS("fb_dat/fb_dat.rds")
-
+  
   
   color_dat <- tibble(
     color = c("#00b13d", "#80c31c", "#cd503e", "#008067", "#6f2421", "#e3101c", "#e01003", "#036b2c", "#02a6e9", "#562883"),
-    advertiser_name = c("D66", "GroenLinks", "VVD", "CDA", "Forum voor Democratie -FVD", "Partij van de Arbeid (PvdA)", "SP", "Partij voor de Dieren", "ChristenUnie", "Volt Nederland"))
+    advertiser_name = c("D66", "GroenLinks", "VVD", "CDA", "FvD", "PvdA", "SP", "PvdD", "ChristenUnie", "Volt Nederland"))
   
   fb_total <- fb_dat %>% 
     mutate(date_range_start = as.Date(ad_delivery_start_time)) %>%
@@ -315,7 +322,6 @@ get_fb_ads <- function() {
     unnest_wider(spend, names_sep = "_") %>%
     unnest_wider(impressions, names_sep = "_") %>%
     mutate_at(vars(spend_lower_bound, spend_upper_bound, impressions_lower_bound, impressions_upper_bound), as.numeric) %>% 
-    rename(advertiser_name = page_name) %>% 
     # drop_na(spend_lower_bound, spend_upper_bound, impressions_lower_bound, impressions_upper_bound) %>% 
     mutate(impressions_lower_bound = case_when(
       is.na(impressions_upper_bound) ~ 0, 
@@ -345,7 +351,7 @@ get_fb_ads <- function() {
     unnest_wider(spend, names_sep = "_") %>%
     unnest_wider(impressions, names_sep = "_") %>%
     mutate_at(vars(spend_lower_bound, spend_upper_bound, impressions_lower_bound, impressions_upper_bound), as.numeric) %>% 
-    rename(advertiser_name = page_name) %>% 
+    # rename(advertiser_name = advertiser_name) %>% 
     # drop_na(spend_lower_bound, spend_upper_bound, impressions_lower_bound, impressions_upper_bound) %>% 
     group_by(date_range_start, advertiser_name) %>% 
     summarise(spend_range_min = sum(spend_lower_bound),
@@ -373,19 +379,19 @@ get_fb_ads <- function() {
     right_join(age_gender_targeted_raw)
   
   gender_targeted_plot <- age_gender_targeted  %>% 
-    # filter(page_name %in% dutch_parties) %>% 
+    # filter(advertiser_name %in% dutch_parties) %>% 
     mutate(percentage = as.numeric(percentage)) %>% 
     mutate(gender_age = paste(gender, age)) %>% 
     filter(!str_detect(gender_age, "unknown")) %>% 
     filter(!str_detect(gender_age, "13-17")) %>% 
     complete(gender, age, fill = list(percentage = 0)) %>% 
-    group_by(id, gender, page_name) %>% 
+    group_by(id, gender, advertiser_name) %>% 
     summarize(percentage = sum(percentage)) %>% 
     ungroup()
   
   fb_gender <- gender_targeted_plot %>% 
     mutate(percentage = percentage * 100) #%>% 
-  # data_to_boxplot(percentage, page_name, gender) 
+  # data_to_boxplot(percentage, advertiser_name, gender) 
   
   
   
@@ -395,14 +401,14 @@ get_fb_ads <- function() {
     filter(!str_detect(gender_age, "unknown")) %>% 
     filter(!str_detect(gender_age, "13-17")) %>% 
     complete(gender, age, fill = list(percentage = 0)) %>% 
-    group_by(id, age, page_name) %>% 
+    group_by(id, age, advertiser_name) %>% 
     summarize(percentage = sum(percentage)) %>% 
     ungroup()
   
   
   fb_age <- age_targeted_plot %>% 
     mutate(percentage = percentage * 100)# %>% 
-  # data_to_boxplot(percentage, page_name, age)
+  # data_to_boxplot(percentage, advertiser_name, age)
   
   
   
@@ -419,11 +425,11 @@ get_fb_ads <- function() {
   
   geo_targeted <- geo_targeted  %>% 
     filter(start_time >= as.Date("2020-09-01")) %>% 
-    # filter(page_name %in% dutch_parties) %>% 
+    # filter(advertiser_name %in% dutch_parties) %>% 
     filter(region %in% dutch_regions) %>% 
     mutate(percentage = as.numeric(percentage)) %>% 
     complete(region, fill = list(percentage = 0)) %>% 
-    group_by(id, region, page_name) %>% 
+    group_by(id, region, advertiser_name) %>% 
     summarize(percentage = sum(percentage)) %>% 
     ungroup()
   
@@ -431,9 +437,8 @@ get_fb_ads <- function() {
   
   fb_geo <- mapdata %>% 
     left_join(geo_targeted %>% 
-                rename(name = region,
-                       advertiser_name = page_name) %>% 
-                # filter(page_name == "D66") %>% 
+                rename(name = region) %>% 
+                # filter(advertiser_name == "D66") %>% 
                 group_by(name, advertiser_name) %>% 
                 summarize(percentage = median(percentage, na.rm = T)) %>% 
                 mutate(name = ifelse(name == "North Brabant", "Noord-Brabant", name))) %>% 
@@ -442,7 +447,7 @@ get_fb_ads <- function() {
     left_join(color_dat) %>% 
     rename(colorful = color)
   
-
+  
   fb_aggr <- list(total = fb_total, times = fb_times, geo = fb_geo, gender = fb_gender, age = fb_age)
   
   tidytemplate::save_it(fb_aggr)
@@ -450,7 +455,7 @@ get_fb_ads <- function() {
   # fb_dat_parties <- fb_dat %>% 
   #   mutate(ad_delivery_start_time = as.Date(ad_delivery_start_time)) %>% 
   #   filter(ad_delivery_start_time >= as.Date("2020-09-01")) %>% 
-  #   filter(page_name %in% dutch_parties) 
+  #   filter(advertiser_name %in% dutch_parties) 
   # 
   # saveRDS(fb_dat_parties, "fb_dat/fb_dat_parties.rds")
   
