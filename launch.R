@@ -48,11 +48,11 @@ while(T){
   
   cat("2. Deploy App\n")
   
-  rsconnect::deployDoc("dashboard.Rmd", launch.browser = F, forceUpdate = T)
-  
-  unlink("data/google-political-ads-transparency-bundle/", recursive = T)
-  unlink("data/PoliticalAds.csv")
-  unlink("data/readme.txt")
+  # rsconnect::deployDoc("dashboard.Rmd", launch.browser = F, forceUpdate = T)
+  # 
+  # unlink("data/google-political-ads-transparency-bundle/", recursive = T)
+  # unlink("data/PoliticalAds.csv")
+  # unlink("data/readme.txt")
   
   # Configure git.
   git2r::config(user.name = "favstats", user.email = "fabio.votta@gmail.com")

@@ -4,6 +4,7 @@
 .Ruserdata
 *.csv
 *.rds
+.rds
 fb_dat
 .Renviron
 *.Renviron
