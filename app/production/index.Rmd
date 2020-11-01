@@ -27,7 +27,7 @@ knitr::opts_chunk$set(echo = F, message = F, warning = F)
 
 library(shiny)
 library(janitor)
-library(data.table)
+library(DT)
 library(magrittr)
 library(glue)
 library(highcharter)
@@ -37,6 +37,7 @@ library(shinyWidgets)
 library(tidyverse)
 library(htmltools)
 library(shinyBS)
+library(shinyjs)
 # library(apexcharter)
 
 # observe({
@@ -44,35 +45,6 @@ library(shinyBS)
 #  }) 
 
 
-# observe({
-# # shinyalert(
-# #     title = "Welcome to Dutch Election Observatory Dashboard",
-# #     text = "Note: the data shown in this dashboard is based on the platform's respective ad libraries. For this reason they might not show the full picture all political ads that were targeted at voters.",
-# #     size = "s", 
-# #     closeOnEsc = TRUE,
-# #     closeOnClickOutside = FALSE,
-# #     html = FALSE,
-# #     type = "info",
-# #     showConfirmButton = TRUE,
-# #     showCancelButton = FALSE,
-# #     confirmButtonText = "OK",
-# #     confirmButtonCol = "#AEDEF4",
-# #     timer = 0,
-# #     imageUrl = "",
-# #     animation = TRUE
-# #   )
-#   sendSweetAlert(session, title = "Help Me!", text = "Please contact your instructor")
-# 
-#  }) 
-  
-# if(str_detect(getwd(), "srv")){
-
-
-# print(Sys.getenv("QUANDL_API_KEY"))
-# } else {
-#   readRenviron("C:/Users/favoo/Documents/.Renviron")
-#   decipher <- sodium::hex2bin(Sys.getenv("AIRTABLE_API_KEY"))
-# }
 
 # ggl_ads <- readRDS("data/ggl_ads.RDS")
 
@@ -86,15 +58,10 @@ fb_aggr <- readRDS("data/fb_aggr.rds")
 mapdata <- readRDS("data/mapdata.RDS")
 
 
-# fb_dat_parties <- readRDS("fb_dat/fb_dat_parties.rds")
-
-
-# tags$script("https://code.highcharts.com/mapdata/countries/nl/nl-all.js")
-
 
 source("helpers.R")
 
-# download_data <- T
+
 ```
 
 ```{r}
@@ -218,6 +185,8 @@ renderUI({
             label = "Target",
             choices = c("Gender targeting", "Age targeting", "Geo targeting"),
             selected = "Gender targeting")
+     
+
 
    } else if (input$plot_type_ggl == "V5/V5.1") {
 
@@ -238,6 +207,7 @@ renderUI({
 
      # HTML("Show number of ads per advertiser")
 
+
 selectizeInput("advertisers__fb", "Select Advertisers", 
             choices = advertiser_names_fb, 
             selected = defaults_fb, multiple = T,
@@ -245,54 +215,84 @@ selectizeInput("advertisers__fb", "Select Advertisers",
             width = NULL, 
             size = NULL)
 
-  # updateSelectizeInput(session = session,inputId ="advertisers__fb",choices=sort(unique(mtcars$cyl)),selected=sort(unique(mtcars$cyl))[1], server = TRUE)
 
-  # df_filtered= reactive({
-  #   mtcars %>%
-  #   {if (is.null(input$cyl)) . else filter(., cyl %in% input$cyl)}
-  # })
-  # output$tab= renderTable(df_filtered())
-# observeEvent( onclick("advertisers__fb", {
-#     # updateSelectizeInput(session, "cyl", selected = "")
-#     input$cyl
-#   })
-     
+observeEvent (req(input$targeting_fb=="Geo targeting"),{
 
-#    } else if (input$plot_type_fb == "Targeted Ads") {
-#      
-#      # my_max <- 3
-#      # my_min <- 1
-# 
-# selectInput("advertisers__fb", "Select Advertisers (please don't select more than 3)", 
-#             choices = advertiser_names_fb, 
-#             selected = defaults_fb[1:3], multiple = T,
-#             selectize = TRUE, 
-#             width = NULL, 
-#             size = NULL)
-#      
-#   #   observe({
-#   #   if(length(input$advertisers_fb) > my_max){
-#   #     updateCheckboxGroupInput(session, "advertisers__fb", selected= tail(input$advertisers__fb,my_max))
-#   #   }
-#   #   if(length(input$advertisers__fb) < my_min){
-#   #     updateCheckboxGroupInput(session, "advertisers__fb", selected= "a1")
-#   #   }
-#   # })
-# 
-#    } else if (input$plot_type_ggl == "V5/V5.1") {
-# 
-#      # selectInput("pol_polar",
-#      #        label = "Variables of Interest",
-#      #        choices = pol_polar_choices ,
-#      #        selected = pol_polar_choices[6])
-# 
-#    }
-# 
-# })
+       updateSelectizeInput(
+            session,
+            inputId = "advertisers__fb",
+            choices = advertiser_names_fb, 
+            selected = defaults_fb[1:3])
+       
+})
+
+
+useShinyjs(rmd = TRUE)
+
+disabled(actionButton("standard_sel_btn_fb", "Standard selection", class = "btn-info btn-xs"))
+
+
+observeEvent (req(!identical(input$advertisers__fb, defaults_fb)),{
+  
+  print("enable button")
+
+shinyjs::enable("standard_sel_btn_fb")
+
+})
+
+observeEvent (req(identical(input$advertisers__fb, defaults_fb)),{
+  
+  print("disable button")
+
+shinyjs::disable("standard_sel_btn_fb")
+  
+})
+
+
+bsTooltip("standard_sel_btn_fb", "Show standard selection of advertisers (Dutch national parties).")
+
+observeEvent (input$standard_sel_btn_fb,{
+
+       updateSelectizeInput(
+            session,
+            inputId = "advertisers__fb",
+            choices = advertiser_names_fb, 
+            selected = defaults_fb)
+       
+})
+
+
 
 
 
 ```
+
+
+```{r, eval = F}
+
+facebook_links <- fb_aggr$total %>%
+  mutate(advertiser_id = ifelse(is.na(advertiser_id), "No Advertiser ID", advertiser_id)) %>% 
+  mutate(Link = paste0("https://www.facebook.com/", advertiser_id)) %>% 
+  mutate(Link = ifelse(is.na(advertiser_id), "No Link", Link)) %>% 
+  select(`Advertiser ID` = advertiser_id,
+         `Advertiser Name` = advertiser_name,
+         `Link` = Link
+         ) 
+
+ output$fb_links <-  DT::renderDataTable({
+
+    facebook_links %>% 
+     DT::datatable()
+  })
+
+actionButton("show_links_fb", "Show Links to Advertisers", class = "btn-info btn-xs", icon = icon("table"))
+
+# renderUI({
+  bsModal("fb_links", "Data Table", trigger = "show_links_fb", size = "large", dataTableOutput("fb_links"))
+# })
+
+```
+
 
 Column 
 -----------------------------------------------------------------------
@@ -480,6 +480,38 @@ selectizeInput("advertisers__ggl", "Select Advertisers",
             # selectize = TRUE, 
             width = NULL, 
             size = NULL)
+
+
+disabled(actionButton("standard_sel_btn_ggl", "Standard selection", class = "btn-info btn-xs"))
+
+
+observeEvent (req(!identical(input$advertisers__ggl, defaults_ggl)),{
+  
+
+shinyjs::enable("standard_sel_btn_ggl")
+
+})
+
+observeEvent (req(identical(input$advertisers__ggl, defaults_ggl)),{
+
+shinyjs::disable("standard_sel_btn_ggl")
+  
+
+
+})
+
+
+bsTooltip("standard_sel_btn_ggl", "Show standard selection of advertisers (Dutch national parties).")
+
+observeEvent (input$standard_sel_btn_ggl,{
+
+       updateSelectizeInput(
+            session,
+            inputId = "advertisers__ggl",
+            choices = advertiser_names_ggl, 
+            selected = defaults_ggl)
+       
+})
 ```
 
 Column 
@@ -518,13 +550,13 @@ hc_plotter <- possibly(hc_plotter, otherwise = NULL, quiet = F)
   #               total_vs_overtime = "Gender targeting",
   #              platform = "Google") %>% list
   
-    ggl_aggr %>%
-    hc_plotter(filters = c("D66", "GroenLinks"),
-           plot_type = "Spent (in EUR)",
-           total_vs_overtime = "Total",
-           targeting = "Geotargeting",
-           platform = "Google", 
-           js_scrip = js_scrip_ggl)
+    # ggl_aggr %>%
+    # hc_plotter(filters = c("D66", "GroenLinks"),
+    #        plot_type = "Spent (in EUR)",
+    #        total_vs_overtime = "Total",
+    #        targeting = "Geotargeting",
+    #        platform = "Google", 
+    #        js_scrip = js_scrip_ggl)
 # 
 # # debugonce(hc_ggl)
 # # 
@@ -536,6 +568,8 @@ hc_plotter <- possibly(hc_plotter, otherwise = NULL, quiet = F)
 #                              y = n, 
 #                              group = advertiser_name,
 #                              color = color))
+  
+  # disabled
 ```
 
 

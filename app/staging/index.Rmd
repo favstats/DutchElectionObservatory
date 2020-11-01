@@ -1,0 +1,655 @@
+---
+title: "Dutch Election Observatory Dashboard"
+output:
+  flexdashboard::flex_dashboard:
+    orientation: row
+    vertical_layout: scroll
+    smooth_scroll: true
+    theme: lumen
+runtime: shiny
+---
+
+
+<!-- <style>                      -->
+<!-- .sidebar { -->
+<!--   font-family: Arial, sans-serif -->
+<!-- } -->
+<!-- .navbar { -->
+<!--   font-family: Arial, sans-serif -->
+<!-- } -->
+<!-- </style -->
+
+```{r global, include=FALSE, echo=F, results='hide'}
+
+
+library(flexdashboard)
+knitr::opts_chunk$set(echo = F, message = F, warning = F)
+
+library(shiny)
+library(janitor)
+library(DT)
+library(magrittr)
+library(glue)
+library(highcharter)
+library(lubridate)
+library(knitr)
+library(shinyWidgets)
+library(tidyverse)
+library(htmltools)
+library(shinyBS)
+library(shinyjs)
+# library(apexcharter)
+
+# observe({
+#    showNotification("This might take a few seconds to load.")
+#  }) 
+
+
+
+# ggl_ads <- readRDS("data/ggl_ads.RDS")
+
+ggl_aggr <- readRDS("data/ggl_aggr.rds")
+fb_aggr <- readRDS("data/fb_aggr.rds")
+
+
+
+# snap_ads <- readRDS("data/snap_ads.RDS")
+
+mapdata <- readRDS("data/mapdata.RDS")
+
+
+
+source("helpers.R")
+
+
+```
+
+```{r}
+
+observe({
+# shinyalert(
+#     title = "Welcome to Dutch Election Observatory Dashboard",
+#     text = "Note: the data shown in this dashboard is based on the platform's respective ad libraries. For this reason they might not show the full picture all political ads that were targeted at voters.",
+#     size = "s",
+#     closeOnEsc = TRUE,
+#     closeOnClickOutside = FALSE,
+#     html = FALSE,
+#     type = "info",
+#     showConfirmButton = TRUE,
+#     showCancelButton = FALSE,
+#     confirmButtonText = "OK",
+#     confirmButtonCol = "#AEDEF4",
+#     timer = 0,
+#     imageUrl = "",
+#     animation = TRUE
+#   )
+  Sys.sleep(1)
+  sendSweetAlert(session,     
+                 title = "Welcome to the Dutch Election Observatory Dashboard",
+    text = "Note: the data shown in this dashboard is based on the platform's respective ad libraries. For this reason the data shown here might not reflect the full picture nor all political ads that were targeted at voters.")
+
+ }) 
+```
+
+
+Facebook {data-icon="fa-facebook-square"}
+=========================================
+
+<!-- Metrics {data-icon="fa-facebook-square" data-navmenu="Facebook"} -->
+<!-- ========================================= -->
+
+Sidebar {.sidebar}
+-------------------------------
+
+```{r}
+
+prettyRadioButtons(
+   inputId = "plot_type_fb",
+   label = "Select Metric: ",
+   choices = c("Number of Ads", "Spent (in EUR)", "Impressions", "Targeted Ads"), 
+   selected = "Number of Ads",
+   # icon = icon("check"), 
+   status = "info",
+   animation = "smooth"
+)
+
+
+radioTooltip(id = "plot_type_fb", choice = "Number of Ads", title = "This metric shows the number of ads that are available in the Facebook Ad library.<br><br>Note: This number might deviate from the real number of ads.")
+
+radioTooltip(id = "plot_type_fb", choice = "Spent (in EUR)", title = 'This metric estimates how much money was spent on ads. The Facebook Ad library only provides very broad" lower" and "upper bounds" of the amount spent.<br><br>The mid point is interpolated using the median of the two boundaries.')
+
+radioTooltip(id = "plot_type_fb", choice = "Impressions", title = 'This metric shows how many "impressions" or views an ad received on Facebook. The Facebook Ad library only provides very broad "lower" and "upper bounds" of impressions.<br><br>The mid point is interpolated using the median of the two boundaries.')
+
+radioTooltip(id = "plot_type_fb", choice = "Targeted Ads", title = 'This option reveals how ads were targeted towards voters. The Facebook Ad library only provides information about who saw the advertisements.<br><br>The percentages shown relate to the share of the specific demographic or geographic group that has seen the ad.')
+
+
+# bsTooltip("radio_A", title="Tooltip for A")
+
+  dutch_parties_fb <- c("VVD", "D66", "FvD", "SP", "GroenLinks", "Volt Nederland", "PvdA", "CDA", "PvdD", "ChristenUnie")
+
+
+  # more_than_5_fb <-  fb_aggr$total %>% 
+  # filter()
+  # drop_na(advertiser_id) %>% 
+  # arrange(desc(advertiser_name)) %>% 
+  # slice(20:nrow(.)) %>% 
+  # filter(n >= 5) %>% 
+  # arrange(advertiser_name) %>% 
+  # filter(!str_detect(advertiser_name, "𝒫")) %>% 
+  # filter(!str_detect(advertiser_name, "yolanda_dxb")) %>% 
+  # pull(advertiser_name)
+  
+advertiser_names_fb <- fb_aggr$times %>%
+  # filter(advertiser_name %in% more_than_5_fb) %>% 
+  pull(advertiser_name) %>% 
+  unique()
+
+defaults_fb <- advertiser_names_fb %>% 
+  keep(~magrittr::is_in(.x, dutch_parties_fb))
+
+
+var_objs_fb <- fb_aggr$total %>%
+  drop_na(advertiser_id) %>% 
+  # filter(advertiser_name %in% more_than_5_fb) %>% 
+  mutate(advertiser_name = str_remove_all(advertiser_name, "[^[:alnum:] ]")) %>% 
+  mutate(java_script = paste0("'", advertiser_name, "': ", "'https://www.facebook.com/", advertiser_id, "'")) %>% 
+  pull(java_script) %>%
+  paste0(collapse = ",")
+
+js_scrip_fb <- glue::glue("function() { 
+            var obj = {
+                     <<var_objs_fb>>
+                   }; 
+                  var getProperty = function (propertyName) {
+                  return obj[propertyName]; 
+                  };
+            return '<a target=\"_top\" href=\"'+ getProperty(this.value) + '\">' + this.value + '</a>';}", .open = "<<", .close = ">>")%>% as.character()
+
+# str_detect("𝒫", "[^[:alnum:] ]")
+
+renderUI({
+
+   if (input$plot_type_fb %in% c("Number of Ads", "Spent (in EUR)", "Impressions")) {
+
+     # HTML("Show number of ads per advertiser")
+
+     selectInput("total_vs_overtime_fb",
+            label = "Total vs. Over Time: ",
+            choices = c("Total", "Over Time"),
+            selected = "Total")
+     
+
+   } else if (input$plot_type_fb == "Targeted Ads") {
+
+     selectInput("targeting_fb",
+            label = "Target",
+            choices = c("Gender targeting", "Age targeting", "Geo targeting"),
+            selected = "Gender targeting")
+     
+
+
+   } else if (input$plot_type_ggl == "V5/V5.1") {
+
+     # selectInput("pol_polar",
+     #        label = "Variables of Interest",
+     #        choices = pol_polar_choices ,
+     #        selected = pol_polar_choices[6])
+
+   }
+
+})
+
+
+
+# renderUI({
+# 
+#    if (input$plot_type_fb %in% c("Number of Ads", "Spent (in EUR)", "Impressions")) {
+
+     # HTML("Show number of ads per advertiser")
+
+
+selectizeInput("advertisers__fb", "Select Advertisers", 
+            choices = advertiser_names_fb, 
+            selected = defaults_fb, multiple = T,
+            # selectize = TRUE, 
+            width = NULL, 
+            size = NULL)
+
+
+observeEvent (req(input$targeting_fb=="Geo targeting"),{
+
+       updateSelectizeInput(
+            session,
+            inputId = "advertisers__fb",
+            choices = advertiser_names_fb, 
+            selected = defaults_fb[1:3])
+       
+})
+
+
+useShinyjs(rmd = TRUE)
+
+disabled(actionButton("standard_sel_btn_fb", "Standard selection", class = "btn-info btn-xs"))
+
+
+observeEvent (req(!identical(input$advertisers__fb, defaults_fb)),{
+  
+  print("enable button")
+
+shinyjs::enable("standard_sel_btn_fb")
+
+})
+
+observeEvent (req(identical(input$advertisers__fb, defaults_fb)),{
+  
+  print("disable button")
+
+shinyjs::disable("standard_sel_btn_fb")
+  
+})
+
+
+bsTooltip("standard_sel_btn_fb", "Show standard selection of advertisers (Dutch national parties).")
+
+observeEvent (input$standard_sel_btn_fb,{
+
+       updateSelectizeInput(
+            session,
+            inputId = "advertisers__fb",
+            choices = advertiser_names_fb, 
+            selected = defaults_fb)
+       
+})
+
+
+
+
+
+```
+
+
+```{r, eval = F}
+
+facebook_links <- fb_aggr$total %>%
+  mutate(advertiser_id = ifelse(is.na(advertiser_id), "No Advertiser ID", advertiser_id)) %>% 
+  mutate(Link = paste0("https://www.facebook.com/", advertiser_id)) %>% 
+  mutate(Link = ifelse(is.na(advertiser_id), "No Link", Link)) %>% 
+  select(`Advertiser ID` = advertiser_id,
+         `Advertiser Name` = advertiser_name,
+         `Link` = Link
+         ) 
+
+ output$fb_links <-  DT::renderDataTable({
+
+    facebook_links %>% 
+     DT::datatable()
+  })
+
+actionButton("show_links_fb", "Show Links to Advertisers", class = "btn-info btn-xs", icon = icon("table"))
+
+# renderUI({
+  bsModal("fb_links", "Data Table", trigger = "show_links_fb", size = "large", dataTableOutput("fb_links"))
+# })
+
+```
+
+
+Column 
+-----------------------------------------------------------------------
+
+### Facebook Ads
+
+```{r}
+
+# debugonce(hc_ggl)
+
+# hc_plotter <- possibly(hc_plotter, otherwise = NULL, quiet = F)
+
+# shiny::reactiveUI({
+#   
+#   if(input$plot_type_fb != "Targeted Ads"){
+  
+ output$fb_chart <-  shiny::renderUI({
+
+    fb_aggr %>%
+      hc_plotter(filters = input$advertisers__fb,
+             plot_type = input$plot_type_fb,
+             total_vs_overtime = input$total_vs_overtime_fb,
+             targeting = input$targeting_fb,
+             platform = "Facebook",
+             js_scrip = js_scrip_fb)
+  })
+  # } else if (input$plot_type_fb == "Targeted Ads") {
+  # output$chart1 <- renderUI({
+  #   fb_aggr %>% 
+  #     hc_plotter(filters = input$advertisers__fb,
+  #            plot_type = input$plot_type_fb,
+  #            total_vs_overtime = input$total_vs_overtime_fb, 
+  #            targeting = input$targeting_fb,
+  #            platform = "Facebook")
+  # })
+
+     # div(style = 'height: 500px; overflow-y: auto; ', htmlOutput('fb_chart') )
+     
+    
+htmlOutput('fb_chart')
+  # }
+  
+  
+# })
+
+
+
+  # fb_aggr %>%
+  #   hc_plotter(filters = "D66",
+  #          plot_type = "Targeted Ads",
+  #          total_vs_overtime = "Total",
+  #          targeting = "Geotargeting",
+  #          platform = "Facebook")
+# debugonce(hc_plotter)
+
+  # fb_aggr %>%
+  #   hc_plotter(filters = c("D66", "GroenLinks"),
+  #          plot_type = "Spent (in EUR)",
+  #          total_vs_overtime = "Total",
+  #          targeting = "Geotargeting",
+  #          platform = "Facebook",
+  #          js_scrip = js_scrip_fb)
+  # 
+  
+  # get_url <- function(variables) {
+  #   
+  # }
+  # 
+  # library(rvest)
+  # 
+  # doc.retd    <- read_xml("data/retract.xml")
+  # 
+  # 
+  # dat <- doc.retd %>% 
+  # xml_find_all("//PubmedData/History/PubMedPubDate[@PubStatus='entrez']/Year") %>% 
+  # xml_text() %>% 
+  # as_tibble() %>% 
+  # mutate(year = as.numeric(value)) %>% 
+  # count(year) %>% 
+  # right_join(tibble(year = min(.$year):max(.$year))) %>% 
+  # arrange(year)
+  # 
+  # highchart() %>% 
+  # hc_add_series(dat, "column", hcaes(x = year, y = n)) %>%
+  # hc_legend(enabled = FALSE) %>%
+  # hc_title(text = "Retracted publications by year of Entrez record creation") %>%
+  # hc_xAxis(title = list(text = "year"),
+  #          labels = list(rotation = 90,
+  #                        formatter = JS("function() { return '<a href=\"http://www.pubmed.gov/?term=%22retracted%20publication%22[PTYP] AND ' + escape(this.value) + '[CRDT]\" target=\"_blank\">' + this.value + '</a>'; }"),
+  #                        useHTML = TRUE,
+  #                        style = list(fontSize = "10px")),
+  #          tickInterval = 1,
+  #          type = "linear") %>%
+  # hc_yAxis(title = list(text = "retracted publications")) %>%
+  # hc_tooltip(pointFormat = '{point.y} records')
+```
+
+
+
+
+Google Ads {data-icon="fa-google"}
+=========================================
+
+Sidebar {.sidebar}
+-------------------------------
+
+```{r}
+
+prettyRadioButtons(
+   inputId = "plot_type_ggl",
+   label = "Select Metric: ",
+   choices = c("Number of Ads", "Spent (in EUR)", "Impressions", "Targeted Ads"), 
+   selected = "Number of Ads",
+   # icon = icon("check"), 
+   status = "info",
+   animation = "smooth"
+)
+
+
+radioTooltip(id = "plot_type_ggl", choice = "Number of Ads", title = "This metric shows the number of ads that are available in the Google Transparency Report.<br><br>Note: This number might deviate from the real number of ads.")
+
+radioTooltip(id = "plot_type_ggl", choice = "Spent (in EUR)", title = 'This metric estimates how much money was spent on ads. The Google Transparency Report only provides very broad" lower" and "upper bounds" of the amount spent.<br><br>The mid point is interpolated using the median of the two boundaries.')
+
+radioTooltip(id = "plot_type_ggl", choice = "Impressions", title = 'This metric shows how many "impressions" or views an ad received on Google platforms. The Google Transparency Report only provides very broad "lower" and "upper bounds" of impressions.<br><br>The mid point is interpolated using the median of the two boundaries.')
+
+radioTooltip(id = "plot_type_ggl", choice = "Targeted Ads", title = 'This option reveals how ads were targeted towards voters. The Google Transparency Report  provides information about the groups that the advertiser chose to target.<br><br>The percentages shown relate to how many of the ads were targeted towards specific groups.')
+
+dutch_parties <- c("D66", "VVD", "GroenLinks", "SP", "Volt Nederland", "CDA", "Pv dA", "FvD")
+
+
+advertiser_names_ggl <- ggl_aggr$total %>%
+  pull(advertiser_name)  
+
+defaults_ggl <- advertiser_names_ggl %>% 
+  keep(~magrittr::is_in(.x, dutch_parties))
+
+var_objs_ggl <- ggl_aggr$total %>% 
+  mutate(java_script = paste0("'", advertiser_name, "': ", "'https://transparencyreport.google.com/political-ads/advertiser/", advertiser_id, "'")) %>% 
+  pull(java_script) %>% 
+  paste0(collapse = ",")
+
+js_scrip_ggl <- glue::glue("function() { 
+            var obj = {
+                     <<var_objs_ggl>>
+                   }; 
+                  var getProperty = function (propertyName) {
+                  return obj[propertyName]; 
+                  };
+            return '<a target=\"_top\" href=\"'+ getProperty(this.value) + '\">' + this.value + '</a>';}", .open = "<<", .close = ">>")%>% as.character()
+
+renderUI({
+
+   if (input$plot_type_ggl %in% c("Number of Ads", "Spent (in EUR)", "Impressions")) {
+
+     # HTML("Show number of ads per advertiser")
+
+     selectInput("total_vs_overtime_ggl",
+            label = "Total vs. Over Time: ",
+            choices = c("Total", "Over Time"),
+            selected = "Total")
+     
+
+   } else if (input$plot_type_ggl == "Targeted Ads") {
+
+     selectInput("targeting_ggl",
+            label = "Target",
+            choices = c("Gender targeting", "Age targeting", "Geo targeting"),
+            selected = "Gender targeting")
+
+   } else if (input$plot_type_ggl == "V5/V5.1") {
+
+     # selectInput("pol_polar",
+     #        label = "Variables of Interest",
+     #        choices = pol_polar_choices ,
+     #        selected = pol_polar_choices[6])
+
+   }
+
+})
+
+
+selectizeInput("advertisers__ggl", "Select Advertisers", 
+            choices = advertiser_names_ggl, 
+            selected = defaults_ggl, multiple = T,
+            # selectize = TRUE, 
+            width = NULL, 
+            size = NULL)
+
+
+disabled(actionButton("standard_sel_btn_ggl", "Standard selection", class = "btn-info btn-xs"))
+
+
+observeEvent (req(!identical(input$advertisers__ggl, defaults_ggl)),{
+  
+
+shinyjs::enable("standard_sel_btn_ggl")
+
+})
+
+observeEvent (req(identical(input$advertisers__ggl, defaults_ggl)),{
+
+shinyjs::disable("standard_sel_btn_ggl")
+  
+
+
+})
+
+
+bsTooltip("standard_sel_btn_ggl", "Show standard selection of advertisers (Dutch national parties).")
+
+observeEvent (input$standard_sel_btn_ggl,{
+
+       updateSelectizeInput(
+            session,
+            inputId = "advertisers__ggl",
+            choices = advertiser_names_ggl, 
+            selected = defaults_ggl)
+       
+})
+```
+
+Column 
+-----------------------------------------------------------------------
+
+### Google Ads
+
+```{r}
+
+
+
+
+# debugonce(hc_ggl)
+
+hc_plotter <- possibly(hc_plotter, otherwise = NULL, quiet = F)
+
+
+ output$ggl_chart <-  shiny::renderUI({
+  
+  ggl_aggr %>% 
+    hc_plotter(filters = input$advertisers__ggl,
+           plot_type = input$plot_type_ggl,
+           total_vs_overtime = input$total_vs_overtime_ggl, 
+           targeting = input$targeting_ggl,
+           platform = "Google",
+           js_scrip = js_scrip_ggl)
+  })
+ 
+  htmlOutput('ggl_chart')   
+
+# ggl_aggr$ggl_times
+
+  # ggl_aggr %>%
+  #   hc_plotter(filters = dutch_parties,
+  #               plot_type = "Targeted Ads",
+  #               total_vs_overtime = "Gender targeting",
+  #              platform = "Google") %>% list
+  
+    # ggl_aggr %>%
+    # hc_plotter(filters = c("D66", "GroenLinks"),
+    #        plot_type = "Spent (in EUR)",
+    #        total_vs_overtime = "Total",
+    #        targeting = "Geotargeting",
+    #        platform = "Google", 
+    #        js_scrip = js_scrip_ggl)
+# 
+# # debugonce(hc_ggl)
+# # 
+# #   ggl_aggr %>% 
+# #     hc_aggr_ggl(lvls, filters = defaults_ggl)
+#   
+#   hc_data %>%
+#         hchart("line", hcaes(x = date_range_start, 
+#                              y = n, 
+#                              group = advertiser_name,
+#                              color = color))
+  
+  # disabled
+```
+
+
+
+Snapchat {data-icon="fa-snapchat-ghost"}
+=========================================
+
+<!-- Column {.tabset .tabset-fade} -->
+<!-- ----------------------------------------------------------------------- -->
+
+### Snapchat Ads
+
+```{r}
+HTML("Not enough ads to display yet.")
+```
+
+
+
+<!-- ```{r} -->
+
+
+<!-- ad_counts <- snap_ads  %>%  -->
+<!--   count(start_date, paying_advertiser_name) %>% -->
+<!--   mutate(start_date = as.Date(start_date)) %>%  -->
+<!--   complete(paying_advertiser_name, start_date = seq.Date(min(start_date), max(start_date), by="day"), fill = list(n = 0)) -->
+
+<!-- ad_counts %>%  -->
+<!--   hchart("line", hcaes(x = start_date, y = n, group = paying_advertiser_name)) %>% -->
+<!--     hc_title( -->
+<!--       text = "" -->
+<!--     ) %>% -->
+<!--     hc_yAxis( -->
+<!--       align = "left", -->
+<!--       title = list(text = "Number of Ads") -->
+<!--     ) %>%  -->
+<!--     hc_xAxis( -->
+<!--       align = "left", -->
+<!--       title = list(text = "Start Date of Ad") -->
+<!--     ) %>%  -->
+<!--     hc_exporting( -->
+<!--       enabled = TRUE -->
+<!--     )  -->
+<!-- ``` -->
+
+
+<!-- ### Ad Impressions -->
+
+
+<!-- ```{r} -->
+
+
+<!-- ad_impressions <- snap_ads  %>%  -->
+<!--   group_by(start_date, paying_advertiser_name) %>%  -->
+<!--   summarize(n = n(), -->
+<!--             impressions = sum(impressions)) %>%  -->
+<!--   mutate(start_date = lubridate::as_date(start_date))  -->
+
+<!-- hchart( -->
+<!--   ad_impressions,  -->
+<!--   "bubble",  -->
+<!--   hcaes( -->
+<!--     x = start_date, -->
+<!--     y = n,  -->
+<!--     size = impressions, -->
+<!--     group = paying_advertiser_name -->
+<!--     ),  -->
+<!-- maxSize = '10%' -->
+<!--   ) %>% -->
+<!--     hc_title( -->
+<!--       text = "" -->
+<!--     ) %>% -->
+<!--     hc_yAxis( -->
+<!--       align = "left", -->
+<!--       title = list(text = "Number of Ads") -->
+<!--     ) %>%  -->
+<!--     hc_xAxis( -->
+<!--       align = "left", -->
+<!--       title = list(text = "Start Date of Ad") -->
+<!--     ) %>%  -->
+<!--     hc_exporting( -->
+<!--       enabled = TRUE -->
+<!--     )  -->
+<!-- ``` -->
