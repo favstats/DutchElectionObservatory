@@ -256,11 +256,9 @@ cat("\n\nCleanup: Done\n\n")
 
 cat("\n\nFB Data: Getting it\n\n")  
 
-library(httr)
 
 # get_fb_ads <- function() {
   
-
 readRenviron(".Renviron")
 
 token <- Sys.getenv("fb_token")

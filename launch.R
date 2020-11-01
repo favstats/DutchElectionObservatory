@@ -39,6 +39,8 @@ gitpush <- function(dir = getwd()){
   system(cmd)
 }
 
+
+
 while(T){
   
   currentTime <- Sys.time()
