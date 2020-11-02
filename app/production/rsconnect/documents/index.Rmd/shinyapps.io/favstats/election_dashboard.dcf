@@ -1,0 +1,12 @@
+name: election_dashboard
+title: election_dashboard
+username:
+account: favstats
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2935130
+bundleId: 3810506
+url: https://favstats.shinyapps.io/election_dashboard/
+when: 1604318694.6298
+asMultiple: FALSE
+asStatic: FALSE

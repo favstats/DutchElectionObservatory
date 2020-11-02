@@ -844,5 +844,17 @@ hc_dat  %>%
 fb_dat %>% count(currency)
 ```
 
+```{r}
+library(tidyverse)
+
+ggl_ads <- data.table::fread("data/google-political-ads-transparency-bundle/google-political-ads-creative-stats.csv") 
+
+
+ggl_ads %>% 
+  filter(str_detect(Regions, "DE")) %>% 
+  filter(Date_Range_Start >= as.Date("2020-09-01")) %>% 
+  count(Advertiser_Name, sort = T)
+```
+
 
 ## Conclusion
