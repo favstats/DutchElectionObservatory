@@ -1,7 +1,9 @@
 library(git2r)
 
 file.copy(from = "app/staging/helpers.R", to = "app/production", recursive = T, overwrite = T)
+file.copy(from = "app/staging/index.html", to = "app/production", recursive = T, overwrite = T)
 file.copy(from = "app/staging/index.Rmd", to = "app/production", recursive = T, overwrite = T)
+file.copy(from = "app/staging/data", to = "app/production", recursive = T, overwrite = T)
 
 # Git commit.
 gitcommit <- function(msg = "commit from Rstudio", dir = getwd()){

@@ -19,8 +19,9 @@ This script is about:
 pacman::p_load(tidyverse, tidytemplate, rvest, data.table, janitor)
 
 file.copy(from = "app/staging/helpers.R", to = "app/production", recursive = T, overwrite = T)
+file.copy(from = "app/staging/index.html", to = "app/production", recursive = T, overwrite = T)
 file.copy(from = "app/staging/index.Rmd", to = "app/production", recursive = T, overwrite = T)
-
+file.copy(from = "app/staging/data", to = "app/production", recursive = T, overwrite = T)
 
 # Creates folders
 # tidytemplate::data_dir()
