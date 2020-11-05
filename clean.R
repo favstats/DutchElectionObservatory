@@ -48,7 +48,12 @@ unnest_dems <- function(x) {
 # plan(multisession, workers = 4)
 
 # get_ggl_data <- function() {
+
+last_updated_time <- as.character(Sys.time())
   
+cat(last_updated_time, file = "app/production/data/last_updated.txt", append = T, sep = "\n")
+cat(last_updated_time, file = "app/staging/data/last_updated.txt", append = T, sep = "\n")
+
 cat("\n\nGet Google Data\n\n")  
 
 ggl_link <- "https://storage.googleapis.com/transparencyreport/google-political-ads-transparency-bundle.zip"

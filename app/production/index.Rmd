@@ -54,6 +54,9 @@ library(shinyjs)
 ggl_aggr <- readRDS("data/ggl_aggr.rds")
 fb_aggr <- readRDS("data/fb_aggr.rds")
 
+last_updated <- read_lines("data/last_updated.txt") %>% 
+  .[length(.)]
+
 
 # 
 # saveRDS(trans_eng, file = "data/trans_eng.rds")
@@ -69,8 +72,7 @@ fb_aggr <- readRDS("data/fb_aggr.rds")
 
 # snap_ads <- readRDS("data/snap_ads.RDS")
 # 
-trans <- readRDS("data/trans_dutch.rds") %>% 
-  mutate_all(~str_replace_all(.x, "'", '"'))
+trans <- readRDS("data/trans_dutch.rds")
 # 
 # 
 mapdata <- readRDS("data/mapdata.RDS")
@@ -80,7 +82,7 @@ mapdata <- readRDS("data/mapdata.RDS")
 #   data.table::transpose() %>%
 #   janitor::row_to_names(1) %>%
 #   mutate_all(str_trim)%>%
-#   mutate_all(~str_replace_all(.x, ", ", ","))
+#   mutate_all(~str_replace_all(.x, ", ", ",")) 
 
 
 source("helpers.R")
@@ -105,11 +107,11 @@ defaults_fb <- advertiser_names_fb %>%
 
 
 ```{r, eval = F}
-    # Return the UI for a modal dialog with data selection input. If 'failed' is
-    # TRUE, then display a message that the previous value was invalid.
-    dataModal <- function(selected_lang = "Nederlands") {
+# Return the UI for a modal dialog with data selection input. If 'failed' is
+# TRUE, then display a message that the previous value was invalid.
+dataModal <- function(selected_lang = "Nederlands") {
       
-        if(selected_lang == "English"){
+if(selected_lang == "English"){
    trans_internal <- read_csv2("data/translation.csv")  %>%
       select(text_id, contains("english")) %>%
       data.table::transpose() %>%
@@ -344,7 +346,7 @@ actionButton("show_links_fb", "Show Links to Advertisers", class = "btn-info btn
 Column 
 -----------------------------------------------------------------------
 
-### Facebook Ads
+### `r trans$fb_title`
 
 ```{r, context = "server"}
 
@@ -545,7 +547,7 @@ observeEvent (input$standard_sel_btn_ggl,{
 Column 
 -----------------------------------------------------------------------
 
-### Google Ads
+### `r trans$ggl_title`
 
 ```{r, context = "server"}
 
@@ -653,10 +655,10 @@ Snapchat {data-icon="fa-snapchat-ghost"}
 <!-- Column {.tabset .tabset-fade} -->
 <!-- ----------------------------------------------------------------------- -->
 
-### Snapchat Ads
+### `r trans$snap_title`
 
 ```{r}
-HTML("Not enough ads to display yet.")
+HTML(trans$snap_message)
 ```
 
 

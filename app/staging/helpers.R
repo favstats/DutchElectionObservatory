@@ -25,11 +25,11 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = ma
   }  
   
   if(platform == "Facebook"){
-    credits_text <- trans$plot_credits_text_fb
+    credits_text <- glue::glue(trans$plot_credits_text_fb)
     href_text <- "https://www.facebook.com/ads/library/"
   } else if (platform == "Google"){
-    credits_text <- trans$plot_credits_text_ggl
-    href_text <- "https://www.facebook.com/ads/library/"   
+    credits_text <- glue::glue(trans$plot_credits_text_ggl)
+    href_text <- "https://transparencyreport.google.com/political-ads/region/nl"   
   }
   
   

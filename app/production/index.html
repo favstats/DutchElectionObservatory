@@ -2748,8 +2748,8 @@ window.FlexDashboardComponents.push({
 </div>
 <div id="section-column" class="section level2">
 <h2>Column</h2>
-<div id="section-facebook-ads" class="section level3">
-<h3>Facebook Ads</h3>
+<div id="section-facebook-advertenties" class="section level3">
+<h3>Facebook-advertenties</h3>
 <div class="knitr-options" data-fig-width="576" data-fig-height="460">
 
 </div>
@@ -2880,8 +2880,8 @@ window.FlexDashboardComponents.push({
 </div>
 <div id="section-column-1" class="section level2">
 <h2>Column</h2>
-<div id="section-google-ads-1" class="section level3">
-<h3>Google Ads</h3>
+<div id="section-google-advertenties" class="section level3">
+<h3>Google Advertenties</h3>
 <div class="knitr-options" data-fig-width="576" data-fig-height="460">
 
 </div>
@@ -2896,12 +2896,12 @@ window.FlexDashboardComponents.push({
 <h1>Snapchat</h1>
 <!-- Column {.tabset .tabset-fade} -->
 <!-- ----------------------------------------------------------------------- -->
-<div id="section-snapchat-ads" class="section level3">
-<h3>Snapchat Ads</h3>
+<div id="section-snapchat-advertenties" class="section level3">
+<h3>Snapchat Advertenties</h3>
 <div class="knitr-options" data-fig-width="576" data-fig-height="460">
 
 </div>
-Not enough ads to display yet.
+Nog niet genoeg advertenties om iets te kunnen weergeven.
 <!-- ```{r} -->
 <!-- ad_counts <- snap_ads  %>%  -->
 <!--   count(start_date, paying_advertiser_name) %>% -->
@@ -2991,6 +2991,9 @@ library(shinyjs)
 ggl_aggr <- readRDS("data/ggl_aggr.rds")
 fb_aggr <- readRDS("data/fb_aggr.rds")
 
+last_updated <- read_lines("data/last_updated.txt") %>% 
+  .[length(.)]
+
 
 # 
 # saveRDS(trans_eng, file = "data/trans_eng.rds")
@@ -3006,8 +3009,7 @@ fb_aggr <- readRDS("data/fb_aggr.rds")
 
 # snap_ads <- readRDS("data/snap_ads.RDS")
 # 
-trans <- readRDS("data/trans_dutch.rds") %>% 
-  mutate_all(~str_replace_all(.x, "'", '"'))
+trans <- readRDS("data/trans_dutch.rds")
 # 
 # 
 mapdata <- readRDS("data/mapdata.RDS")
@@ -3017,7 +3019,7 @@ mapdata <- readRDS("data/mapdata.RDS")
 #   data.table::transpose() %>%
 #   janitor::row_to_names(1) %>%
 #   mutate_all(str_trim)%>%
-#   mutate_all(~str_replace_all(.x, ", ", ","))
+#   mutate_all(~str_replace_all(.x, ", ", ",")) 
 
 
 source("helpers.R")

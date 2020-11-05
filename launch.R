@@ -79,7 +79,7 @@ while(T){
   gitpush()
   
   
-  Sys.sleep(60*60*24)
+  Sys.sleep(60*60*8)
   
   # Sys.sleep(60*60*60)
   
