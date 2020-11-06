@@ -6,8 +6,8 @@ output:
     vertical_layout: scroll
     smooth_scroll: true
     theme: lumen
-    logo: http://politieke-advertenties.nl/wp-content/uploads/2020/11/logo-e1604404707339.png
-    favicon: http://politieke-advertenties.nl/wp-content/uploads/2020/11/logo-e1604404707339.png
+    logo: https://politieke-advertenties.nl/wp-content/uploads/2020/11/logo-e1604404707339.png
+    favicon: https://politieke-advertenties.nl/wp-content/uploads/2020/11/logo-e1604404707339.png
 runtime: shiny_prerendered
 ---
 
@@ -39,7 +39,7 @@ library(shinyWidgets)
 library(tidyverse)
 library(htmltools)
 library(shinyBS)
-library(shinyjs)
+# library(shinyjs)
 # library(shinyalert)
 # library(apexcharter)
 
@@ -54,7 +54,7 @@ library(shinyjs)
 ggl_aggr <- readRDS("data/ggl_aggr.rds")
 fb_aggr <- readRDS("data/fb_aggr.rds")
 
-last_updated <- read_lines("data/last_updated.txt") %>% 
+update_time <- read_lines("data/last_updated.txt") %>% 
   .[length(.)]
 
 
@@ -75,7 +75,7 @@ last_updated <- read_lines("data/last_updated.txt") %>%
 trans <- readRDS("data/trans_dutch.rds")
 # 
 # 
-mapdata <- readRDS("data/mapdata.RDS")
+map_data <- readRDS("data/mapdata.RDS")
 
 # trans <- read_csv2("data/translation.csv")  %>%
 #   select(text_id, contains("dutch")) %>%
@@ -204,6 +204,8 @@ observe({
 #     imageUrl = "",
 #     animation = TRUE
 #   )
+  # trans <- readRDS("data/trans_dutch.rds")
+  
   # Sys.sleep(1)
   sendSweetAlert(session, title = trans$welcome_title,
     text = trans$welcome_text)
@@ -413,7 +415,10 @@ observe ({
       hc_plotter(filters = input$advertisers__fb,
              plot_type = input$plot_type_fb,
              plot_type_sub = input$plot_type_sub_fb,
-             platform = "Facebook")
+             mapdata = map_data,
+             platform = "Facebook",
+             trans_internal = trans,
+             last_updated = update_time)
   })
 
 
@@ -421,6 +426,14 @@ observe ({
 
 # hc_plotter <- possibly(hc_plotter, otherwise = NULL, quiet = F)
 
+ # ggl_aggr$times %>%
+ #   group_by(advertiser_name) %>%
+ #   arrange(date_range_start) %>%
+ #   mutate(cumsum_n = cumsum(n)) %>%
+ #   filter(advertiser_name %in% advertiser_names_fb) %>%
+ #   ggplot(aes(date_range_start, cumsum_n, color = advertiser_name)) +
+ #   geom_line()
+ #   count(advertiser_name, sort = T)
 ```
 
 
@@ -609,8 +622,10 @@ hc_plotter <- possibly(hc_plotter, otherwise = NULL, quiet = F)
   ggl_aggr %>% 
     hc_plotter(filters = input$advertisers__ggl,
            plot_type = input$plot_type_ggl,
-           plot_type_sub = input$plot_type_sub_ggl, 
-           platform = "Google")
+           plot_type_sub = input$plot_type_sub_ggl,
+           platform = "Google",
+             trans_internal = trans,
+             last_updated = update_time)
   })
 
 # ggl_aggr$ggl_times
@@ -621,16 +636,16 @@ hc_plotter <- possibly(hc_plotter, otherwise = NULL, quiet = F)
   #               plot_type_sub = "Gender targeting",
   #              platform = "Google") %>% list
   
-    # ggl_aggr %>%
-    # hc_plotter(filters = c("D66", "GroenLinks"),
-    #        plot_type = "Spent (in EUR)",
-    #        plot_type_sub = "Total",
-    #        targeting = "Geotargeting",
-    #        platform = "Google", 
-    #        js_scrip = js_scrip_ggl)
-# 
-# # debugonce(hc_ggl)
+#     ggl_aggr %>%
+#     hc_plotter(filters = c("D66", "GroenLinks", "FvD"),
+#            plot_type = unlist_it(trans$choices, 2),
+#            plot_type_sub = unlist_it(trans$total_text, 1),
+#            platform = "Google",
+#              trans_internal = trans,
+#              last_updated = update_time)
 # # 
+# debugonce(hc_plotter)
+#
 # #   ggl_aggr %>% 
 # #     hc_aggr_ggl(lvls, filters = defaults_ggl)
 #   
