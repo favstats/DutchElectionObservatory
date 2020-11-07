@@ -101,6 +101,27 @@ advertiser_names_fb <- fb_aggr$times %>%
 defaults_fb <- advertiser_names_fb %>% 
   keep(~magrittr::is_in(.x, dutch_parties_fb))
 
+
+facebook_links <- fb_aggr$total %>%
+  mutate(advertiser_id = ifelse(is.na(advertiser_id), "No Advertiser ID", advertiser_id)) %>% 
+  mutate(Link = paste0("https://www.facebook.com/", advertiser_id)) %>% 
+  mutate(Link = ifelse(is.na(advertiser_id), "No Link", Link)) %>% 
+  select(advertiser_name, advertiser_id, n, Link) %>% 
+  arrange(desc(n)) %>% 
+  mutate(platform = "Facebook")
+
+google_links <- ggl_aggr$total %>%
+  mutate(advertiser_id = ifelse(is.na(advertiser_id), "No Advertiser ID", advertiser_id)) %>% 
+  mutate(Link = paste0("https://transparencyreport.google.com/political-ads/advertiser/", advertiser_id)) %>% 
+  mutate(Link = ifelse(is.na(advertiser_id), "No Link", Link)) %>% 
+  select(advertiser_name, advertiser_id, n, Link) %>% 
+  arrange(desc(n)) %>% 
+  mutate(platform = "Google")
+
+advertisers_dat <- facebook_links %>% 
+  bind_rows(google_links)
+
+write_csv(advertisers_dat, "data/advertisers.csv")
 ```
 
 
