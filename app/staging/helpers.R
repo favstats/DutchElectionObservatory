@@ -1,6 +1,6 @@
 
 
-hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NULL, platform, trans_internal = trans, last_updated) {
+hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NULL, platform, trans_internal = trans, last_updated, minmax = "Minimum") {
   
   if (plot_type %in% unlist_it(trans_internal$choices, 1:3)) {
     if(plot_type_sub == unlist_it(trans_internal$total_text, 1)){
@@ -120,11 +120,28 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
     
     if(plot_type_sub == unlist_it(trans_internal$total_text, 1)){
     
-    lvls <- hc_data %>% 
-      mutate(advertiser_name = fct_reorder(advertiser_name, spend_range_mid)) %>% 
-      pull(advertiser_name) %>% 
-      levels() %>% 
-      rev()
+      if(minmax == "Minimum"){
+        lvls <- hc_data %>% 
+          mutate(advertiser_name = fct_reorder(advertiser_name, spend_range_min)) %>% 
+          pull(advertiser_name) %>% 
+          levels() %>% 
+          rev()      
+        
+        hc_data <- hc_data %>% 
+          mutate(value = spend_range_min)
+        
+      } else if (minmax == "Maximum"){
+        lvls <- hc_data %>% 
+          mutate(advertiser_name = fct_reorder(advertiser_name, spend_range_max)) %>% 
+          pull(advertiser_name) %>% 
+          levels() %>% 
+          rev()      
+        
+        hc_data <- hc_data %>% 
+          mutate(value = spend_range_max)
+      }
+      
+
     
     
     # js_scrip <- "function() { return '<a target=\"_top\" href=\"https://www.france-politique.fr/election-presidentielle-1965.htm\">' + this.value + '</a>';}"
@@ -151,7 +168,7 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
         type = "bar",
         hcaes(
           x = advertiser_name,
-          y = spend_range_mid,
+          y = value,
           # low = spend_range_min,
           # high = spend_range_max,
           color = color),
@@ -192,9 +209,33 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
     #                   }")
     # 
     if(plot_type_sub == unlist_it(trans_internal$total_text, 2)){
+      
+      
+      if(minmax == "Minimum"){
+        lvls <- hc_data %>% 
+          mutate(advertiser_name = fct_reorder(advertiser_name, spend_range_min)) %>% 
+          pull(advertiser_name) %>% 
+          levels() %>% 
+          rev()      
+        
+        hc_data <- hc_data %>% 
+          mutate(value = spend_range_min)
+        
+      } else if (minmax == "Maximum"){
+        lvls <- hc_data %>% 
+          mutate(advertiser_name = fct_reorder(advertiser_name, spend_range_max)) %>% 
+          pull(advertiser_name) %>% 
+          levels() %>% 
+          rev()      
+        
+        hc_data <- hc_data %>% 
+          mutate(value = spend_range_max)
+      }
+      
+      
       hc_plot <- hc_data %>%
         hchart("line", hcaes(x = date_range_start, 
-                             y = spend_range_mid, 
+                             y = value, 
                              group = advertiser_name),
                tooltip = list(pointFormat = paste0("<b>{point.advertiser_name}</b><br><br>", trans_internal$plot_tooltip_spend))) %>%
         hc_title(
@@ -225,11 +266,28 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
     subtitle_text <- glue::glue(trans_internal$plot_subtitle_impressions)
     
     if(plot_type_sub == unlist_it(trans_internal$total_text, 1)){
-      lvls <- hc_data %>% 
-        mutate(advertiser_name = fct_reorder(advertiser_name, impressions_range_mid)) %>% 
-        pull(advertiser_name) %>% 
-        levels() %>% 
-        rev()
+      
+      if(minmax == "Minimum"){
+        lvls <- hc_data %>% 
+          mutate(advertiser_name = fct_reorder(advertiser_name, impressions_range_min)) %>% 
+          pull(advertiser_name) %>% 
+          levels() %>% 
+          rev()      
+        
+        hc_data <- hc_data %>% 
+          mutate(value = impressions_range_min)
+        
+      } else if (minmax == "Maximum"){
+        lvls <- hc_data %>% 
+          mutate(advertiser_name = fct_reorder(advertiser_name, impressions_range_max)) %>% 
+          pull(advertiser_name) %>% 
+          levels() %>% 
+          rev()      
+        
+        hc_data <- hc_data %>% 
+          mutate(value = impressions_range_max)
+      }
+      
       
       hc_plot <- hc_data %>% 
         drop_na(impressions_range_min, impressions_range_mid, impressions_range_max) %>% 
@@ -237,7 +295,7 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
           type = "bar",
           hcaes(
             x = advertiser_name,
-            y = impressions_range_mid,
+            y = value,
             color = color),
           tooltip = list(pointFormat =  trans_internal$plot_tooltip_impressions)) %>%
         # hchart(
@@ -263,9 +321,33 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
         hc_chart(inverted = TRUE)            
     }
     if(plot_type_sub == unlist_it(trans_internal$total_text, 2)){
+      
+      if(minmax == "Minimum"){
+        lvls <- hc_data %>% 
+          mutate(advertiser_name = fct_reorder(advertiser_name, impressions_range_min)) %>% 
+          pull(advertiser_name) %>% 
+          levels() %>% 
+          rev()      
+        
+        hc_data <- hc_data %>% 
+          mutate(value = impressions_range_min)
+        
+      } else if (minmax == "Maximum"){
+        lvls <- hc_data %>% 
+          mutate(advertiser_name = fct_reorder(advertiser_name, impressions_range_max)) %>% 
+          pull(advertiser_name) %>% 
+          levels() %>% 
+          rev()      
+        
+        hc_data <- hc_data %>% 
+          mutate(value = impressions_range_max)
+      }
+      
+      
+      
       hc_plot <- hc_data %>%
         hchart("line", hcaes(x = date_range_start, 
-                             y = impressions_range_mid, 
+                             y = value, 
                              group = advertiser_name),
                tooltip = list(pointFormat = trans_internal$plot_tooltip_impressions)) %>%
         hc_title(

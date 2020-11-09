@@ -197,6 +197,9 @@ if(!length(input$language)==0){
 }
 
 })
+
+# fb_aggr$total %>% 
+#   filter(str_detect(advertiser_name, "PvdA"))
 ```
 
 
@@ -288,14 +291,37 @@ selectInput("plot_type_sub_fb",
 
 
 
+
+
+```
+```{r, context = "server"}
+
+output$sub2_fb <- renderUI({
+  
+    if(input$plot_type_fb %in% unlist_it(trans$choices, 2:3)){
+       prettyRadioButtons(
+         inputId = "plot_type_sub2_fb",
+         label = "Minimum vs. Maximum",
+         choices = c("Minimum", "Maximum"), 
+         selected = "Minimum",
+         status = "info",
+         animation = "smooth"
+      )            
+    }
+ })
+
+
+```
+
+```{r}
+uiOutput("sub2_fb")
+
 selectizeInput("advertisers__fb", trans$select_advertisers, 
             choices = advertiser_names_fb, 
             selected = defaults_fb, multiple = T,
             # selectize = TRUE, 
             width = NULL, 
             size = NULL)
-
-
 
 
 ```
@@ -439,7 +465,8 @@ observe ({
              mapdata = map_data,
              platform = "Facebook",
              trans_internal = trans,
-             last_updated = update_time)
+             last_updated = update_time,
+             minmax = input$plot_type_sub2_fb)
   })
 
 
@@ -533,8 +560,29 @@ selectInput("plot_type_sub_ggl",
        label =  trans$total_vs_overtime,
        choices = unlist_it(trans$total_text),
        selected = unlist_it(trans$total_text, 1))
+```
+
+```{r, context = "server"}
+
+output$sub2_ggl <- renderUI({
+  
+    if(input$plot_type_ggl %in% unlist_it(trans$choices, 2:3)){
+       prettyRadioButtons(
+         inputId = "plot_type_sub2_ggl",
+         label = "Minimum vs. Maximum",
+         choices = c("Minimum", "Maximum"), 
+         selected = "Minimum",
+         status = "info",
+         animation = "smooth"
+      )            
+    }
+ })
 
 
+```
+
+```{r}
+uiOutput("sub2_ggl")
 
 selectizeInput("advertisers__ggl", trans$select_advertisers, 
             choices = advertiser_names_ggl, 
@@ -542,7 +590,10 @@ selectizeInput("advertisers__ggl", trans$select_advertisers,
             # selectize = TRUE, 
             width = NULL, 
             size = NULL)
+
+
 ```
+
 
 
 ```{r, eval = F}
@@ -645,8 +696,10 @@ hc_plotter <- possibly(hc_plotter, otherwise = NULL, quiet = F)
            plot_type = input$plot_type_ggl,
            plot_type_sub = input$plot_type_sub_ggl,
            platform = "Google",
-             trans_internal = trans,
-             last_updated = update_time)
+           trans_internal = trans,
+           last_updated = update_time,
+           minmax = input$plot_type_sub2_ggl
+           )
   })
 
 # ggl_aggr$ggl_times

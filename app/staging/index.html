@@ -2631,7 +2631,7 @@ window.FlexDashboardComponents.push({
 <div class="knitr-options" data-fig-width="576" data-fig-height="460">
 
 </div>
-<p><div id="plot_type_fb" class="form-group shiny-input-radiogroup shiny-input-container">
+<div id="plot_type_fb" class="form-group shiny-input-radiogroup shiny-input-container">
 <label class="control-label" for="plot_type_fb">Kies variabele</label>
 <div class="shiny-options-group">
 <div style="height:7px;"></div>
@@ -2727,7 +2727,14 @@ window.FlexDashboardComponents.push({
 <option value="gedurende een tijdsperiode">gedurende een tijdsperiode</option></select>
 <script type="application/json" data-for="plot_type_sub_fb" data-nonempty="">{}</script>
 </div>
-</div><div class="form-group shiny-input-container">
+</div>
+<div class="knitr-options" data-fig-width="576" data-fig-height="460">
+
+</div>
+<div class="knitr-options" data-fig-width="576" data-fig-height="460">
+
+</div>
+<p><div id="sub2_fb" class="shiny-html-output"></div><div class="form-group shiny-input-container">
 <label class="control-label" for="advertisers__fb">Selecteer adverteerders</label>
 <div>
 <select id="advertisers__fb" class="form-control" multiple="multiple"><option value="CDA" selected>CDA</option>
@@ -2863,7 +2870,14 @@ window.FlexDashboardComponents.push({
 <option value="gedurende een tijdsperiode">gedurende een tijdsperiode</option></select>
 <script type="application/json" data-for="plot_type_sub_ggl" data-nonempty="">{}</script>
 </div>
-</div><div class="form-group shiny-input-container">
+</div></p>
+<div class="knitr-options" data-fig-width="576" data-fig-height="460">
+
+</div>
+<div class="knitr-options" data-fig-width="576" data-fig-height="460">
+
+</div>
+<p><div id="sub2_ggl" class="shiny-html-output"></div><div class="form-group shiny-input-container">
 <label class="control-label" for="advertisers__ggl">Selecteer adverteerders</label>
 <div>
 <select id="advertisers__ggl" class="form-control" multiple="multiple"><option value="CDA" selected>CDA</option>
@@ -3038,6 +3052,27 @@ advertiser_names_fb <- fb_aggr$times %>%
 defaults_fb <- advertiser_names_fb %>% 
   keep(~magrittr::is_in(.x, dutch_parties_fb))
 
+
+facebook_links <- fb_aggr$total %>%
+  mutate(advertiser_id = ifelse(is.na(advertiser_id), "No Advertiser ID", advertiser_id)) %>% 
+  mutate(Link = paste0("https://www.facebook.com/", advertiser_id)) %>% 
+  mutate(Link = ifelse(is.na(advertiser_id), "No Link", Link)) %>% 
+  select(advertiser_name, advertiser_id, n, Link) %>% 
+  arrange(desc(n)) %>% 
+  mutate(platform = "Facebook")
+
+google_links <- ggl_aggr$total %>%
+  mutate(advertiser_id = ifelse(is.na(advertiser_id), "No Advertiser ID", advertiser_id)) %>% 
+  mutate(Link = paste0("https://transparencyreport.google.com/political-ads/advertiser/", advertiser_id)) %>% 
+  mutate(Link = ifelse(is.na(advertiser_id), "No Link", Link)) %>% 
+  select(advertiser_name, advertiser_id, n, Link) %>% 
+  arrange(desc(n)) %>% 
+  mutate(platform = "Google")
+
+advertisers_dat <- facebook_links %>% 
+  bind_rows(google_links)
+
+write_csv(advertisers_dat, "data/advertisers.csv")
 </script>
  
 <script type="application/shiny-prerendered" data-context="server">
@@ -3076,6 +3111,25 @@ observe({
   # showModal(dataModal(selected_lang))
   
  }) 
+
+
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+
+output$sub2_fb <- renderUI({
+  
+    if(input$plot_type_fb %in% unlist_it(trans$choices, 2:3)){
+       prettyRadioButtons(
+         inputId = "plot_type_sub2_fb",
+         label = "Minimum vs. Maximum",
+         choices = c("Minimum", "Maximum"), 
+         selected = "Minimum",
+         status = "info",
+         animation = "smooth"
+      )            
+    }
+ })
 
 
 </script>
@@ -3148,7 +3202,8 @@ observe ({
              mapdata = map_data,
              platform = "Facebook",
              trans_internal = trans,
-             last_updated = update_time)
+             last_updated = update_time,
+             minmax = input$plot_type_sub2_fb)
   })
 
 
@@ -3164,6 +3219,25 @@ observe ({
  #   ggplot(aes(date_range_start, cumsum_n, color = advertiser_name)) +
  #   geom_line()
  #   count(advertiser_name, sort = T)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+
+output$sub2_ggl <- renderUI({
+  
+    if(input$plot_type_ggl %in% unlist_it(trans$choices, 2:3)){
+       prettyRadioButtons(
+         inputId = "plot_type_sub2_ggl",
+         label = "Minimum vs. Maximum",
+         choices = c("Minimum", "Maximum"), 
+         selected = "Minimum",
+         status = "info",
+         animation = "smooth"
+      )            
+    }
+ })
+
+
 </script>
  
 <script type="application/shiny-prerendered" data-context="server">
@@ -3228,8 +3302,10 @@ hc_plotter <- possibly(hc_plotter, otherwise = NULL, quiet = F)
            plot_type = input$plot_type_ggl,
            plot_type_sub = input$plot_type_sub_ggl,
            platform = "Google",
-             trans_internal = trans,
-             last_updated = update_time)
+           trans_internal = trans,
+           last_updated = update_time,
+           minmax = input$plot_type_sub2_ggl
+           )
   })
 
 # ggl_aggr$ggl_times
@@ -3240,16 +3316,16 @@ hc_plotter <- possibly(hc_plotter, otherwise = NULL, quiet = F)
   #               plot_type_sub = "Gender targeting",
   #              platform = "Google") %>% list
   
-    # ggl_aggr %>%
-    # hc_plotter(filters = c("D66", "GroenLinks"),
-    #        plot_type = "Spent (in EUR)",
-    #        plot_type_sub = "Total",
-    #        targeting = "Geotargeting",
-    #        platform = "Google", 
-    #        js_scrip = js_scrip_ggl)
-# 
-# # debugonce(hc_ggl)
+#     ggl_aggr %>%
+#     hc_plotter(filters = c("D66", "GroenLinks", "FvD"),
+#            plot_type = unlist_it(trans$choices, 2),
+#            plot_type_sub = unlist_it(trans$total_text, 1),
+#            platform = "Google",
+#              trans_internal = trans,
+#              last_updated = update_time)
 # # 
+# debugonce(hc_plotter)
+#
 # #   ggl_aggr %>% 
 # #     hc_aggr_ggl(lvls, filters = defaults_ggl)
 #   
@@ -3260,6 +3336,8 @@ hc_plotter <- possibly(hc_plotter, otherwise = NULL, quiet = F)
 #                              color = color))
   
   # disabled
+ 
+ # fb_aggr$total %>% arrange(desc(spend_range_max))
 </script>
  <!--html_preserve-->
 <script type="application/shiny-prerendered" data-context="dependencies">
