@@ -2,6 +2,8 @@
 
 hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NULL, platform, trans_internal = trans, last_updated, minmax = "Minimum") {
   
+  # trans_internal <- trans
+  
   if (plot_type %in% unlist_it(trans_internal$choices, 1:3)) {
     if(plot_type_sub == unlist_it(trans_internal$total_text, 1)){
       plot_dat_fin <- plot_dat$total
@@ -114,13 +116,16 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
       # return(fin)
     }
   } else if (plot_type == unlist_it(trans_internal$choices, 2)) {
+    ## if option is spend
     
     title_text <- glue::glue(trans_internal$plot_title_spend)
     subtitle_text <- glue::glue(trans_internal$plot_subtitle_spend)
+ 
     
-    if(plot_type_sub == unlist_it(trans_internal$total_text, 1)){
-    
+    if(platform == "Facebook"){
+      print("Facebook")
       if(minmax == "Minimum"){
+        print("Minimum")
         lvls <- hc_data %>% 
           mutate(advertiser_name = fct_reorder(advertiser_name, spend_range_min)) %>% 
           pull(advertiser_name) %>% 
@@ -131,6 +136,7 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
           mutate(value = spend_range_min)
         
       } else if (minmax == "Maximum"){
+        print("Maximum")
         lvls <- hc_data %>% 
           mutate(advertiser_name = fct_reorder(advertiser_name, spend_range_max)) %>% 
           pull(advertiser_name) %>% 
@@ -140,9 +146,21 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
         hc_data <- hc_data %>% 
           mutate(value = spend_range_max)
       }
+    } else if(platform == "Google"){
+      print("Google")
+      lvls <- hc_data %>% 
+        mutate(advertiser_name = fct_reorder(advertiser_name, spend_eur)) %>% 
+        pull(advertiser_name) %>% 
+        levels() %>% 
+        rev()      
       
-
-    
+      hc_data <- hc_data %>% 
+        mutate(value = spend_eur)
+    }
+       
+    if(plot_type_sub == unlist_it(trans_internal$total_text, 1)){
+      #if option is Total
+      print("total")
     
     # js_scrip <- "function() { return '<a target=\"_top\" href=\"https://www.france-politique.fr/election-presidentielle-1965.htm\">' + this.value + '</a>';}"
     
@@ -209,30 +227,8 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
     #                   }")
     # 
     if(plot_type_sub == unlist_it(trans_internal$total_text, 2)){
-      
-      
-      if(minmax == "Minimum"){
-        lvls <- hc_data %>% 
-          mutate(advertiser_name = fct_reorder(advertiser_name, spend_range_min)) %>% 
-          pull(advertiser_name) %>% 
-          levels() %>% 
-          rev()      
-        
-        hc_data <- hc_data %>% 
-          mutate(value = spend_range_min)
-        
-      } else if (minmax == "Maximum"){
-        lvls <- hc_data %>% 
-          mutate(advertiser_name = fct_reorder(advertiser_name, spend_range_max)) %>% 
-          pull(advertiser_name) %>% 
-          levels() %>% 
-          rev()      
-        
-        hc_data <- hc_data %>% 
-          mutate(value = spend_range_max)
-      }
-      
-      
+      # if option is over time
+      print("over time")
       hc_plot <- hc_data %>%
         hchart("line", hcaes(x = date_range_start, 
                              y = value, 

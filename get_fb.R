@@ -68,12 +68,12 @@ total_times <- fb_dat %>%
 fb_total <- total_times %>% 
   # drop_na(spend_lower_bound, spend_upper_bound, impressions_lower_bound, impressions_upper_bound) %>% 
   mutate(impressions_lower_bound = case_when(
-    is.na(impressions_upper_bound) ~ 0, 
-    is.na(impressions_lower_bound) ~ 0,
+    is.na(impressions_upper_bound) ~ 0.01, 
+    is.na(impressions_lower_bound) ~ 0.01,
     T ~ impressions_lower_bound)) %>% 
   mutate(impressions_upper_bound = case_when(
-    is.na(impressions_upper_bound) ~ 0, 
-    is.na(impressions_lower_bound) ~ 0,
+    is.na(impressions_upper_bound) ~ 0.01, 
+    is.na(impressions_lower_bound) ~ 0.01,
     T ~ impressions_upper_bound)) %>% 
   group_by(advertiser_name, advertiser_id) %>% 
   summarise(spend_range_min = sum(spend_lower_bound),

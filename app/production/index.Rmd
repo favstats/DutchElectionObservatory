@@ -52,7 +52,9 @@ library(shinyBS)
 # ggl_ads <- readRDS("data/ggl_ads.RDS")
 
 ggl_aggr <- readRDS("data/ggl_aggr.rds")
-fb_aggr <- readRDS("data/fb_aggr.rds")
+fb_aggr <- readRDS("data/fb_aggr.rds") 
+
+# fb_aggr$total
 
 update_time <- read_lines("data/last_updated.txt") %>% 
   .[length(.)]
@@ -101,6 +103,27 @@ advertiser_names_fb <- fb_aggr$times %>%
 defaults_fb <- advertiser_names_fb %>% 
   keep(~magrittr::is_in(.x, dutch_parties_fb))
 
+
+# facebook_links <- fb_aggr$total %>%
+#   mutate(advertiser_id = ifelse(is.na(advertiser_id), "No Advertiser ID", advertiser_id)) %>% 
+#   mutate(Link = paste0("https://www.facebook.com/", advertiser_id)) %>% 
+#   mutate(Link = ifelse(is.na(advertiser_id), "No Link", Link)) %>% 
+#   select(advertiser_name, advertiser_id, n, Link) %>% 
+#   arrange(desc(n)) %>% 
+#   mutate(platform = "Facebook")
+# 
+# google_links <- ggl_aggr$total %>%
+#   mutate(advertiser_id = ifelse(is.na(advertiser_id), "No Advertiser ID", advertiser_id)) %>% 
+#   mutate(Link = paste0("https://transparencyreport.google.com/political-ads/advertiser/", advertiser_id)) %>% 
+#   mutate(Link = ifelse(is.na(advertiser_id), "No Link", Link)) %>% 
+#   select(advertiser_name, advertiser_id, n, Link) %>% 
+#   arrange(desc(n)) %>% 
+#   mutate(platform = "Google")
+
+# advertisers_dat <- facebook_links %>% 
+#   bind_rows(google_links)
+# 
+# write_csv(advertisers_dat, "data/advertisers.csv")
 ```
 
 
@@ -176,6 +199,10 @@ if(!length(input$language)==0){
 }
 
 })
+
+# fb_aggr$geo %>%
+#   filter(advertiser_name == "PvdA")
+# #   filter(str_detect(advertiser_name, "PvdA"))
 ```
 
 
@@ -267,14 +294,37 @@ selectInput("plot_type_sub_fb",
 
 
 
+
+
+```
+```{r, context = "server"}
+
+output$sub2_fb <- renderUI({
+  
+    if(input$plot_type_fb %in% unlist_it(trans$choices, 2:3)){
+       prettyRadioButtons(
+         inputId = "plot_type_sub2_fb",
+         label = "Minimum vs. Maximum",
+         choices = c("Minimum", "Maximum"), 
+         selected = "Minimum",
+         status = "info",
+         animation = "smooth"
+      )            
+    }
+ })
+
+
+```
+
+```{r}
+uiOutput("sub2_fb")
+
 selectizeInput("advertisers__fb", trans$select_advertisers, 
             choices = advertiser_names_fb, 
             selected = defaults_fb, multiple = T,
             # selectize = TRUE, 
             width = NULL, 
             size = NULL)
-
-
 
 
 ```
@@ -418,7 +468,8 @@ observe ({
              mapdata = map_data,
              platform = "Facebook",
              trans_internal = trans,
-             last_updated = update_time)
+             last_updated = update_time,
+             minmax = input$plot_type_sub2_fb)
   })
 
 
@@ -449,14 +500,20 @@ htmlOutput('fb_chart')
   #          platform = "Facebook")
 # debugonce(hc_plotter)
 # 
-#   fb_aggr %>%
-#     hc_plotter(filters = c("D66", "GroenLinks"),
-#            plot_type = unlist_it(trans$choices, 4),
-#            plot_type_sub = unlist_it(trans$targeted_ads_choices, 1),
-#            # targeting = "Geotargeting",
-#            platform = "Facebook")
+  # fb_aggr %>%
+  #   hc_plotter(filters = c("D66", "GroenLinks"),
+  #          plot_type = unlist_it(trans$choices, 4),
+  #          plot_type_sub = unlist_it(trans$targeted_ads_choices, 1),
+  #          # targeting = "Geotargeting",
+  #          platform = "Facebook", last_updated = update_time, minmax = "minimum")
   # 
-
+debugonce(hc_plotter)
+  ggl_aggr %>%
+    hc_plotter(filters = c("D66", "GroenLinks"),
+           plot_type = unlist_it(trans$choices, 2),
+           plot_type_sub = unlist_it(trans$total_text, 2),
+           # targeting = "Geotargeting",
+           platform = "Google", last_updated = update_time, minmax = "Minimum")
 ```
 
 
@@ -505,15 +562,37 @@ advertiser_names_ggl <- ggl_aggr$total %>%
   keep(~magrittr::is_in(.x, dutch_parties))
 
 defaults_ggl <- advertiser_names_ggl %>% 
-  keep(~magrittr::is_in(.x, dutch_parties))
+  keep(~magrittr::is_in(.x, dutch_parties)) %>% 
+  discard(~magrittr::is_in(.x, c("CDA", "FvD")))
 
 
 selectInput("plot_type_sub_ggl",
        label =  trans$total_vs_overtime,
        choices = unlist_it(trans$total_text),
        selected = unlist_it(trans$total_text, 1))
+```
+
+```{r, context = "server"}
+
+output$sub2_ggl <- renderUI({
+  
+    if(input$plot_type_ggl %in% unlist_it(trans$choices, 2:3)){
+       prettyRadioButtons(
+         inputId = "plot_type_sub2_ggl",
+         label = "Minimum vs. Maximum",
+         choices = c("Minimum", "Maximum"), 
+         selected = "Minimum",
+         status = "info",
+         animation = "smooth"
+      )            
+    }
+ })
 
 
+```
+
+```{r}
+uiOutput("sub2_ggl")
 
 selectizeInput("advertisers__ggl", trans$select_advertisers, 
             choices = advertiser_names_ggl, 
@@ -521,7 +600,10 @@ selectizeInput("advertisers__ggl", trans$select_advertisers,
             # selectize = TRUE, 
             width = NULL, 
             size = NULL)
+
+
 ```
+
 
 
 ```{r, eval = F}
@@ -624,8 +706,10 @@ hc_plotter <- possibly(hc_plotter, otherwise = NULL, quiet = F)
            plot_type = input$plot_type_ggl,
            plot_type_sub = input$plot_type_sub_ggl,
            platform = "Google",
-             trans_internal = trans,
-             last_updated = update_time)
+           trans_internal = trans,
+           last_updated = update_time,
+           minmax = input$plot_type_sub2_ggl
+           )
   })
 
 # ggl_aggr$ggl_times
@@ -656,6 +740,8 @@ hc_plotter <- possibly(hc_plotter, otherwise = NULL, quiet = F)
 #                              color = color))
   
   # disabled
+ 
+ # fb_aggr$total %>% arrange(desc(spend_range_max))
 ```
 
 ```{r}

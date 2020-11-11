@@ -1,4 +1,4 @@
-pacman::p_load(tidyverse, janitor, highcharter, httr, furrr)
+pacman::p_load(tidyverse, janitor, highcharter, httr, furrr, lubridate)
 
 dir.create("data")
 
@@ -65,9 +65,9 @@ unzip(ggl_file, exdir = "data")
 
 unlink(ggl_file)
 
-dir("data/google-political-ads-transparency-bundle", full.names =   T) %>% 
-  discard(~str_detect(.x,"creative")) %>% 
-  walk(file.remove)  
+# dir("data/google-political-ads-transparency-bundle", full.names =   T) %>% 
+#   discard(~str_detect(.x,"creative")) %>% 
+#   walk(file.remove)  
 
 # dutch_parties <- c("D66", "VVD", "GroenLinks", "SP (Socialistische Partij)", "Volt Nederland", "Christen Democratisch Appèl", "Partij van de Arbeid", "FvD")
 
@@ -80,7 +80,7 @@ ggl_ads <- data.table::fread("data/google-political-ads-transparency-bundle/goog
   filter(str_detect(Regions, "NL")) %>%
   janitor::clean_names() %>% 
   # filter(advertiser_name %in% dutch_parties) %>%
-  filter(date_range_start >= as.Date("2020-09-01")) %>% 
+  filter(date_range_start >= as.Date("2020-09-06")) %>% 
   mutate(advertiser_name = case_when(
     advertiser_name == 'Christen Democratisch Appèl' ~ "CDA",
     advertiser_name == 'SP (Socialistische Partij)' ~ "SP",
@@ -93,7 +93,35 @@ ggl_ads_old <- read_rds("data/ggl_ads.rds")
 
 ggl_ads <- ggl_ads %>% 
   bind_rows(ggl_ads_old) %>% 
-  distinct(ad_id, .keep_all = T)
+  distinct(ad_id, .keep_all = T) %>% 
+  filter(date_range_start >= as.Date("2020-09-06")) 
+
+advertiser_emp_ggl <- ggl_ads %>% 
+  pull(advertiser_name) %>% 
+  unique()
+
+weekly_spend <- read_csv("data/google-political-ads-transparency-bundle/google-political-ads-advertiser-weekly-spend.csv")
+
+weekly_spend_ggl <- weekly_spend  %>% 
+  janitor::clean_names() %>% 
+  mutate(advertiser_name = case_when(
+    advertiser_name == 'Christen Democratisch Appèl' ~ "CDA",
+    advertiser_name == 'SP (Socialistische Partij)' ~ "SP",
+    advertiser_name == 'Partij van de Arbeid' ~ "PvdA",
+    advertiser_name == 'Forum voor Democratie' ~ "FvD",
+    T ~ advertiser_name
+  )) %>% 
+  filter(week_start_date >= as.Date("2020-09-06")) %>% 
+  filter(advertiser_name %in% advertiser_emp_ggl) %>% 
+  mutate(spend_eur = ifelse(spend_eur == 0, 0.01, spend_eur)) %>% 
+  complete(advertiser_name,
+           week_start_date = seq.Date(min(week_start_date), max(week_start_date), by="week"),
+           fill = list(spend_eur = 0)) %>% 
+  select(advertiser_name, date_range_start = week_start_date, spend_eur) 
+
+total_spend_ggl <- weekly_spend_ggl %>% 
+  group_by(advertiser_name) %>% 
+  summarize(spend_eur = sum(spend_eur))
 
 ggl_total <- ggl_ads %>% 
   mutate(impressions_lower_bound = case_when(
@@ -122,7 +150,10 @@ ggl_total <- ggl_ads %>%
             n = n()) %>% 
   ungroup() %>% 
   left_join(color_dat)  %>% 
-  assign_colors()
+  assign_colors() %>% 
+  left_join(total_spend_ggl)
+
+
 
 # tidytemplate::save_it(ggl_total)
 
@@ -143,6 +174,7 @@ ggl_times <- ggl_ads  %>%
     # impressions == "> 10M" ~ 20000000,
     T ~ 0
   )) %>% 
+  mutate(date_range_start = floor_date(date_range_start, "week")) %>% 
   group_by(date_range_start, advertiser_name, advertiser_id) %>% 
   summarise(spend_range_min = sum(spend_range_min_eur),
             spend_range_max = sum(spend_range_max_eur),
@@ -153,9 +185,10 @@ ggl_times <- ggl_ads  %>%
             n = n()) %>% 
   ungroup() %>% 
   mutate(date_range_start = as.Date(date_range_start)) %>%
-  complete(advertiser_name, advertiser_id, date_range_start = seq.Date(min(date_range_start), max(date_range_start), by="day"), fill = list(n = 0, spend_range_min = 0, spend_range_mid = 0, spend_range_max = 0, impressions_range_min = 0, impressions_range_mid = 0, impressions_range_max = 0)) %>% 
+  complete(advertiser_name, advertiser_id, date_range_start = seq.Date(min(date_range_start), max(date_range_start), by="week"), fill = list(n = 0, spend_range_min = 0, spend_range_mid = 0, spend_range_max = 0, impressions_range_min = 0, impressions_range_mid = 0, impressions_range_max = 0)) %>% 
   left_join(color_dat) %>% 
-  assign_colors()
+  assign_colors() %>% 
+  left_join(weekly_spend_ggl)
 
 ggl_gender <- ggl_ads %>%
   mutate(gender_targeting = ifelse(str_detect(gender_targeting, "Male") & str_detect(gender_targeting, "Female"), "Not targeted", gender_targeting)) %>%
@@ -297,7 +330,8 @@ page_one_response <- GET(my_link,
                                       limit=100,
                                       ad_active_status="ALL",
                                       search_terms="''",
-                                      impression_condition = 'HAS_IMPRESSIONS_LAST_7_DAYS',
+                                      # impression_condition = '',
+                                      ad_delivery_date_min = "2020-09-01",
                                       fields=search_fields,
                                       # token = token,
                                       ad_reached_countries="NL"))
@@ -332,6 +366,9 @@ while(length(next_link)>0) {
   page <- page + 1
   
 }
+
+saveRDS(df_imp, "fb_dat/fb_dat_experimental.rds")
+
 
 dutch_parties <- c("VVD", "D66", "FvD", "SP", "GroenLinks", "Volt Nederland", "PvdA", "CDA", "PvdD", "ChristenUnie")
 
@@ -397,18 +434,22 @@ total_times <- fb_dat %>%
   filter(date_range_start >= as.Date("2020-09-01")) %>% 
   unnest_wider(spend, names_sep = "_") %>%
   unnest_wider(impressions, names_sep = "_") %>%
-  mutate_at(vars(spend_lower_bound, spend_upper_bound, impressions_lower_bound, impressions_upper_bound), as.numeric) 
-
-fb_total <- total_times %>% 
+  mutate_at(vars(spend_lower_bound, spend_upper_bound, impressions_lower_bound, impressions_upper_bound), as.numeric) %>% 
   # drop_na(spend_lower_bound, spend_upper_bound, impressions_lower_bound, impressions_upper_bound) %>% 
   mutate(impressions_lower_bound = case_when(
     is.na(impressions_upper_bound) ~ 0, 
     is.na(impressions_lower_bound) ~ 0,
+    impressions_lower_bound == 0 ~ 0.01, 
     T ~ impressions_lower_bound)) %>% 
+  mutate(spend_lower_bound = case_when(
+    spend_lower_bound == 0 ~ 0.01, 
+    T ~ spend_lower_bound)) %>% 
   mutate(impressions_upper_bound = case_when(
     is.na(impressions_upper_bound) ~ 0, 
     is.na(impressions_lower_bound) ~ 0,
-    T ~ impressions_upper_bound)) %>% 
+    T ~ impressions_upper_bound))
+
+fb_total <- total_times  %>% 
   group_by(advertiser_name, advertiser_id) %>% 
   summarise(spend_range_min = sum(spend_lower_bound),
             spend_range_max = sum(spend_upper_bound),

@@ -857,5 +857,84 @@ ggl_ads %>%
   count(Advertiser_Name, sort = T)
 ```
 
+```{r}
+fb_dat <- readRDS("fb_dat/fb_dat.rds")
+
+fb_dat %>% 
+  filter(str_detect(advertiser_name, "D66")) %>%
+  drop_na(funding_entity) %>% 
+  distinct(advertiser_name, .keep_all = T)
+  glimpse()
+  
+  
+df_imp %>% 
+  # filter(is.na(funding_entity)) %>% 
+  # filter(id == "365592684777850")
+  # filter(str_detect(page_name, "PvdA")) %>%
+  # count(page_name, sort = T) %>% 
+  # arrange(page_name)
+  # filter(funding_entity == "Partij van de Arbeid (PvdA)") %>%
+  # distinct(ad_creative_body, .keep_all = T) %>% 
+  
+  # filter(funding_entity %in% c("Partij van de Arbeid (PvdA)", "Partij van de Arbeid", "PvdA")) %>%
+  filter(str_detect(funding_entity, "Arbeid|PvdA-GroenLinks")) %>%
+
+  # count(funding_entity, sort = T)
+  mutate(ad_delivery_start_time = as.Date(ad_delivery_start_time)) %>% 
+  mutate(ad_creation_time = as.Date(ad_creation_time)) %>% 
+  mutate(ad_delivery_stop_time = as.Date(ad_delivery_stop_time)) %>% 
+  filter(between(ad_delivery_stop_time, as.Date("2020-10-15"), as.Date("2020-11-11")) | is.na(ad_delivery_stop_time)) %>% 
+  unnest_wider(spend, names_sep = "_") %>% 
+  
+  mutate_at(vars(spend_lower_bound, spend_upper_bound), as.numeric) %>% 
+  mutate(spend_lower_bound = ifelse(spend_lower_bound == 0, 0.01, spend_lower_bound)) %>%
+  
+  group_by(ad_creative_body) %>% 
+  summarise(spend_lower_bound = max(spend_lower_bound),
+            spend_upper_bound = max(spend_upper_bound))%>%
+  ungroup() %>% 
+  summarise(spend_lower_bound = sum(spend_lower_bound),
+            spend_upper_bound = sum(spend_upper_bound))
+  
+```
+
+```{r}
+
+weekly_spend <- read_csv("data/google-political-ads-transparency-bundle/google-political-ads-advertiser-weekly-spend.csv")
+
+weekly_spend  %>% 
+  janitor::clean_names() %>% 
+  mutate(advertiser_name = case_when(
+    advertiser_name == 'Christen Democratisch Appèl' ~ "CDA",
+    advertiser_name == 'SP (Socialistische Partij)' ~ "SP",
+    advertiser_name == 'Partij van de Arbeid' ~ "PvdA",
+    advertiser_name == 'Forum voor Democratie' ~ "FvD",
+    T ~ advertiser_name
+  )) %>% 
+    filter(week_start_date >= as.Date("2020-09-01")) %>% 
+
+  filter(advertiser_name %in% c("D66", "GroenLinks", "VVD", "CDA", "SP", "PvdA", "FvD")) %>% 
+  complete(advertiser_name,
+           week_start_date = seq.Date(min(week_start_date), max(week_start_date), by="week"),
+           fill = list(spend_eur = 0)) %>% 
+  # 
+  # filter(str_detect(Advertiser_Name, "D66|TRUMP"))# %>%
+  # group_by(advertiser_name) %>% 
+  # mutate(spend_eur = cumsum(spend_eur)) %>%
+  ggplot(aes(week_start_date, spend_eur, color = advertiser_name)) +
+  geom_line()
+  count(Advertiser_Name, sort = T)
+  filter()
+
+```
+
+```{r}
+ww <- read_csv("data/google-political-ads-transparency-bundle/google-political-ads-updated.csv")
+
+ww %>% 
+  filter(str_detect(Country, "NL"))
+  count(Regions, sort = T)
+```
+
 
 ## Conclusion
