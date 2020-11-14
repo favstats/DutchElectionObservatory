@@ -317,6 +317,7 @@ search_fields=c("ad_creation_time",
                 "page_id",
                 "page_name",
                 "spend",
+                "ad_snapshot_url",
                 "demographic_distribution",
                 "funding_entity",
                 "impressions",
@@ -330,10 +331,8 @@ page_one_response <- GET(my_link,
                                       limit=100,
                                       ad_active_status="ALL",
                                       search_terms="''",
-                                      # impression_condition = '',
                                       ad_delivery_date_min = "2020-09-01",
                                       fields=search_fields,
-                                      # token = token,
                                       ad_reached_countries="NL"))
 page_one_content<- content(page_one_response)
 
@@ -375,6 +374,12 @@ dutch_parties <- c("VVD", "D66", "FvD", "SP", "GroenLinks", "Volt Nederland", "P
 cat("\n\nFB Data: Read in old data\n\n")  
 
 fb_dat <- readRDS("fb_dat/fb_dat.rds")
+
+
+# fb_dat <- fb_dat %>% 
+#   mutate(advertiser_id = ifelse(is.na(advertiser_id), page_id, advertiser_id))
+
+
 # saveRDS(df_imp, "data/df_imp.rds")
 # df_imp <- readRDS("data/df_imp.rds")
 
@@ -396,7 +401,6 @@ fb_dat <- df_imp %>%
 saveRDS(fb_dat, "fb_dat/fb_dat.rds")
 
 cat("\n\nFB Data: Save data\n\n")  
-
 
 # fb_dat <- readRDS("fb_dat/fb_dat.rds")
 
@@ -437,26 +441,40 @@ total_times <- fb_dat %>%
   mutate_at(vars(spend_lower_bound, spend_upper_bound, impressions_lower_bound, impressions_upper_bound), as.numeric) %>% 
   # drop_na(spend_lower_bound, spend_upper_bound, impressions_lower_bound, impressions_upper_bound) %>% 
   mutate(impressions_lower_bound = case_when(
-    is.na(impressions_upper_bound) ~ 0, 
-    is.na(impressions_lower_bound) ~ 0,
+    # is.na(impressions_upper_bound) ~ 0, 
+    # is.na(impressions_lower_bound) ~ 0,
     impressions_lower_bound == 0 ~ 0.01, 
     T ~ impressions_lower_bound)) %>% 
   mutate(spend_lower_bound = case_when(
     spend_lower_bound == 0 ~ 0.01, 
     T ~ spend_lower_bound)) %>% 
-  mutate(impressions_upper_bound = case_when(
-    is.na(impressions_upper_bound) ~ 0, 
-    is.na(impressions_lower_bound) ~ 0,
-    T ~ impressions_upper_bound))
+  drop_na(impressions_lower_bound, impressions_upper_bound)
+
+batch_id_dat <- total_times  %>% 
+  # filter(is.na(advertiser_id)) %>% View
+  mutate(unique_advertiser_id = as.numeric(as.factor(advertiser_name))) %>% 
+  group_by(ad_creative_body, ad_creative_link_title, advertiser_name, advertiser_id) %>% 
+  mutate(batch_id = paste0(unique_advertiser_id, "_", n(), "_", sample(10000:10000000000, size = 1)))%>% 
+  ungroup() %>% 
+  select(id, batch_id)
 
 fb_total <- total_times  %>% 
-  group_by(advertiser_name, advertiser_id) %>% 
-  summarise(spend_range_min = sum(spend_lower_bound),
-            spend_range_max = sum(spend_upper_bound),
-            spend_range_mid = sum(get_mid(spend_lower_bound, spend_upper_bound)),
-            impressions_range_min = sum(impressions_lower_bound),
-            impressions_range_max = sum(impressions_upper_bound),
-            impressions_range_mid = sum(get_mid(impressions_lower_bound, impressions_upper_bound)),
+  group_by(ad_creative_body, ad_creative_link_title, advertiser_name, advertiser_id) %>% 
+  summarise(spend_range_min = median(spend_lower_bound),
+            spend_range_max = median(spend_upper_bound),
+            spend_range_mid = median(get_mid(spend_lower_bound, spend_upper_bound)),
+            impressions_range_min = median(impressions_lower_bound),
+            impressions_range_max = median(impressions_upper_bound),
+            impressions_range_mid = median(get_mid(impressions_lower_bound, impressions_upper_bound)),
+            n_ids = n()) %>% 
+  ungroup() %>% 
+  group_by(advertiser_name, advertiser_id) %>%# View
+  summarise(spend_range_min = sum(spend_range_min),
+            spend_range_max = sum(spend_range_max),
+            spend_range_mid = sum(spend_range_mid),
+            impressions_range_min = sum(impressions_range_min),
+            impressions_range_max = sum(impressions_range_max),
+            impressions_range_mid = sum(impressions_range_mid),
             n = n()) %>% 
   ungroup() %>% 
   left_join(color_dat)  %>% 
@@ -468,13 +486,22 @@ cat("\n\nFB Data: Get times\n\n")
 # tidytemplate::save_it(fb_total)
 
 fb_times <- total_times %>%
-  group_by(date_range_start, advertiser_name) %>% 
-  summarise(spend_range_min = sum(spend_lower_bound),
-            spend_range_max = sum(spend_upper_bound),
-            spend_range_mid = sum(get_mid(spend_lower_bound, spend_upper_bound)),
-            impressions_range_min = sum(impressions_lower_bound),
-            impressions_range_max = sum(impressions_upper_bound),
-            impressions_range_mid = sum(get_mid(impressions_lower_bound, impressions_upper_bound)),
+  group_by(date_range_start, ad_creative_body, ad_creative_link_title, advertiser_name, advertiser_id) %>% 
+  summarise(spend_range_min = median(spend_lower_bound),
+            spend_range_max = median(spend_upper_bound),
+            spend_range_mid = median(get_mid(spend_lower_bound, spend_upper_bound)),
+            impressions_range_min = median(impressions_lower_bound),
+            impressions_range_max = median(impressions_upper_bound),
+            impressions_range_mid = median(get_mid(impressions_lower_bound, impressions_upper_bound)),
+            n_ids = n()) %>% 
+  ungroup() %>% 
+  group_by(date_range_start, advertiser_name, advertiser_id) %>%# View
+  summarise(spend_range_min = sum(spend_range_min),
+            spend_range_max = sum(spend_range_max),
+            spend_range_mid = sum(spend_range_mid),
+            impressions_range_min = sum(impressions_range_min),
+            impressions_range_max = sum(impressions_range_max),
+            impressions_range_mid = sum(impressions_range_mid),
             n = n()) %>% 
   ungroup() %>% 
   complete(advertiser_name, date_range_start = seq.Date(min(date_range_start), max(date_range_start), by="day"), fill = list(n = 0, spend_range_min = 0, spend_range_mid = 0, spend_range_max = 0, impressions_range_min = 0, impressions_range_mid = 0, impressions_range_max = 0)) %>% 
@@ -509,12 +536,19 @@ fb_gender <- age_gender_targeted  %>%
   mutate(gender_age = paste(gender, age)) %>% 
   filter(!str_detect(gender_age, "unknown")) %>% 
   filter(!str_detect(gender_age, "13-17")) %>% 
+  filter(!str_detect(gender_age, "All")) %>% 
+  drop_na(gender) %>% 
   complete(gender, advertiser_name, age, fill = list(percentage = 0)) %>% 
   group_by(id, gender, advertiser_name) %>% 
   summarize(percentage = sum(percentage)) %>% 
   ungroup()%>% 
-  mutate(percentage = percentage * 100) %>% 
-  left_join(fb_total %>% select(advertiser_id, advertiser_name))
+  mutate(percentage = round(percentage * 100, 2)) %>% 
+  left_join(batch_id_dat) %>% 
+  group_by(advertiser_name, batch_id, gender) %>%
+  summarise(percentage = median(percentage)) %>% 
+  ungroup() %>% 
+  left_join(fb_total %>% select(advertiser_id, advertiser_name)) #%>% 
+  # filter(advertiser_name == "PvdA")
 
 cat("\n\nFB Data: Get age/gender IV\n\n")  
 
@@ -525,11 +559,16 @@ fb_age <- age_gender_targeted  %>%
   mutate(gender_age = paste(gender, age)) %>% 
   filter(!str_detect(gender_age, "unknown")) %>% 
   filter(!str_detect(gender_age, "13-17")) %>% 
+  filter(!str_detect(gender_age, "All")) %>% 
   complete(gender, age, advertiser_id, fill = list(percentage = 0)) %>% 
   group_by(id, age, advertiser_name, advertiser_id) %>% 
   summarize(percentage = sum(percentage)) %>% 
   ungroup() %>% 
-  mutate(percentage = percentage * 100)
+  mutate(percentage = round(percentage * 100, 2)) %>% 
+  left_join(batch_id_dat) %>% 
+  group_by(advertiser_name, advertiser_id, batch_id, age) %>%
+  summarise(percentage = median(percentage)) %>% 
+  ungroup() %>% select(-batch_id)
 
 cat("\n\nFB Data: Get geo I\n\n")    
 
@@ -554,7 +593,12 @@ geo_targeted <- geo_targeted  %>%
   complete(region, advertiser_name, fill = list(percentage = 0)) %>% 
   group_by(id, region, advertiser_name) %>% 
   summarize(percentage = sum(percentage)) %>% 
-  ungroup()
+  ungroup() %>% 
+  left_join(batch_id_dat) %>% 
+  group_by(advertiser_name, batch_id, region) %>%
+  summarise(percentage = median(percentage)) %>% 
+  ungroup() 
+
 
 cat("\n\nFB Data: Get geo III\n\n")    
 

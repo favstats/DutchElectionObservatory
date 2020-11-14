@@ -860,6 +860,12 @@ ggl_ads %>%
 ```{r}
 fb_dat <- readRDS("fb_dat/fb_dat.rds")
 
+
+fb_dat %>% glimpse
+```
+
+
+```{r}
 fb_dat %>% 
   filter(str_detect(advertiser_name, "D66")) %>%
   drop_na(funding_entity) %>% 
@@ -867,7 +873,7 @@ fb_dat %>%
   glimpse()
   
   
-df_imp %>% 
+fb_dat %>% 
   # filter(is.na(funding_entity)) %>% 
   # filter(id == "365592684777850")
   # filter(str_detect(page_name, "PvdA")) %>%
@@ -876,26 +882,34 @@ df_imp %>%
   # filter(funding_entity == "Partij van de Arbeid (PvdA)") %>%
   # distinct(ad_creative_body, .keep_all = T) %>% 
   
+  mutate(ad_delivery_start_time = as.Date(ad_delivery_start_time)) %>% 
+  filter(ad_delivery_start_time >= as.Date("2020-09-01")) %>% 
+  filter(advertiser_name == "PvdA") %>% 
+  group_by(ad_creative_body, ad_creative_link_title, advertiser_name) %>%
+  summarize(n = n()) %>% 
+  arrange(desc(n)) %>% View
   # filter(funding_entity %in% c("Partij van de Arbeid (PvdA)", "Partij van de Arbeid", "PvdA")) %>%
-  filter(str_detect(funding_entity, "Arbeid|PvdA-GroenLinks")) %>%
+  # filter(str_detect(funding_entity, "Arbeid|PvdA-GroenLinks")) %>%
 
   # count(funding_entity, sort = T)
   mutate(ad_delivery_start_time = as.Date(ad_delivery_start_time)) %>% 
+  filter(ad_delivery_start_time >= as.Date("2020-09-01")) %>% 
   mutate(ad_creation_time = as.Date(ad_creation_time)) %>% 
-  mutate(ad_delivery_stop_time = as.Date(ad_delivery_stop_time)) %>% 
-  filter(between(ad_delivery_stop_time, as.Date("2020-10-15"), as.Date("2020-11-11")) | is.na(ad_delivery_stop_time)) %>% 
+  mutate(ad_delivery_stop_time = as.Date(ad_delivery_stop_time)) %>%
+  # filter(between(ad_delivery_stop_time, as.Date("2020-10-15"), as.Date("2020-11-11")) | is.na(ad_delivery_stop_time)) %>% 
   unnest_wider(spend, names_sep = "_") %>% 
   
   mutate_at(vars(spend_lower_bound, spend_upper_bound), as.numeric) %>% 
   mutate(spend_lower_bound = ifelse(spend_lower_bound == 0, 0.01, spend_lower_bound)) %>%
   
-  group_by(ad_creative_body) %>% 
+  group_by(ad_creative_body, ad_creative_link_title, advertiser_name) %>% 
   summarise(spend_lower_bound = max(spend_lower_bound),
             spend_upper_bound = max(spend_upper_bound))%>%
   ungroup() %>% 
+  group_by(advertiser_name) %>% 
   summarise(spend_lower_bound = sum(spend_lower_bound),
-            spend_upper_bound = sum(spend_upper_bound))
-  
+            spend_upper_bound = sum(spend_upper_bound)) %>% 
+  arrange(desc(spend_upper_bound))
 ```
 
 ```{r}
@@ -934,6 +948,18 @@ ww <- read_csv("data/google-political-ads-transparency-bundle/google-political-a
 ww %>% 
   filter(str_detect(Country, "NL"))
   count(Regions, sort = T)
+```
+
+
+```{r}
+read_csv("data/FacebookAdLibraryReport_2020-11-11_NL_lifelong_advertisers.csv") 
+
+library(rvest)
+
+rvest::html_session("https://www.facebook.com/ads/library/report/?country=NL") %>% 
+  read_html() %>% 
+  as.character()
+  html_nodes(xpath = '//*[@id="content"]')
 ```
 
 

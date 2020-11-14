@@ -486,7 +486,9 @@ observe ({
  #   geom_line()
  #   count(advertiser_name, sort = T)
 ```
-
+<!-- <div id="fb-root"></div> -->
+<!-- <script async defer src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v7.0"></script> -->
+<!-- <div class="fb-ad-library-spend-tracker" data-country="NL" data-page-ids="113895885305052,52985377549,609816282477420,211661062254003,121264564551002,175740570505,128393027527,320374518118,102287806490622" data-time-preset="last_7_days" data-width="500"></div> -->
 
 ```{r}
 
@@ -507,13 +509,13 @@ htmlOutput('fb_chart')
   #          # targeting = "Geotargeting",
   #          platform = "Facebook", last_updated = update_time, minmax = "minimum")
   # 
-debugonce(hc_plotter)
-  ggl_aggr %>%
-    hc_plotter(filters = c("D66", "GroenLinks"),
-           plot_type = unlist_it(trans$choices, 2),
-           plot_type_sub = unlist_it(trans$total_text, 2),
-           # targeting = "Geotargeting",
-           platform = "Google", last_updated = update_time, minmax = "Minimum")
+# debugonce(hc_plotter)
+#   ggl_aggr %>%
+#     hc_plotter(filters = c("D66", "GroenLinks"),
+#            plot_type = unlist_it(trans$choices, 2),
+#            plot_type_sub = unlist_it(trans$total_text, 2),
+#            # targeting = "Geotargeting",
+#            platform = "Google", last_updated = update_time, minmax = "Minimum")
 ```
 
 
@@ -529,7 +531,7 @@ Sidebar {.sidebar}
 prettyRadioButtons(
    inputId = "plot_type_ggl",
    label = trans$plot_type,
-   choices = trans$choices %>% str_split(",") %>% unlist, 
+   choices = trans$choices %>% str_split(",") %>% unlist %>% .[c(1:2, 4)], 
    selected = trans$choices %>% str_split(",") %>% unlist %>% .[1],
    # icon = icon("check"), 
    status = "info",
@@ -554,16 +556,20 @@ radioTooltip(id = "plot_type_ggl",
              choice = unlist_it(trans$choices, 4), 
              title = trans$choice_targeted_tooltip_ggl)
 
-dutch_parties <- c("D66", "VVD", "GroenLinks", "SP", "Volt Nederland", "CDA", "PvdA", "FvD")
+dutch_parties <- c("D66", "VVD",
+                   "GroenLinks", "SP", 
+                   "Volt Nederland", "CDA", 
+                   "PvdA", "FvD")
 
 
 advertiser_names_ggl <- ggl_aggr$total %>%
   pull(advertiser_name) %>% 
-  keep(~magrittr::is_in(.x, dutch_parties))
+  keep(~magrittr::is_in(.x, dutch_parties))  %>% 
+  discard(~magrittr::is_in(.x, c( "FvD")))
+
 
 defaults_ggl <- advertiser_names_ggl %>% 
-  keep(~magrittr::is_in(.x, dutch_parties)) %>% 
-  discard(~magrittr::is_in(.x, c("CDA", "FvD")))
+  keep(~magrittr::is_in(.x, dutch_parties))
 
 
 selectInput("plot_type_sub_ggl",
@@ -572,7 +578,7 @@ selectInput("plot_type_sub_ggl",
        selected = unlist_it(trans$total_text, 1))
 ```
 
-```{r, context = "server"}
+```{r, context = "server", eval = F}
 
 output$sub2_ggl <- renderUI({
   
@@ -591,9 +597,12 @@ output$sub2_ggl <- renderUI({
 
 ```
 
-```{r}
+```{r, eval = F}
 uiOutput("sub2_ggl")
+```
 
+
+```{r}
 selectizeInput("advertisers__ggl", trans$select_advertisers, 
             choices = advertiser_names_ggl, 
             selected = defaults_ggl, multiple = T,
@@ -707,8 +716,8 @@ hc_plotter <- possibly(hc_plotter, otherwise = NULL, quiet = F)
            plot_type_sub = input$plot_type_sub_ggl,
            platform = "Google",
            trans_internal = trans,
-           last_updated = update_time,
-           minmax = input$plot_type_sub2_ggl
+           last_updated = update_time#,
+           # minmax = input$plot_type_sub2_ggl
            )
   })
 
