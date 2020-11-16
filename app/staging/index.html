@@ -8,9 +8,9 @@
 
 
 
-<title>Nederlands verkiezingsobservatorium-dashboard</title>
+<title>Dutch Election Observatory Dashboard</title>
 
-<meta property="og:title" content="Nederlands verkiezingsobservatorium-dashboard" />
+<meta property="og:title" content="Dutch Election Observatory Dashboard" />
 
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
 
@@ -801,7 +801,7 @@ body {
   <img src="https://politieke-advertenties.nl/wp-content/uploads/2020/11/logo-e1604404707339.png" class="navbar-logo"/>
 </span>
 <span class="navbar-brand">
-  Nederlands verkiezingsobservatorium-dashboard
+  Dutch Election Observatory Dashboard
   <span class="navbar-author">
         </span>
 </span>
@@ -2632,41 +2632,41 @@ window.FlexDashboardComponents.push({
 
 </div>
 <div id="plot_type_fb" class="form-group shiny-input-radiogroup shiny-input-container">
-<label class="control-label" for="plot_type_fb">Kies variabele</label>
+<label class="control-label" for="plot_type_fb">Select Metric:</label>
 <div class="shiny-options-group">
 <div style="height:7px;"></div>
 <div class="pretty p-default p-round p-smooth">
-<input type="radio" name="plot_type_fb" value="Aantal Advertenties" checked="checked"/>
+<input type="radio" name="plot_type_fb" value="Number of Ads" checked="checked"/>
 <div class="state p-info">
 <label>
-<span>Aantal Advertenties</span>
+<span>Number of Ads</span>
 </label>
 </div>
 </div>
 <div style="height:3px;"></div>
 <div class="pretty p-default p-round p-smooth">
-<input type="radio" name="plot_type_fb" value="Uitgegeven (in EUR)"/>
+<input type="radio" name="plot_type_fb" value="Spent (in EUR)"/>
 <div class="state p-info">
 <label>
-<span>Uitgegeven (in EUR)</span>
+<span>Spent (in EUR)</span>
 </label>
 </div>
 </div>
 <div style="height:3px;"></div>
 <div class="pretty p-default p-round p-smooth">
-<input type="radio" name="plot_type_fb" value="Impressies"/>
+<input type="radio" name="plot_type_fb" value="Impressions"/>
 <div class="state p-info">
 <label>
-<span>Impressies</span>
+<span>Impressions</span>
 </label>
 </div>
 </div>
 <div style="height:3px;"></div>
 <div class="pretty p-default p-round p-smooth">
-<input type="radio" name="plot_type_fb" value="Getargete Advertenties"/>
+<input type="radio" name="plot_type_fb" value="Targeted Ads"/>
 <div class="state p-info">
 <label>
-<span>Getargete Advertenties</span>
+<span>Targeted Ads</span>
 </label>
 </div>
 </div>
@@ -2676,8 +2676,8 @@ window.FlexDashboardComponents.push({
     $(document).ready(function() {
       setTimeout(function() {
         $('input', $('#plot_type_fb')).each(function(){
-          if(this.getAttribute('value') == 'Aantal Advertenties') {
-            opts = $.extend({'placement': 'bottom', 'trigger': 'hover', 'title': 'Deze variabele toont het aantal advertenties die beschikbaar zijn in Facebooks advertentiebibliotheek. <br><br>Let op: dit aantal kan afwijken van het daadwerkelijke aantal advertenties.'}, {html: true});
+          if(this.getAttribute('value') == 'Number of Ads') {
+            opts = $.extend({'placement': 'bottom', 'trigger': 'hover', 'title': 'This metric shows the number of ads that are available in the Facebook Ad library. <br><br>Note: This number might deviate from the real number of ads.'}, {html: true});
             $(this.parentElement).tooltip('destroy');
             $(this.parentElement).tooltip(opts);
           }
@@ -2688,8 +2688,8 @@ window.FlexDashboardComponents.push({
     $(document).ready(function() {
       setTimeout(function() {
         $('input', $('#plot_type_fb')).each(function(){
-          if(this.getAttribute('value') == 'Uitgegeven (in EUR)') {
-            opts = $.extend({'placement': 'bottom', 'trigger': 'hover', 'title': 'Deze variabele maakt een schatting van de hoeveelheid geld dat is besteed aan advertenties. De advertentiebibliotheek van Facebook geeft slechts een zeer ruwe schatting van het minimum- en maximumbedrag dat per advertentie is besteed.<br><br>Het "midpunt" is de mediaan van het minimum- en maximumbedrag.'}, {html: true});
+          if(this.getAttribute('value') == 'Spent (in EUR)') {
+            opts = $.extend({'placement': 'bottom', 'trigger': 'hover', 'title': 'This metric estimates how much money was spent on ads.  The Facebook Ad library API only provides very broad" lower" and "upper bounds" of the amount spent on ads.<br><br>The mid point is interpolated using the median of the two boundaries but it might severely over- or underestimate the real amount of money spend.'}, {html: true});
             $(this.parentElement).tooltip('destroy');
             $(this.parentElement).tooltip(opts);
           }
@@ -2700,8 +2700,8 @@ window.FlexDashboardComponents.push({
     $(document).ready(function() {
       setTimeout(function() {
         $('input', $('#plot_type_fb')).each(function(){
-          if(this.getAttribute('value') == 'Impressies') {
-            opts = $.extend({'placement': 'bottom', 'trigger': 'hover', 'title': 'Deze variabele schat in hoe vaak een advertentie is getoond. Een impressie betekent niet dat een gebruiker de advertentie daadwerkelijk heeft gezien. Een advertentie kan meerdere malen aan dezelfde gebruiker worden getoond. De advertentiebibliotheek van Facebook geeft slechts een zeer ruwe schatting van het minimum en maximum aantal impressies per advertentie.<br><br>Het "midpunt" is de mediaan van het minimum en maximum aantal impressies.'}, {html: true});
+          if(this.getAttribute('value') == 'Impressions') {
+            opts = $.extend({'placement': 'bottom', 'trigger': 'hover', 'title': 'This metric shows how many "impressions" or views an ad received on Facebook. The Facebook Ad library only provides very broad "lower" and "upper bounds" of impressions.<br><br>The mid point is interpolated using the median of the two boundaries but it might severely over- or underestimate the real amount of money spend.'}, {html: true});
             $(this.parentElement).tooltip('destroy');
             $(this.parentElement).tooltip(opts);
           }
@@ -2712,8 +2712,8 @@ window.FlexDashboardComponents.push({
     $(document).ready(function() {
       setTimeout(function() {
         $('input', $('#plot_type_fb')).each(function(){
-          if(this.getAttribute('value') == 'Getargete Advertenties') {
-            opts = $.extend({'placement': 'bottom', 'trigger': 'hover', 'title': 'Deze variabele toont op welke manier advertenties zijn getarget. De advertentiebibliotheek van Facebook geeft slechts een beperkt beeld van wie de advertentie heeft gezien.<br><br>De percentages drukken per provincie,leeftijdsgroep of gender de verdeling uit van het aantal impressies.'}, {html: true});
+          if(this.getAttribute('value') == 'Targeted Ads') {
+            opts = $.extend({'placement': 'bottom', 'trigger': 'hover', 'title': 'This option reveals how ads were targeted towards voters. The Facebook Ad library only provides limited information about who saw the advertisements.<br><br>The percentages shown relate to the share of the specific demographic or geographic group that has seen the ad.'}, {html: true});
             $(this.parentElement).tooltip('destroy');
             $(this.parentElement).tooltip(opts);
           }
@@ -2721,10 +2721,10 @@ window.FlexDashboardComponents.push({
       }, 500)
     });
   </script><div class="form-group shiny-input-container">
-<label class="control-label" for="plot_type_sub_fb">Totaal versus gedurende een tijdsperiode:</label>
+<label class="control-label" for="plot_type_sub_fb">Total vs. Over Time:</label>
 <div>
-<select id="plot_type_sub_fb"><option value="Totaal" selected>Totaal</option>
-<option value="gedurende een tijdsperiode">gedurende een tijdsperiode</option></select>
+<select id="plot_type_sub_fb"><option value="Total" selected>Total</option>
+<option value="Over Time">Over Time</option></select>
 <script type="application/json" data-for="plot_type_sub_fb" data-nonempty="">{}</script>
 </div>
 </div>
@@ -2735,7 +2735,7 @@ window.FlexDashboardComponents.push({
 
 </div>
 <p><div id="sub2_fb" class="shiny-html-output"></div><div class="form-group shiny-input-container">
-<label class="control-label" for="advertisers__fb">Selecteer adverteerders</label>
+<label class="control-label" for="advertisers__fb">Select Advertisers</label>
 <div>
 <select id="advertisers__fb" class="form-control" multiple="multiple"><option value="CDA" selected>CDA</option>
 <option value="ChristenUnie" selected>ChristenUnie</option>
@@ -2755,8 +2755,8 @@ window.FlexDashboardComponents.push({
 </div>
 <div id="section-column" class="section level2">
 <h2>Column</h2>
-<div id="section-facebook-advertenties" class="section level3">
-<h3>Facebook-advertenties</h3>
+<div id="section-facebook-ads" class="section level3">
+<h3>Facebook Ads</h3>
 <div class="knitr-options" data-fig-width="576" data-fig-height="460">
 
 </div>
@@ -2778,32 +2778,32 @@ window.FlexDashboardComponents.push({
 
 </div>
 <p><div id="plot_type_ggl" class="form-group shiny-input-radiogroup shiny-input-container">
-<label class="control-label" for="plot_type_ggl">Kies variabele</label>
+<label class="control-label" for="plot_type_ggl">Select Metric:</label>
 <div class="shiny-options-group">
 <div style="height:7px;"></div>
 <div class="pretty p-default p-round p-smooth">
-<input type="radio" name="plot_type_ggl" value="Aantal Advertenties" checked="checked"/>
+<input type="radio" name="plot_type_ggl" value="Number of Ads" checked="checked"/>
 <div class="state p-info">
 <label>
-<span>Aantal Advertenties</span>
+<span>Number of Ads</span>
 </label>
 </div>
 </div>
 <div style="height:3px;"></div>
 <div class="pretty p-default p-round p-smooth">
-<input type="radio" name="plot_type_ggl" value="Uitgegeven (in EUR)"/>
+<input type="radio" name="plot_type_ggl" value="Spent (in EUR)"/>
 <div class="state p-info">
 <label>
-<span>Uitgegeven (in EUR)</span>
+<span>Spent (in EUR)</span>
 </label>
 </div>
 </div>
 <div style="height:3px;"></div>
 <div class="pretty p-default p-round p-smooth">
-<input type="radio" name="plot_type_ggl" value="Getargete Advertenties"/>
+<input type="radio" name="plot_type_ggl" value="Targeted Ads"/>
 <div class="state p-info">
 <label>
-<span>Getargete Advertenties</span>
+<span>Targeted Ads</span>
 </label>
 </div>
 </div>
@@ -2813,8 +2813,8 @@ window.FlexDashboardComponents.push({
     $(document).ready(function() {
       setTimeout(function() {
         $('input', $('#plot_type_ggl')).each(function(){
-          if(this.getAttribute('value') == 'Aantal Advertenties') {
-            opts = $.extend({'placement': 'bottom', 'trigger': 'hover', 'title': 'Deze variabele toont het aantal advertenties die beschikbaar zijn in het transparantierapport van Google.<br><br>Let op: dit aantal kan afwijken van het daadwerkelijke aantal advertenties.'}, {html: true});
+          if(this.getAttribute('value') == 'Number of Ads') {
+            opts = $.extend({'placement': 'bottom', 'trigger': 'hover', 'title': 'This metric shows the number of ads that are available in the Google Transparency Report.<br><br>Note: This number might deviate from the real number of ads.'}, {html: true});
             $(this.parentElement).tooltip('destroy');
             $(this.parentElement).tooltip(opts);
           }
@@ -2825,8 +2825,8 @@ window.FlexDashboardComponents.push({
     $(document).ready(function() {
       setTimeout(function() {
         $('input', $('#plot_type_ggl')).each(function(){
-          if(this.getAttribute('value') == 'Uitgegeven (in EUR)') {
-            opts = $.extend({'placement': 'bottom', 'trigger': 'hover', 'title': 'Deze variabele schat in hoeveel geld is uitgegeven aan advertenties. Het transparantierapport van Google toon slecht zeer ruwe schatting van het minimum- en maximumbedrag dat per advertentie is besteed.<br><br>Het "midpunt" is de mediaan van het minimum- en maximumbedrag.'}, {html: true});
+          if(this.getAttribute('value') == 'Spent (in EUR)') {
+            opts = $.extend({'placement': 'bottom', 'trigger': 'hover', 'title': 'This metric shows how much money was spent on ads.'}, {html: true});
             $(this.parentElement).tooltip('destroy');
             $(this.parentElement).tooltip(opts);
           }
@@ -2837,8 +2837,8 @@ window.FlexDashboardComponents.push({
     $(document).ready(function() {
       setTimeout(function() {
         $('input', $('#plot_type_ggl')).each(function(){
-          if(this.getAttribute('value') == 'Impressies') {
-            opts = $.extend({'placement': 'bottom', 'trigger': 'hover', 'title': 'Deze variabele schat in hoe vaak een advertentie is getoond. Een impressie betekent niet dat een gebruiker de advertentie daadwerkelijk heeft gezien. Een advertentie kan meerdere malen aan dezelfde gebruiker worden getoond. het transparantierapport van Google geeft slechts een zeer ruwe schatting van het minimum en maximum aantal impressies per advertentie.<br><br>Het "midpunt" is de mediaan van het minimum en maximum aantal impressies.'}, {html: true});
+          if(this.getAttribute('value') == 'Impressions') {
+            opts = $.extend({'placement': 'bottom', 'trigger': 'hover', 'title': 'This metric shows how many "impressions" or views an ad received on Google platforms. The Google Transparency Report only provides very broad "lower" and "upper bounds" of impressions.<br><br>The mid point is interpolated using the median of the two boundaries but it might severely over- or underestimate the real amount of impressions.'}, {html: true});
             $(this.parentElement).tooltip('destroy');
             $(this.parentElement).tooltip(opts);
           }
@@ -2849,8 +2849,8 @@ window.FlexDashboardComponents.push({
     $(document).ready(function() {
       setTimeout(function() {
         $('input', $('#plot_type_ggl')).each(function(){
-          if(this.getAttribute('value') == 'Getargete Advertenties') {
-            opts = $.extend({'placement': 'bottom', 'trigger': 'hover', 'title': 'Deze variabele toont hoe advertenties zijn getargeted naar burgers. Het transparantierapport van Google geeft informatie over de groepen die de adverteerder wilde bereiken.<br><br>De percentages geven aan hoeveel advertenties getarget zijn naar specifieke groepen.'}, {html: true});
+          if(this.getAttribute('value') == 'Targeted Ads') {
+            opts = $.extend({'placement': 'bottom', 'trigger': 'hover', 'title': 'This option reveals how ads were targeted towards voters. The Google Transparency Report  provides information about the groups that the advertiser chose to target.<br><br>The percentages shown relate to how many of the ads were targeted towards specific groups.'}, {html: true});
             $(this.parentElement).tooltip('destroy');
             $(this.parentElement).tooltip(opts);
           }
@@ -2858,10 +2858,10 @@ window.FlexDashboardComponents.push({
       }, 500)
     });
   </script><div class="form-group shiny-input-container">
-<label class="control-label" for="plot_type_sub_ggl">Totaal versus gedurende een tijdsperiode:</label>
+<label class="control-label" for="plot_type_sub_ggl">Total vs. Over Time:</label>
 <div>
-<select id="plot_type_sub_ggl"><option value="Totaal" selected>Totaal</option>
-<option value="gedurende een tijdsperiode">gedurende een tijdsperiode</option></select>
+<select id="plot_type_sub_ggl"><option value="Total" selected>Total</option>
+<option value="Over Time">Over Time</option></select>
 <script type="application/json" data-for="plot_type_sub_ggl" data-nonempty="">{}</script>
 </div>
 </div></p>
@@ -2875,7 +2875,7 @@ window.FlexDashboardComponents.push({
 
 </div>
 <div class="form-group shiny-input-container">
-<label class="control-label" for="advertisers__ggl">Selecteer adverteerders</label>
+<label class="control-label" for="advertisers__ggl">Select Advertisers</label>
 <div>
 <select id="advertisers__ggl" class="form-control" multiple="multiple"><option value="CDA" selected>CDA</option>
 <option value="D66" selected>D66</option>
@@ -2890,8 +2890,8 @@ window.FlexDashboardComponents.push({
 </div>
 <div id="section-column-1" class="section level2">
 <h2>Column</h2>
-<div id="section-google-advertenties" class="section level3">
-<h3>Google Advertenties</h3>
+<div id="section-google-ads-1" class="section level3">
+<h3>Google Ads</h3>
 <div class="knitr-options" data-fig-width="576" data-fig-height="460">
 
 </div>
@@ -2906,12 +2906,12 @@ window.FlexDashboardComponents.push({
 <h1>Snapchat</h1>
 <!-- Column {.tabset .tabset-fade} -->
 <!-- ----------------------------------------------------------------------- -->
-<div id="section-snapchat-advertenties" class="section level3">
-<h3>Snapchat Advertenties</h3>
+<div id="section-snapchat-ads" class="section level3">
+<h3>Snapchat Ads</h3>
 <div class="knitr-options" data-fig-width="576" data-fig-height="460">
 
 </div>
-Nog niet genoeg advertenties om iets te kunnen weergeven.
+Not enough ads to display yet.
 <!-- ```{r} -->
 <!-- ad_counts <- snap_ads  %>%  -->
 <!--   count(start_date, paying_advertiser_name) %>% -->
@@ -3017,21 +3017,27 @@ update_time <- read_lines("data/last_updated.txt") %>%
 # 
 # saveRDS(trans, file = "data/trans_dutch.rds")
 
-# trans <- readRDS("data/trans_eng.rds")
+# trans_eng <- translation %>%
+#   select(text_id, contains("english")) %>%
+#   data.table::transpose() %>%
+#   janitor::row_to_names(1)
+
+# saveRDS(trans, file = "data/trans_eng.rds")
 
 # snap_ads <- readRDS("data/snap_ads.RDS")
 # 
-trans <- readRDS("data/trans_dutch.rds")
+# trans <- readRDS("data/trans_dutch.rds")
+trans <- readRDS("data/trans_eng.rds")
 # 
 # 
 map_data <- readRDS("data/mapdata.RDS")
 
 # trans <- read_csv2("data/translation.csv")  %>%
-#   select(text_id, contains("dutch")) %>%
-#   data.table::transpose() %>%
+#   select(text_id, contains("english")) %>%
+#   data.table::transpose() %>% #glimpse
 #   janitor::row_to_names(1) %>%
 #   mutate_all(str_trim)%>%
-#   mutate_all(~str_replace_all(.x, ", ", ",")) 
+#   mutate_all(~str_replace_all(.x, ", ", ","))
 
 
 source("helpers.R")
@@ -3101,8 +3107,15 @@ observe({
   # trans <- readRDS("data/trans_dutch.rds")
   
   # Sys.sleep(1)
-  sendSweetAlert(session, title = trans$welcome_title,
-    text = trans$welcome_text)
+  sendSweetAlert(session, 
+                 title = trans$welcome_title,
+                 text = tags$span(
+                   trans$welcome_text_one,
+                   tags$a(trans$welcome_text_two,     href="http://politieke-advertenties.nl/", target="_blank"), 
+                   trans$welcome_text_three,
+                   tags$br(),
+                   tags$br(),
+                   trans$welcome_text_four), html = T)
   #     if(!exists("selected_lang")){
   #       selected_lang <<- "Nederlands"
   #     }

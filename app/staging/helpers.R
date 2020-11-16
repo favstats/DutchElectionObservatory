@@ -38,6 +38,8 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
     href_text <- "https://transparencyreport.google.com/political-ads/region/nl"   
   }
   
+  upper_or_lower_bound <- minmax
+  
   
   # if(!is.null(plot_dat_fin$page_name)){
   #   plot_dat_fin <- plot_dat_fin %>% rename(advertiser_name = page_name)
@@ -118,12 +120,14 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
   } else if (plot_type == unlist_it(trans_internal$choices, 2)) {
     ## if option is spend
     
-    title_text <- glue::glue(trans_internal$plot_title_spend)
-    subtitle_text <- glue::glue(trans_internal$plot_subtitle_spend)
- 
-    
     if(platform == "Facebook"){
       print("Facebook")
+      
+      spend_tooltip <- trans_internal$plot_tooltip_spend_fb
+      
+      title_text <- glue::glue(trans_internal$plot_title_spend_fb)
+      subtitle_text <- glue::glue(trans_internal$plot_subtitle_spend_fb)
+      
       if(minmax == "Minimum"){
         print("Minimum")
         lvls <- hc_data %>% 
@@ -145,9 +149,17 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
         
         hc_data <- hc_data %>% 
           mutate(value = spend_range_max)
+        
+        
       }
     } else if(platform == "Google"){
       print("Google")
+      
+      spend_tooltip <- trans_internal$plot_tooltip_spend_ggl
+      
+      title_text <- glue::glue(trans_internal$plot_title_spend_ggl)
+      subtitle_text <- glue::glue(trans_internal$plot_subtitle_spend_ggl)      
+  
       lvls <- hc_data %>% 
         mutate(advertiser_name = fct_reorder(advertiser_name, spend_eur)) %>% 
         pull(advertiser_name) %>% 
@@ -156,6 +168,7 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
       
       hc_data <- hc_data %>% 
         mutate(value = spend_eur)
+      
     }
        
     if(plot_type_sub == unlist_it(trans_internal$total_text, 1)){
@@ -190,7 +203,7 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
           # low = spend_range_min,
           # high = spend_range_max,
           color = color),
-        tooltip = list(pointFormat = trans_internal$plot_tooltip_spend)) %>%
+        tooltip = list(pointFormat = spend_tooltip)) %>%
       # hchart(
       #   type = "errorbar",
       #   hcaes(
@@ -209,7 +222,7 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
       #   ),
       #   name = "Euros spent",
       #   tooltip = list(pointFormat = "<b>Lower bound:</b> {point.spend_range_min}€<br><b>Mid point:</b> {point.spend_range_mid}€<br><b>Upper bound:</b> {point.spend_range_max}€<br><br><b>Number of Ads:</b> {point.n}"))%>%
-      hc_yAxis(reversed = F, min = 0, title = list(text = trans_internal$plot_yaxis_spend))  %>% 
+      hc_yAxis(reversed = F, min = 0, title = list(text = glue::glue(trans_internal$plot_yaxis_spend)))  %>% 
       hc_xAxis(categories = lvls, title = list(text = "")#,  
                # labels = list(
                #   formatter = JS(js_scrip)
@@ -233,13 +246,13 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
         hchart("line", hcaes(x = date_range_start, 
                              y = value, 
                              group = advertiser_name),
-               tooltip = list(pointFormat = paste0("<b>{point.advertiser_name}</b><br><br>", trans_internal$plot_tooltip_spend))) %>%
+               tooltip = list(pointFormat = paste0("{point.advertiser_name}<br><br>", spend_tooltip))) %>%
         hc_title(
           text = title_text
         ) %>%
         hc_yAxis(
           align = "left",
-          title = list(text = trans_internal$plot_yaxis_spend)
+          title = list(text = glue::glue(trans_internal$plot_yaxis_spend))
         ) %>%
         hc_xAxis(
           align = "left",
@@ -397,6 +410,7 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
         
         hc_plot <- hc_data %>% 
           filter(n != 0) %>% 
+          mutate(geo_targeting_included = ifelse(geo_targeting_included == "Not targeted", trans_internal$not_targeted, geo_targeting_included)) %>% 
           hchart("bar", hcaes(x = advertiser_name, y = perc, group = geo_targeting_included),
                  tooltip = list(pointFormat = "<b>{point.geo_targeting_included}: </b> {point.perc}%"))  %>%
           hc_xAxis(
@@ -420,21 +434,23 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
         
         hc_plot <- hc_data %>% 
           # filter(n != 0) %>% 
+          mutate(gender_targeting = ifelse(gender_targeting == "Not targeted", trans_internal$not_targeted, gender_targeting)) %>% 
           hchart("bar", hcaes(x = advertiser_name, y = perc, group = gender_targeting),
                  tooltip = list(pointFormat = "<b>{point.gender_targeting}: </b> {point.perc}%"))  %>%
           hc_xAxis(
             align = "left",
-            title = list(text = trans_internal$plot_yaxis_gender)
+            title = list(text = trans_internal$plot_yaxis_gender_ggl)
           ) %>%
           hc_yAxis(
             align = "left",
-            title = list(text = trans_internal$plot_xaxis_gender_ggl)
+            title = list(text = trans_internal$plot_xaxis_gender)
           ) 
       } else if (platform == "Facebook"){
         
         
         hc_data <- hc_data %>% 
           filter(gender %in% c("male", "female")) %>% 
+          mutate(gender = ifelse(gender == "male", trans_internal$gender_male, trans_internal$gender_female)) %>% 
           data_to_boxplot(percentage, advertiser_name, gender)
         
         hc_plot <-  highchart() %>%
@@ -459,16 +475,17 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
             age_targeting2 == "25-34, 35-44, 45-54, 55-64, ≥65" ~ "25-65+",
             T ~ age_targeting2
           )) %>% 
+          mutate(age_targeting2 = ifelse(age_targeting2 == "Not targeted", trans_internal$not_targeted, age_targeting2)) %>% 
           # filter(n != 0) %>% 
           hchart("bar", hcaes(x = advertiser_name, y = perc, group = age_targeting2),
                  tooltip = list(pointFormat = "<b>{point.age_targeting2}: </b> {point.perc}%"))  %>%
           hc_xAxis(
             align = "left",
-            title = list(text = trans_internal$plot_yaxis_gender)
+            title = list(text = trans_internal$plot_yaxis_age_ggl)
           ) %>%
           hc_yAxis(
             align = "left",
-            title = list(text = trans_internal$plot_xaxis_age_ggl)
+            title = list(text = trans_internal$plot_xaxis_age)
           ) 
       } else if (platform == "Facebook"){
         
