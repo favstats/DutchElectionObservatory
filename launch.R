@@ -1,5 +1,5 @@
 library(git2r)
-
+# sudo systemctl restart shiny-server.service
 file.copy(from = "app/staging/helpers.R", to = "app/production", recursive = T, overwrite = T)
 file.copy(from = "app/staging/index.html", to = "app/production", recursive = T, overwrite = T)
 file.copy(from = "app/staging/index.Rmd", to = "app/production", recursive = T, overwrite = T)

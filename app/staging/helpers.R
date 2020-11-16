@@ -155,6 +155,8 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
     } else if(platform == "Google"){
       print("Google")
       
+      upper_or_lower_bound <- "Totaal"
+      
       spend_tooltip <- trans_internal$plot_tooltip_spend_ggl
       
       title_text <- glue::glue(trans_internal$plot_title_spend_ggl)

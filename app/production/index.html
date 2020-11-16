@@ -2689,7 +2689,7 @@ window.FlexDashboardComponents.push({
       setTimeout(function() {
         $('input', $('#plot_type_fb')).each(function(){
           if(this.getAttribute('value') == 'Uitgegeven (in EUR)') {
-            opts = $.extend({'placement': 'bottom', 'trigger': 'hover', 'title': 'Deze variabele maakt een schatting van de hoeveelheid geld dat is besteed aan advertenties. De advertentiebibliotheek van Facebook geeft slechts een zeer ruwe schatting van het minimum- en maximumbedrag dat per advertentie is besteed.<br><br>Het "midpunt" is de mediaan van het minimum- en maximumbedrag.'}, {html: true});
+            opts = $.extend({'placement': 'bottom', 'trigger': 'hover', 'title': 'advertenties. De advertentiebibliotheek van Facebook geeft slechts een zeer ruwe schatting van het minimum- en maximumbedrag dat per advertentie is besteed.<br><br>Het 'midpunt' is de mediaan tussen het minimum- en maximumbedrag. Maar mogelijk over- of onderschat het midpunt het daadwerkelijke getal fors doordat Facebook slechts een zeer ruwe schatting vrijgeeft.'}, {html: true});
             $(this.parentElement).tooltip('destroy');
             $(this.parentElement).tooltip(opts);
           }
@@ -2701,7 +2701,7 @@ window.FlexDashboardComponents.push({
       setTimeout(function() {
         $('input', $('#plot_type_fb')).each(function(){
           if(this.getAttribute('value') == 'Impressies') {
-            opts = $.extend({'placement': 'bottom', 'trigger': 'hover', 'title': 'Deze variabele schat in hoe vaak een advertentie is getoond. Een impressie betekent niet dat een gebruiker de advertentie daadwerkelijk heeft gezien. Een advertentie kan meerdere malen aan dezelfde gebruiker worden getoond. De advertentiebibliotheek van Facebook geeft slechts een zeer ruwe schatting van het minimum en maximum aantal impressies per advertentie.<br><br>Het "midpunt" is de mediaan van het minimum en maximum aantal impressies.'}, {html: true});
+            opts = $.extend({'placement': 'bottom', 'trigger': 'hover', 'title': 'Deze variabele schat in hoe vaak een advertentie is getoond. Een impressie betekent niet dat een gebruiker de advertentie daadwerkelijk heeft gezien. Een advertentie kan meerdere malen aan dezelfde gebruiker worden getoond. De advertentiebibliotheek van Facebook geeft slechts een zeer ruwe schatting van het minimum en maximum aantal impressies per advertentie.<br><br>Het 'midpunt' is de mediaan van het minimum en maximum aantal impressies.'}, {html: true});
             $(this.parentElement).tooltip('destroy');
             $(this.parentElement).tooltip(opts);
           }
@@ -2826,7 +2826,7 @@ window.FlexDashboardComponents.push({
       setTimeout(function() {
         $('input', $('#plot_type_ggl')).each(function(){
           if(this.getAttribute('value') == 'Uitgegeven (in EUR)') {
-            opts = $.extend({'placement': 'bottom', 'trigger': 'hover', 'title': 'Deze variabele schat in hoeveel geld is uitgegeven aan advertenties. Het transparantierapport van Google toon slecht zeer ruwe schatting van het minimum- en maximumbedrag dat per advertentie is besteed.<br><br>Het "midpunt" is de mediaan van het minimum- en maximumbedrag.'}, {html: true});
+            opts = $.extend({'placement': 'bottom', 'trigger': 'hover', 'title': 'Deze variabele toont hoeveel geld is uitgegeven aan advertenties.'}, {html: true});
             $(this.parentElement).tooltip('destroy');
             $(this.parentElement).tooltip(opts);
           }
@@ -2838,7 +2838,7 @@ window.FlexDashboardComponents.push({
       setTimeout(function() {
         $('input', $('#plot_type_ggl')).each(function(){
           if(this.getAttribute('value') == 'Impressies') {
-            opts = $.extend({'placement': 'bottom', 'trigger': 'hover', 'title': 'Deze variabele schat in hoe vaak een advertentie is getoond. Een impressie betekent niet dat een gebruiker de advertentie daadwerkelijk heeft gezien. Een advertentie kan meerdere malen aan dezelfde gebruiker worden getoond. het transparantierapport van Google geeft slechts een zeer ruwe schatting van het minimum en maximum aantal impressies per advertentie.<br><br>Het "midpunt" is de mediaan van het minimum en maximum aantal impressies.'}, {html: true});
+            opts = $.extend({'placement': 'bottom', 'trigger': 'hover', 'title': 'Deze variabele schat in hoe vaak een advertentie is getoond. Een impressie betekent niet dat een gebruiker de advertentie daadwerkelijk heeft gezien. Een advertentie kan meerdere malen aan dezelfde gebruiker worden getoond. het transparantierapport van Google geeft slechts een zeer ruwe schatting van het minimum en maximum aantal impressies per advertentie.<br><br>Het 'midpunt' is de mediaan van het minimum en maximum aantal impressies.'}, {html: true});
             $(this.parentElement).tooltip('destroy');
             $(this.parentElement).tooltip(opts);
           }
@@ -3017,21 +3017,27 @@ update_time <- read_lines("data/last_updated.txt") %>%
 # 
 # saveRDS(trans, file = "data/trans_dutch.rds")
 
-# trans <- readRDS("data/trans_eng.rds")
+# trans_eng <- translation %>%
+#   select(text_id, contains("english")) %>%
+#   data.table::transpose() %>%
+#   janitor::row_to_names(1)
+
+# saveRDS(trans, file = "data/trans_eng.rds")
 
 # snap_ads <- readRDS("data/snap_ads.RDS")
 # 
 trans <- readRDS("data/trans_dutch.rds")
+# trans <- readRDS("data/trans_eng.rds")
 # 
 # 
 map_data <- readRDS("data/mapdata.RDS")
 
 # trans <- read_csv2("data/translation.csv")  %>%
 #   select(text_id, contains("dutch")) %>%
-#   data.table::transpose() %>%
+#   data.table::transpose() %>% #glimpse
 #   janitor::row_to_names(1) %>%
 #   mutate_all(str_trim)%>%
-#   mutate_all(~str_replace_all(.x, ", ", ",")) 
+#   mutate_all(~str_replace_all(.x, ", ", ","))
 
 
 source("helpers.R")
@@ -3101,8 +3107,15 @@ observe({
   # trans <- readRDS("data/trans_dutch.rds")
   
   # Sys.sleep(1)
-  sendSweetAlert(session, title = trans$welcome_title,
-    text = trans$welcome_text)
+  sendSweetAlert(session, 
+                 title = trans$welcome_title,
+                 text = tags$span(
+                   trans$welcome_text_one,
+                   tags$a(trans$welcome_text_two,     href="http://politieke-advertenties.nl/", target="_blank"), 
+                   trans$welcome_text_three,
+                   tags$br(),
+                   tags$br(),
+                   trans$welcome_text_four), html = T)
   #     if(!exists("selected_lang")){
   #       selected_lang <<- "Nederlands"
   #     }
