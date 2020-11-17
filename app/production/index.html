@@ -2689,7 +2689,7 @@ window.FlexDashboardComponents.push({
       setTimeout(function() {
         $('input', $('#plot_type_fb')).each(function(){
           if(this.getAttribute('value') == 'Uitgegeven (in EUR)') {
-            opts = $.extend({'placement': 'bottom', 'trigger': 'hover', 'title': 'advertenties. De advertentiebibliotheek van Facebook geeft slechts een zeer ruwe schatting van het minimum- en maximumbedrag dat per advertentie is besteed.<br><br>Het 'midpunt' is de mediaan tussen het minimum- en maximumbedrag. Maar mogelijk over- of onderschat het midpunt het daadwerkelijke getal fors doordat Facebook slechts een zeer ruwe schatting vrijgeeft.'}, {html: true});
+            opts = $.extend({'placement': 'bottom', 'trigger': 'hover', 'title': 'De advertentiebibliotheek van Facebook geeft slechts een zeer ruwe schatting van het minimum- en maximumbedrag dat per advertentie is besteed.<br><br>Het "midpunt" is de mediaan tussen het minimum- en maximumbedrag. Maar mogelijk over- of onderschat het midpunt het daadwerkelijke getal fors doordat Facebook slechts een zeer ruwe schatting vrijgeeft.'}, {html: true});
             $(this.parentElement).tooltip('destroy');
             $(this.parentElement).tooltip(opts);
           }
@@ -2701,7 +2701,7 @@ window.FlexDashboardComponents.push({
       setTimeout(function() {
         $('input', $('#plot_type_fb')).each(function(){
           if(this.getAttribute('value') == 'Impressies') {
-            opts = $.extend({'placement': 'bottom', 'trigger': 'hover', 'title': 'Deze variabele schat in hoe vaak een advertentie is getoond. Een impressie betekent niet dat een gebruiker de advertentie daadwerkelijk heeft gezien. Een advertentie kan meerdere malen aan dezelfde gebruiker worden getoond. De advertentiebibliotheek van Facebook geeft slechts een zeer ruwe schatting van het minimum en maximum aantal impressies per advertentie.<br><br>Het 'midpunt' is de mediaan van het minimum en maximum aantal impressies.'}, {html: true});
+            opts = $.extend({'placement': 'bottom', 'trigger': 'hover', 'title': 'Deze variabele schat in hoe vaak een advertentie is getoond. Een impressie betekent niet dat een gebruiker de advertentie daadwerkelijk heeft gezien. Een advertentie kan meerdere malen aan dezelfde gebruiker worden getoond. De advertentiebibliotheek van Facebook geeft slechts een zeer ruwe schatting van het minimum en maximum aantal impressies per advertentie.<br><br>Het "midpunt" is de mediaan van het minimum en maximum aantal impressies.'}, {html: true});
             $(this.parentElement).tooltip('destroy');
             $(this.parentElement).tooltip(opts);
           }
@@ -3111,7 +3111,7 @@ observe({
                  title = trans$welcome_title,
                  text = tags$span(
                    trans$welcome_text_one,
-                   tags$a(trans$welcome_text_two,     href="http://politieke-advertenties.nl/", target="_blank"), 
+                   tags$a(trans$welcome_text_two,     href="https://politieke-advertenties.nl/waar-komen-onze-data-vandaan/", target="_blank"), 
                    trans$welcome_text_three,
                    tags$br(),
                    tags$br(),

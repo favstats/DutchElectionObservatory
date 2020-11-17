@@ -244,7 +244,7 @@ observe({
                  title = trans$welcome_title,
                  text = tags$span(
                    trans$welcome_text_one,
-                   tags$a(trans$welcome_text_two,     href="http://politieke-advertenties.nl/", target="_blank"), 
+                   tags$a(trans$welcome_text_two,     href="https://politieke-advertenties.nl/waar-komen-onze-data-vandaan/", target="_blank"), 
                    trans$welcome_text_three,
                    tags$br(),
                    tags$br(),
@@ -287,13 +287,14 @@ radioTooltip(id = "plot_type_fb",
              choice = unlist_it(trans$choices, 1), 
              title = trans$choice_number_tooltip_fb)
 
-radioTooltip(id = "plot_type_fb", 
-             choice = unlist_it(trans$choices, 2), 
-             title = trans$choice_spent_tooltip_fb)
+
+radioTooltip(id = "plot_type_fb",
+             choice =  unlist_it(trans$choices, 2),
+             title = str_replace_all(trans$choice_spent_tooltip_fb, "'", '"'))
 
 radioTooltip(id = "plot_type_fb", 
-             choice = unlist_it(trans$choices, 3), 
-             title = trans$choice_impressions_tooltip_fb)
+             choice = "Impressies", 
+             title = str_replace_all(trans$choice_impressions_tooltip_fb, "'", '"'))
 
 radioTooltip(id = "plot_type_fb", 
              choice = unlist_it(trans$choices, 4), 

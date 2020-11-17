@@ -327,7 +327,7 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
         #   ),
         #   name = "Impressions",
         #   tooltip = list(pointFormat = "<b>Lower bound:</b> {point.impressions_range_min}<br><b>Mid point:</b> {point.impressions_range_mid}<br><b>Upper bound:</b> {point.impressions_range_max}<br><br><b>Number of Ads:</b> {point.n}"))%>%
-        hc_yAxis(reversed = F, min = 0, title = list(text = trans_internal$plot_yaxis_impressions))  %>% 
+        hc_yAxis(reversed = F, min = 0, title = list(text = glue::glue(trans_internal$plot_yaxis_impressions)))  %>% 
         hc_xAxis(categories = lvls, title = list(text = "")) %>% 
         hc_chart(inverted = TRUE)            
     }
