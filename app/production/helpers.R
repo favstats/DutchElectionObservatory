@@ -272,7 +272,7 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
     }
     
   } else if (plot_type == unlist_it(trans_internal$choices, 3)){
-    
+    print("impressions")
     title_text <- glue::glue(trans_internal$plot_title_impressions)
     subtitle_text <- glue::glue(trans_internal$plot_subtitle_impressions)
     
@@ -366,7 +366,7 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
         ) %>%
         hc_yAxis(
           align = "left",
-          title = list(text = trans_internal$plot_yaxis_impressions)
+          title = list(text = glue::glue(trans_internal$plot_yaxis_impressions))
         ) %>%
         hc_xAxis(
           align = "left",
@@ -464,7 +464,8 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
       }
     } else if (plot_type_sub == unlist_it(trans_internal$targeted_ads_choices, 2)){
       
-      title_text <- glue::glue(trans_internal$plot_title_age)
+      ## this needs to change
+      title_text <- glue::glue("{unlist_it(trans_internal$targeted_ads_choices, 2)} met {platform} advertenties")
       subtitle_text <- glue::glue("")
       
       if(platform == "Google"){

@@ -465,7 +465,7 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
     } else if (plot_type_sub == unlist_it(trans_internal$targeted_ads_choices, 2)){
       
       ## this needs to change
-      title_text <- glue::glue("{unlist_it(trans$targeted_ads_choices, 2)} met {platform} advertenties")
+      title_text <- glue::glue("{unlist_it(trans_internal$targeted_ads_choices, 2)} met {platform} advertenties")
       subtitle_text <- glue::glue("")
       
       if(platform == "Google"){
