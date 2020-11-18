@@ -50,7 +50,7 @@ unnest_dems <- function(x) {
 # get_ggl_data <- function() {
 
 last_updated_time <- as.character(Sys.time())
-  
+
 cat(last_updated_time, file = "app/production/data/last_updated.txt", append = T, sep = "\n")
 cat(last_updated_time, file = "app/staging/data/last_updated.txt", append = T, sep = "\n")
 
@@ -233,7 +233,7 @@ saveRDS(ggl_aggr, file = "app/production/data/ggl_aggr.rds")
 saveRDS(ggl_aggr, file = "app/staging/data/ggl_aggr.rds")
 
 
-  
+
 #   return(ggl_ads)
 # }
 
@@ -297,7 +297,7 @@ cat("\n\nFB Data: Getting it\n\n")
 
 
 # get_fb_ads <- function() {
-  
+
 readRenviron(".Renviron")
 
 token <- Sys.getenv("fb_token")
@@ -366,7 +366,7 @@ while(length(next_link)>0) {
   
 }
 
-saveRDS(df_imp, "fb_dat/fb_dat_experimental.rds")
+# saveRDS(df_imp, "fb_dat/fb_dat_experimental.rds")
 
 
 dutch_parties <- c("VVD", "D66", "FvD", "SP", "GroenLinks", "Volt Nederland", "PvdA", "CDA", "PvdD", "ChristenUnie")
@@ -409,17 +409,17 @@ gc()
 
 cat("\n\nGarbage collected\n\n")  
 
- 
+
 # rstudioapi::jobRunScript("get_fb.R")
-  
-  
-  # fb_dat_parties <- fb_dat %>% 
-  #   mutate(ad_delivery_start_time = as.Date(ad_delivery_start_time)) %>% 
-  #   filter(ad_delivery_start_time >= as.Date("2020-09-01")) %>% 
-  #   filter(advertiser_name %in% dutch_parties) 
-  # 
-  # saveRDS(fb_dat_parties, "fb_dat/fb_dat_parties.rds")
-  
+
+
+# fb_dat_parties <- fb_dat %>% 
+#   mutate(ad_delivery_start_time = as.Date(ad_delivery_start_time)) %>% 
+#   filter(ad_delivery_start_time >= as.Date("2020-09-01")) %>% 
+#   filter(advertiser_name %in% dutch_parties) 
+# 
+# saveRDS(fb_dat_parties, "fb_dat/fb_dat_parties.rds")
+
 #   return(fb_dat)
 #   
 # }
@@ -548,7 +548,7 @@ fb_gender <- age_gender_targeted  %>%
   summarise(percentage = median(percentage)) %>% 
   ungroup() %>% 
   left_join(fb_total %>% select(advertiser_id, advertiser_name)) #%>% 
-  # filter(advertiser_name == "PvdA")
+# filter(advertiser_name == "PvdA")
 
 cat("\n\nFB Data: Get age/gender IV\n\n")  
 

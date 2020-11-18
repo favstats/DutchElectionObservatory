@@ -10,4 +10,5 @@ fb_dat
 *.Renviron
 *.RDS
 .RDS
-data
+data/
+get_ggl.Rmd
