@@ -58,7 +58,7 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
       
       lvls <- hc_data %>% 
         mutate(advertiser_name = fct_reorder(advertiser_name, n)) %>% 
-        pull(advertiser_name) %>% 
+        dplyr::pull(advertiser_name) %>% 
         levels() %>% 
         rev()
       
@@ -132,7 +132,7 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
         print("Minimum")
         lvls <- hc_data %>% 
           mutate(advertiser_name = fct_reorder(advertiser_name, spend_range_min)) %>% 
-          pull(advertiser_name) %>% 
+          dplyr::pull(advertiser_name) %>% 
           levels() %>% 
           rev()      
         
@@ -143,7 +143,7 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
         print("Maximum")
         lvls <- hc_data %>% 
           mutate(advertiser_name = fct_reorder(advertiser_name, spend_range_max)) %>% 
-          pull(advertiser_name) %>% 
+          dplyr::pull(advertiser_name) %>% 
           levels() %>% 
           rev()      
         
@@ -164,7 +164,7 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
   
       lvls <- hc_data %>% 
         mutate(advertiser_name = fct_reorder(advertiser_name, spend_eur)) %>% 
-        pull(advertiser_name) %>% 
+        dplyr::pull(advertiser_name) %>% 
         levels() %>% 
         rev()      
       
@@ -281,7 +281,7 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
       if(minmax == "Minimum"){
         lvls <- hc_data %>% 
           mutate(advertiser_name = fct_reorder(advertiser_name, impressions_range_min)) %>% 
-          pull(advertiser_name) %>% 
+          dplyr::pull(advertiser_name) %>% 
           levels() %>% 
           rev()      
         
@@ -291,7 +291,7 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
       } else if (minmax == "Maximum"){
         lvls <- hc_data %>% 
           mutate(advertiser_name = fct_reorder(advertiser_name, impressions_range_max)) %>% 
-          pull(advertiser_name) %>% 
+          dplyr::pull(advertiser_name) %>% 
           levels() %>% 
           rev()      
         
@@ -336,7 +336,7 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
       if(minmax == "Minimum"){
         lvls <- hc_data %>% 
           mutate(advertiser_name = fct_reorder(advertiser_name, impressions_range_min)) %>% 
-          pull(advertiser_name) %>% 
+          dplyr::pull(advertiser_name) %>% 
           levels() %>% 
           rev()      
         
@@ -346,7 +346,7 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
       } else if (minmax == "Maximum"){
         lvls <- hc_data %>% 
           mutate(advertiser_name = fct_reorder(advertiser_name, impressions_range_max)) %>% 
-          pull(advertiser_name) %>% 
+          dplyr::pull(advertiser_name) %>% 
           levels() %>% 
           rev()      
         

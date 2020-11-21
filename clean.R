@@ -96,9 +96,14 @@ ggl_ads <- ggl_ads %>%
   distinct(ad_id, .keep_all = T) %>% 
   filter(date_range_start >= as.Date("2020-09-06")) 
 
-advertiser_emp_ggl <- ggl_ads %>% 
-  pull(advertiser_name) %>% 
-  unique()
+advertiser_emp_ggl <- ggl_ads %>%
+  distinct(advertiser_name) %>% 
+  dplyr::pull(advertiser_name)  
+
+advertiser_ids_ggl <- ggl_ads %>%
+  distinct(advertiser_id, .keep_all = T) %>% 
+  select(advertiser_name, advertiser_id)  
+
 
 weekly_spend <- read_csv("data/google-political-ads-transparency-bundle/google-political-ads-advertiser-weekly-spend.csv")
 
@@ -140,7 +145,7 @@ ggl_total <- ggl_ads %>%
     # impressions == "> 10M" ~ 20000000,
     T ~ 0
   )) %>% 
-  group_by(advertiser_name, advertiser_id) %>% 
+  group_by(advertiser_name) %>% 
   summarise(spend_range_min = sum(spend_range_min_eur),
             spend_range_max = sum(spend_range_max_eur),
             spend_range_mid = sum(get_mid(spend_range_max_eur, spend_range_min_eur)),
@@ -151,7 +156,8 @@ ggl_total <- ggl_ads %>%
   ungroup() %>% 
   left_join(color_dat)  %>% 
   assign_colors() %>% 
-  left_join(total_spend_ggl)
+  left_join(total_spend_ggl) %>% 
+  left_join(advertiser_ids_ggl)
 
 
 
@@ -175,7 +181,7 @@ ggl_times <- ggl_ads  %>%
     T ~ 0
   )) %>% 
   mutate(date_range_start = floor_date(date_range_start, "week")) %>% 
-  group_by(date_range_start, advertiser_name, advertiser_id) %>% 
+  group_by(date_range_start, advertiser_name) %>% 
   summarise(spend_range_min = sum(spend_range_min_eur),
             spend_range_max = sum(spend_range_max_eur),
             spend_range_mid = sum(get_mid(spend_range_max_eur, spend_range_min_eur)),
@@ -185,32 +191,43 @@ ggl_times <- ggl_ads  %>%
             n = n()) %>% 
   ungroup() %>% 
   mutate(date_range_start = as.Date(date_range_start)) %>%
-  complete(advertiser_name, advertiser_id, date_range_start = seq.Date(min(date_range_start), max(date_range_start), by="week"), fill = list(n = 0, spend_range_min = 0, spend_range_mid = 0, spend_range_max = 0, impressions_range_min = 0, impressions_range_mid = 0, impressions_range_max = 0)) %>% 
+  complete(advertiser_name, date_range_start = seq.Date(min(date_range_start), max(date_range_start), by="week"), fill = list(n = 0, spend_range_min = 0, spend_range_mid = 0, spend_range_max = 0, impressions_range_min = 0, impressions_range_mid = 0, impressions_range_max = 0)) %>% 
   left_join(color_dat) %>% 
   assign_colors() %>% 
-  left_join(weekly_spend_ggl)
+  left_join(weekly_spend_ggl)  %>% 
+  left_join(advertiser_ids_ggl)
+
+  # ggl_times %>%
+  # # filter(advertiser_name == "CDA") %>%
+  # group_by(advertiser_name) %>%
+  # arrange(date_range_start) %>%
+  # mutate_if(is.numeric, ~cumsum(.x)) %>%# View
+  # ggplot(aes(date_range_start, spend_eur, color = advertiser_name)) +
+  # geom_line()
 
 ggl_gender <- ggl_ads %>%
   mutate(gender_targeting = ifelse(str_detect(gender_targeting, "Male") & str_detect(gender_targeting, "Female"), "Not targeted", gender_targeting)) %>%
-  count(advertiser_name, gender_targeting, advertiser_id) %>%
-  group_by(advertiser_name, advertiser_id) %>%
+  count(advertiser_name, gender_targeting) %>%
+  group_by(advertiser_name) %>%
   mutate(perc = round(n/sum(n)*100, 2)) %>% 
   ungroup() %>% 
   left_join(color_dat) %>% 
-  assign_colors()
+  assign_colors() %>% 
+  left_join(advertiser_ids_ggl)
 
 ggl_age <- ggl_ads %>%
   mutate(age_targeting2 = case_when(
     str_detect(age_targeting, "18-24, 25-34, 35-44, 45-54, 55-64, ≥65") ~ "Not targeted",
     T ~ age_targeting
   )) %>%
-  count(advertiser_name, age_targeting2, advertiser_id) %>%
-  complete(advertiser_name, advertiser_id, age_targeting2, fill = list(n = 0)) %>%
-  group_by(advertiser_name, advertiser_id) %>%
+  count(advertiser_name, age_targeting2) %>%
+  complete(advertiser_name, age_targeting2, fill = list(n = 0)) %>%
+  group_by(advertiser_name) %>%
   mutate(perc = round(n/sum(n)*100, 2))%>% 
   ungroup() %>% 
   left_join(color_dat) %>% 
-  assign_colors()
+  assign_colors() %>% 
+  left_join(advertiser_ids_ggl)
 
 ggl_geo <-  ggl_ads %>%
   mutate(geo_targeting_included = case_when(
@@ -218,13 +235,14 @@ ggl_geo <-  ggl_ads %>%
     str_detect(geo_targeting_included, "Netherlands") ~ "Not targeted",
     T ~ geo_targeting_included
   )) %>%
-  count(advertiser_name, geo_targeting_included, advertiser_id) %>%
-  complete(advertiser_name, advertiser_id, geo_targeting_included, fill = list(n = 0)) %>%
-  group_by(advertiser_name, advertiser_id) %>%
+  count(advertiser_name, geo_targeting_included) %>%
+  complete(advertiser_name, geo_targeting_included, fill = list(n = 0)) %>%
+  group_by(advertiser_name) %>%
   mutate(perc = round(n/sum(n)*100, 2))%>% 
   ungroup() %>% 
   left_join(color_dat) %>% 
-  assign_colors()
+  assign_colors() %>% 
+  left_join(advertiser_ids_ggl)
 
 ggl_aggr <- list(total = ggl_total, times = ggl_times, gender = ggl_gender, age = ggl_age, geo = ggl_geo)
 
