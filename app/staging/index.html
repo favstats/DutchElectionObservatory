@@ -3321,7 +3321,7 @@ hc_plotter <- possibly(hc_plotter, otherwise = NULL, quiet = F)
     #          trans_internal = trans,
     #          last_updated = update_time)
 # # 
-debugonce(hc_plotter)
+# debugonce(hc_plotter)
 #
 # #   ggl_aggr %>% 
 # #     hc_aggr_ggl(lvls, filters = defaults_ggl)
@@ -3332,13 +3332,13 @@ debugonce(hc_plotter)
 #                              group = advertiser_name,
 #                              color = color))
 
-    ggl_aggr %>%
-    hc_plotter(filters = c("CDA"),
-           plot_type = unlist_it(trans$choices, 2),
-           plot_type_sub = unlist_it(trans$total_text, 2),
-           platform = "Google",
-             trans_internal = trans,
-             last_updated = update_time)
+    # ggl_aggr %>%
+    # hc_plotter(filters = c("CDA"),
+    #        plot_type = unlist_it(trans$choices, 2),
+    #        plot_type_sub = unlist_it(trans$total_text, 2),
+    #        platform = "Google",
+    #          trans_internal = trans,
+    #          last_updated = update_time)
   
   # disabled
  

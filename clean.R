@@ -1,6 +1,9 @@
+### ---- Load Packages and Functions  ####
+
+
 pacman::p_load(tidyverse, janitor, highcharter, httr, furrr, lubridate)
 
-dir.create("data")
+if(!dir.exists("data")) dir.create("data")
 
 get_mid <- function(spend_upper_bound, spend_lower_bound) {
   # (spend_upper_bound-spend_lower_bound)/2+spend_lower_bound
@@ -44,15 +47,14 @@ unnest_dems <- function(x) {
     mutate(id = x$id)
 }
 
-# Set a "plan" for how the code should run.
-# plan(multisession, workers = 4)
-
-# get_ggl_data <- function() {
 
 last_updated_time <- as.character(Sys.time())
 
 cat(last_updated_time, file = "app/production/data/last_updated.txt", append = T, sep = "\n")
 cat(last_updated_time, file = "app/staging/data/last_updated.txt", append = T, sep = "\n")
+
+
+### ---- Get Google data  ####
 
 cat("\n\nGet Google Data\n\n")  
 
@@ -264,6 +266,8 @@ saveRDS(ggl_ads, file = "data/ggl_ads.rds")
 
 cat("\n\nGoogle Data: Done\n\n")  
 
+### ---- Get Snapchat data  ####
+
 
 cat("\n\nSnapchat Data: Getting it\n\n")  
 
@@ -310,6 +314,9 @@ rm(ggl_geo)
 gc()
 
 cat("\n\nCleanup: Done\n\n")  
+
+### ---- Get Facebook data  ####
+
 
 cat("\n\nFB Data: Getting it\n\n")  
 
@@ -476,17 +483,22 @@ batch_id_dat <- total_times  %>%
   ungroup() %>% 
   select(id, batch_id)
 
+facebook_id_dat <- total_times  %>% 
+  distinct(advertiser_name, .keep_all = T) %>% 
+  select(advertiser_name, advertiser_id)
+
 fb_total <- total_times  %>% 
-  group_by(ad_creative_body, ad_creative_link_title, advertiser_name, advertiser_id) %>% 
+  left_join(batch_id_dat) %>% 
+  group_by(batch_id, advertiser_name) %>% 
   summarise(spend_range_min = median(spend_lower_bound),
             spend_range_max = median(spend_upper_bound),
             spend_range_mid = median(get_mid(spend_lower_bound, spend_upper_bound)),
-            impressions_range_min = median(impressions_lower_bound),
-            impressions_range_max = median(impressions_upper_bound),
-            impressions_range_mid = median(get_mid(impressions_lower_bound, impressions_upper_bound)),
+            impressions_range_min = median(impressions_lower_bound) * n(),
+            impressions_range_max = median(impressions_upper_bound) * n(),
+            impressions_range_mid = median(get_mid(impressions_lower_bound, impressions_upper_bound))* n(),
             n_ids = n()) %>% 
   ungroup() %>% 
-  group_by(advertiser_name, advertiser_id) %>%# View
+  group_by(advertiser_name) %>%# View
   summarise(spend_range_min = sum(spend_range_min),
             spend_range_max = sum(spend_range_max),
             spend_range_mid = sum(spend_range_mid),
@@ -496,7 +508,8 @@ fb_total <- total_times  %>%
             n = n()) %>% 
   ungroup() %>% 
   left_join(color_dat)  %>% 
-  assign_colors()
+  assign_colors() %>% 
+  left_join(facebook_id_dat)
 
 cat("\n\nFB Data: Get times\n\n")  
 
@@ -504,16 +517,21 @@ cat("\n\nFB Data: Get times\n\n")
 # tidytemplate::save_it(fb_total)
 
 fb_times <- total_times %>%
-  group_by(date_range_start, ad_creative_body, ad_creative_link_title, advertiser_name, advertiser_id) %>% 
+  left_join(batch_id_dat) %>% 
+  group_by(batch_id) %>% 
+  mutate(date_range_start = min(date_range_start)) %>% 
+  ungroup() %>% 
+  group_by(batch_id, advertiser_name, date_range_start) %>% 
+  # group_by(date_range_start, ad_creative_body, ad_creative_link_title, advertiser_name) %>% 
   summarise(spend_range_min = median(spend_lower_bound),
             spend_range_max = median(spend_upper_bound),
             spend_range_mid = median(get_mid(spend_lower_bound, spend_upper_bound)),
-            impressions_range_min = median(impressions_lower_bound),
-            impressions_range_max = median(impressions_upper_bound),
-            impressions_range_mid = median(get_mid(impressions_lower_bound, impressions_upper_bound)),
+            impressions_range_min = median(impressions_lower_bound) * n(),
+            impressions_range_max = median(impressions_upper_bound) * n(),
+            impressions_range_mid = median(get_mid(impressions_lower_bound, impressions_upper_bound)) * n(),
             n_ids = n()) %>% 
   ungroup() %>% 
-  group_by(date_range_start, advertiser_name, advertiser_id) %>%# View
+  group_by(date_range_start, advertiser_name) %>%# View
   summarise(spend_range_min = sum(spend_range_min),
             spend_range_max = sum(spend_range_max),
             spend_range_mid = sum(spend_range_mid),
@@ -524,8 +542,29 @@ fb_times <- total_times %>%
   ungroup() %>% 
   complete(advertiser_name, date_range_start = seq.Date(min(date_range_start), max(date_range_start), by="day"), fill = list(n = 0, spend_range_min = 0, spend_range_mid = 0, spend_range_max = 0, impressions_range_min = 0, impressions_range_mid = 0, impressions_range_max = 0)) %>% 
   left_join(color_dat) %>% 
-  assign_colors() %>% 
-  left_join(fb_total %>% select(advertiser_id, advertiser_name))
+  assign_colors()  %>% 
+  left_join(facebook_id_dat)
+
+# fb_times %>% 
+#   dplyr::filter(advertiser_name == "VVD") %>% 
+#   distinct(date_range_start)
+# 
+# total_times %>% 
+#   filter(advertiser_name == "VVD") %>% View
+# 
+# fb_total %>%
+#   dplyr::filter(advertiser_name == "VVD") %>% 
+#   mutate_if(is.numeric, ~cumsum(.x)) %>%
+#   dplyr::pull(n)
+# 
+# fb_times %>%
+#   dplyr::filter(advertiser_name == "VVD") %>% 
+#   # View
+#   mutate_if(is.numeric, ~cumsum(.x)) %>%
+#   dplyr::pull(n)
+#   max(.$n)
+#   ggplot(aes(date_range_start, n)) +
+#   geom_line()
 
 cat("\n\nFB Data: Get age/gender I\n\n")  
 
@@ -565,8 +604,31 @@ fb_gender <- age_gender_targeted  %>%
   group_by(advertiser_name, batch_id, gender) %>%
   summarise(percentage = median(percentage)) %>% 
   ungroup() %>% 
-  left_join(fb_total %>% select(advertiser_id, advertiser_name)) #%>% 
+  drop_na(batch_id) %>% 
+  group_by(advertiser_name) %>% 
+  complete(batch_id, gender, fill = list(percentage = 0)) %>%
+  ungroup() %>% 
+  left_join(facebook_id_dat)  #%>% 
 # filter(advertiser_name == "PvdA")
+
+# fb_gender %>% 
+#   count(batch_id, sort = T)
+
+#   fb_gender %>% 
+#     group_by(advertiser_name) %>% 
+#     complete(batch_id, gender, fill = list(percentage = 0)) %>%
+#     ungroup() %>% 
+#     left_join(facebook_id_dat) %>% 
+#     filter(advertiser_name == "PvdA") %>%  View
+#   
+# fb_gender %>% 
+#   filter(advertiser_name == "PvdA") %>% View
+# 
+# age_gender_targeted %>% 
+#   filter(id == "960301371113512") %>% View
+# 
+# batch_id_dat %>% 
+#   filter(batch_id == "2014_1_6732740374")
 
 cat("\n\nFB Data: Get age/gender IV\n\n")  
 
@@ -578,15 +640,20 @@ fb_age <- age_gender_targeted  %>%
   filter(!str_detect(gender_age, "unknown")) %>% 
   filter(!str_detect(gender_age, "13-17")) %>% 
   filter(!str_detect(gender_age, "All")) %>% 
-  complete(gender, age, advertiser_id, fill = list(percentage = 0)) %>% 
-  group_by(id, age, advertiser_name, advertiser_id) %>% 
+  complete(gender, age, advertiser_name, fill = list(percentage = 0)) %>% 
+  group_by(id, age, advertiser_name) %>% 
   summarize(percentage = sum(percentage)) %>% 
   ungroup() %>% 
   mutate(percentage = round(percentage * 100, 2)) %>% 
   left_join(batch_id_dat) %>% 
-  group_by(advertiser_name, advertiser_id, batch_id, age) %>%
+  group_by(advertiser_name, batch_id, age) %>%
   summarise(percentage = median(percentage)) %>% 
-  ungroup() %>% select(-batch_id)
+  ungroup() %>% 
+  drop_na(batch_id, age) %>% 
+  group_by(advertiser_name) %>% 
+  complete(batch_id, age, fill = list(percentage = 0)) %>%
+  ungroup() %>% 
+  left_join(facebook_id_dat) 
 
 cat("\n\nFB Data: Get geo I\n\n")    
 
@@ -603,7 +670,7 @@ dutch_regions <- geo_targeted %>%
   count(region, sort = T) %>% 
   slice(1:12) %>% pull(region)
 
-geo_targeted <- geo_targeted  %>% 
+geo_targeted_dat <- geo_targeted  %>% 
   filter(start_time >= as.Date("2020-09-01")) %>% 
   # filter(advertiser_name %in% dutch_parties) %>% 
   filter(region %in% dutch_regions) %>% 
@@ -613,9 +680,13 @@ geo_targeted <- geo_targeted  %>%
   summarize(percentage = sum(percentage)) %>% 
   ungroup() %>% 
   left_join(batch_id_dat) %>% 
+  drop_na(batch_id) %>% 
   group_by(advertiser_name, batch_id, region) %>%
   summarise(percentage = median(percentage)) %>% 
-  ungroup() 
+  ungroup() %>%  
+  group_by(advertiser_name) %>% 
+  complete(batch_id, region, fill = list(percentage = 0)) %>%
+  ungroup()
 
 
 cat("\n\nFB Data: Get geo III\n\n")    
@@ -624,22 +695,24 @@ cat("\n\nFB Data: Get geo III\n\n")
 mapdata <- get_data_from_map(download_map_data("https://code.highcharts.com/mapdata/countries/nl/nl-all.js"))
 
 fb_geo <- mapdata %>% 
-  left_join(geo_targeted %>% 
+  left_join(geo_targeted_dat %>% 
               rename(name = region) %>% 
               # filter(advertiser_name == "D66") %>% 
               group_by(name, advertiser_name) %>% 
               summarize(percentage = median(percentage, na.rm = T)) %>% 
               mutate(name = ifelse(name == "North Brabant", "Noord-Brabant", name))) %>% 
-  mutate(percentage = round(100*percentage, 2)) %>% 
   ungroup() %>% 
   left_join(color_dat) %>% 
   rename(colorful = color) %>% 
-  left_join(fb_total %>% select(advertiser_id, advertiser_name))
+  left_join(facebook_id_dat) 
+
+fb_geo <- fb_geo %>% 
+  mutate(percentage = round(100*percentage, 2))
 
 
 fb_aggr <- list(total = fb_total, times = fb_times, geo = fb_geo, gender = fb_gender, age = fb_age)
 
 saveRDS(fb_aggr, "app/production/data/fb_aggr.rds")
-saveRDS(fb_aggr, file = "app/staging/data/fb_aggr.rds")
+saveRDS(fb_aggr, "app/staging/data/fb_aggr.rds")
 
 cat("\n\nFB Data: Done\n\n") 

@@ -3047,9 +3047,9 @@ source("helpers.R")
 dutch_parties_fb <- c("VVD", "D66", "FvD", "SP", "GroenLinks", "Volt Nederland", "PvdA", "CDA", "PvdD", "ChristenUnie")
 
 advertiser_names_fb <- fb_aggr$times %>%
+  distinct(advertiser_name) %>% 
   # filter(advertiser_name %in% more_than_5_fb) %>% 
-  pull(advertiser_name) %>% 
-  unique() %>% 
+  dplyr::pull(advertiser_name) %>% 
   ## only keep national political parties
   keep(~magrittr::is_in(.x, dutch_parties_fb))
 
@@ -3077,6 +3077,11 @@ defaults_fb <- advertiser_names_fb %>%
 #   bind_rows(google_links)
 # 
 # write_csv(advertisers_dat, "data/advertisers.csv")
+
+# ggl_aggr$times  %>% 
+#   filter(advertiser_name == "CDA") %>%
+#   ggplot(aes(date_range_start, spend_eur)) +
+#   geom_line()
 </script>
  
 <script type="application/shiny-prerendered" data-context="server">
@@ -3308,13 +3313,13 @@ hc_plotter <- possibly(hc_plotter, otherwise = NULL, quiet = F)
   #               plot_type_sub = "Gender targeting",
   #              platform = "Google") %>% list
   
-#     ggl_aggr %>%
-#     hc_plotter(filters = c("D66", "GroenLinks", "FvD"),
-#            plot_type = unlist_it(trans$choices, 2),
-#            plot_type_sub = unlist_it(trans$total_text, 1),
-#            platform = "Google",
-#              trans_internal = trans,
-#              last_updated = update_time)
+    # ggl_aggr %>%
+    # hc_plotter(filters = c("D66", "GroenLinks", "FvD"),
+    #        plot_type = unlist_it(trans$choices, 2),
+    #        plot_type_sub = unlist_it(trans$total_text, 1),
+    #        platform = "Google",
+    #          trans_internal = trans,
+    #          last_updated = update_time)
 # # 
 # debugonce(hc_plotter)
 #
@@ -3326,6 +3331,14 @@ hc_plotter <- possibly(hc_plotter, otherwise = NULL, quiet = F)
 #                              y = n, 
 #                              group = advertiser_name,
 #                              color = color))
+
+    # ggl_aggr %>%
+    # hc_plotter(filters = c("CDA"),
+    #        plot_type = unlist_it(trans$choices, 2),
+    #        plot_type_sub = unlist_it(trans$total_text, 2),
+    #        platform = "Google",
+    #          trans_internal = trans,
+    #          last_updated = update_time)
   
   # disabled
  
