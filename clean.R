@@ -50,7 +50,7 @@ unnest_dems <- function(x) {
 
 last_updated_time <- as.character(Sys.time())
 
-cat(last_updated_time, file = "app/production/data/last_updated.txt", append = T, sep = "\n")
+# cat(last_updated_time, file = "app/production/data/last_updated.txt", append = T, sep = "\n")
 cat(last_updated_time, file = "app/staging/data/last_updated.txt", append = T, sep = "\n")
 
 
@@ -249,7 +249,7 @@ ggl_geo <-  ggl_ads %>%
 ggl_aggr <- list(total = ggl_total, times = ggl_times, gender = ggl_gender, age = ggl_age, geo = ggl_geo)
 
 
-saveRDS(ggl_aggr, file = "app/production/data/ggl_aggr.rds")
+# saveRDS(ggl_aggr, file = "app/production/data/ggl_aggr.rds")
 saveRDS(ggl_aggr, file = "app/staging/data/ggl_aggr.rds")
 
 
@@ -394,7 +394,7 @@ while(length(next_link)>0) {
 # saveRDS(df_imp, "fb_dat/fb_dat_experimental.rds")
 
 
-dutch_parties <- c("VVD", "D66", "FvD", "SP", "GroenLinks", "Volt Nederland", "PvdA", "CDA", "PvdD", "ChristenUnie")
+dutch_parties <- c("VVD", "D66", "FvD", "SP", "GroenLinks", "Volt Nederland", "PvdA", "CDA", "PvdD", "ChristenUnie", "SGP", "DENK")
 
 cat("\n\nFB Data: Read in old data\n\n")  
 
@@ -452,8 +452,8 @@ cat("\n\nGarbage collected\n\n")
 # fb_ads <- get_fb_ads()
 
 color_dat <- tibble(
-  color = c("#00b13d", "#80c31c", "#cd503e", "#008067", "#6f2421", "#e3101c", "#e01003", "#036b2c", "#02a6e9", "#562883"),
-  advertiser_name = c("D66", "GroenLinks", "VVD", "CDA", "FvD", "PvdA", "SP", "PvdD", "ChristenUnie", "Volt Nederland"))
+  color = c("#00b13d", "#80c31c", "#cd503e", "#008067", "#6f2421", "#e3101c", "#e01003", "#036b2c", "#02a6e9", "#562883", "#eeaa00", "#34c1c4"),
+  advertiser_name = c("D66", "GroenLinks", "VVD", "CDA", "FvD", "PvdA", "SP", "PvdD", "ChristenUnie", "Volt Nederland", "SGP", "DENK"))
 
 cat("\n\nFB Data: Get totals\n\n")  
 
@@ -712,7 +712,7 @@ fb_geo <- fb_geo %>%
 
 fb_aggr <- list(total = fb_total, times = fb_times, geo = fb_geo, gender = fb_gender, age = fb_age)
 
-saveRDS(fb_aggr, "app/production/data/fb_aggr.rds")
+# saveRDS(fb_aggr, "app/production/data/fb_aggr.rds")
 saveRDS(fb_aggr, "app/staging/data/fb_aggr.rds")
 
 cat("\n\nFB Data: Done\n\n") 

@@ -2740,10 +2740,12 @@ window.FlexDashboardComponents.push({
 <select id="advertisers__fb" class="form-control" multiple="multiple"><option value="CDA" selected>CDA</option>
 <option value="ChristenUnie" selected>ChristenUnie</option>
 <option value="D66" selected>D66</option>
+<option value="DENK" selected>DENK</option>
 <option value="FvD" selected>FvD</option>
 <option value="GroenLinks" selected>GroenLinks</option>
 <option value="PvdA" selected>PvdA</option>
 <option value="PvdD" selected>PvdD</option>
+<option value="SGP" selected>SGP</option>
 <option value="SP" selected>SP</option>
 <option value="VVD" selected>VVD</option></select>
 <script type="application/json" data-for="advertisers__fb">{}</script>
@@ -2880,6 +2882,7 @@ window.FlexDashboardComponents.push({
 <select id="advertisers__ggl" class="form-control" multiple="multiple"><option value="CDA" selected>CDA</option>
 <option value="D66" selected>D66</option>
 <option value="GroenLinks" selected>GroenLinks</option>
+<option value="PvdA" selected>PvdA</option>
 <option value="VVD" selected>VVD</option></select>
 <script type="application/json" data-for="advertisers__ggl">{}</script>
 </div>
@@ -3044,7 +3047,7 @@ source("helpers.R")
 
 
 ### Facebook setup
-dutch_parties_fb <- c("VVD", "D66", "FvD", "SP", "GroenLinks", "Volt Nederland", "PvdA", "CDA", "PvdD", "ChristenUnie")
+dutch_parties_fb <- c("VVD", "D66", "FvD", "SP", "GroenLinks", "Volt Nederland", "PvdA", "CDA", "PvdD", "ChristenUnie", "SGP", "DENK")
 
 advertiser_names_fb <- fb_aggr$times %>%
   distinct(advertiser_name) %>% 
