@@ -50,7 +50,7 @@ unnest_dems <- function(x) {
 
 last_updated_time <- as.character(Sys.time())
 
-# cat(last_updated_time, file = "app/production/data/last_updated.txt", append = T, sep = "\n")
+cat(last_updated_time, file = "app/production/data/last_updated.txt", append = T, sep = "\n")
 cat(last_updated_time, file = "app/staging/data/last_updated.txt", append = T, sep = "\n")
 
 
@@ -249,7 +249,7 @@ ggl_geo <-  ggl_ads %>%
 ggl_aggr <- list(total = ggl_total, times = ggl_times, gender = ggl_gender, age = ggl_age, geo = ggl_geo)
 
 
-# saveRDS(ggl_aggr, file = "app/production/data/ggl_aggr.rds")
+saveRDS(ggl_aggr, file = "app/production/data/ggl_aggr.rds")
 saveRDS(ggl_aggr, file = "app/staging/data/ggl_aggr.rds")
 
 
@@ -712,7 +712,7 @@ fb_geo <- fb_geo %>%
 
 fb_aggr <- list(total = fb_total, times = fb_times, geo = fb_geo, gender = fb_gender, age = fb_age)
 
-# saveRDS(fb_aggr, "app/production/data/fb_aggr.rds")
+saveRDS(fb_aggr, "app/production/data/fb_aggr.rds")
 saveRDS(fb_aggr, "app/staging/data/fb_aggr.rds")
 
 cat("\n\nFB Data: Done\n\n") 
