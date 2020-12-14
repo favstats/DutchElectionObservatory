@@ -510,7 +510,7 @@ observe ({
 <!-- <div class="fb-ad-library-spend-tracker" data-country="NL" data-page-ids="113895885305052,52985377549,609816282477420,211661062254003,121264564551002,175740570505,128393027527,320374518118,102287806490622" data-time-preset="last_7_days" data-width="500"></div> -->
 
 ```{r}
-source("helpers.R")
+
 
 htmlOutput('fb_chart')
 
@@ -521,13 +521,13 @@ htmlOutput('fb_chart')
   #          platform = "Facebook")
 # debugonce(hc_plotter)
 # 
-  fb_aggr %>%
-    hc_plotter(filters = c("D66", "GroenLinks"),
-           plot_type = unlist_it(trans$choices, 4),
-           plot_type_sub = unlist_it(trans$targeted_ads_choices, 1),
-           # targeting = "Geotargeting",
-           platform = "Facebook", last_updated = update_time, minmax = "minimum")
-
+  # fb_aggr %>%
+  #   hc_plotter(filters = c("D66", "GroenLinks"),
+  #          plot_type = unlist_it(trans$choices, 4),
+  #          plot_type_sub = unlist_it(trans$targeted_ads_choices, 1),
+  #          # targeting = "Geotargeting",
+  #          platform = "Facebook", last_updated = update_time, minmax = "minimum")
+  # 
 # debugonce(hc_plotter)
 #   ggl_aggr %>%
 #     hc_plotter(filters = c("D66", "GroenLinks"),

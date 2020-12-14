@@ -113,7 +113,7 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
       #     subtitle = subtitle_text
       #   ) 
       # 
-      # # print(hc_data)
+      # # #print(hc_data)
       # 
       # return(fin)
     }
@@ -121,7 +121,7 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
     ## if option is spend
     
     if(platform == "Facebook"){
-      print("Facebook")
+      #print("Facebook")
       
       spend_tooltip <- trans_internal$plot_tooltip_spend_fb
       
@@ -129,7 +129,7 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
       subtitle_text <- glue::glue(trans_internal$plot_subtitle_spend_fb)
       
       if(minmax == "Minimum"){
-        print("Minimum")
+        #print("Minimum")
         lvls <- hc_data %>% 
           mutate(advertiser_name = fct_reorder(advertiser_name, spend_range_min)) %>% 
           dplyr::pull(advertiser_name) %>% 
@@ -140,7 +140,7 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
           mutate(value = spend_range_min)
         
       } else if (minmax == "Maximum"){
-        print("Maximum")
+        #print("Maximum")
         lvls <- hc_data %>% 
           mutate(advertiser_name = fct_reorder(advertiser_name, spend_range_max)) %>% 
           dplyr::pull(advertiser_name) %>% 
@@ -153,7 +153,7 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
         
       }
     } else if(platform == "Google"){
-      print("Google")
+      #print("Google")
       
       upper_or_lower_bound <- "Totaal"
       
@@ -175,7 +175,7 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
        
     if(plot_type_sub == unlist_it(trans_internal$total_text, 1)){
       #if option is Total
-      print("total")
+      #print("total")
     
     # js_scrip <- "function() { return '<a target=\"_top\" href=\"https://www.france-politique.fr/election-presidentielle-1965.htm\">' + this.value + '</a>';}"
     
@@ -243,7 +243,7 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
     # 
     if(plot_type_sub == unlist_it(trans_internal$total_text, 2)){
       # if option is over time
-      print("over time")
+      #print("over time")
       hc_plot <- hc_data %>%
         hchart("line", hcaes(x = date_range_start, 
                              y = value, 
@@ -272,7 +272,7 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
     }
     
   } else if (plot_type == unlist_it(trans_internal$choices, 3)){
-    print("impressions")
+    #print("impressions")
     title_text <- glue::glue(trans_internal$plot_title_impressions)
     subtitle_text <- glue::glue(trans_internal$plot_subtitle_impressions)
     
@@ -390,7 +390,7 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
         n_cols <- length(unique(hc_data$advertiser_name))
         
         if(n_cols > 3){
-          # print("hello")
+          # #print("hello")
           Sys.sleep(2)
           hc_fin <- tibble(text = trans_internal$plot_message_geo, value = 12) %>% 
             hchart("wordcloud", hcaes(name = text, weight = value)) %>% hw_grid(ncol = 1) 
@@ -457,8 +457,8 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
         
         hc_plot <-  highchart() %>%
           hc_xAxis(type = "category") %>%
-          hc_add_series_list(hc_data, tooltip = list(pointFormat = "hello")) %>%
-          hc_yAxis(reversed = F, min = 0, title = list(text =  trans_internal$plot_yaxis_gender_fb))
+          hc_add_series_list(hc_data)%>%
+          hc_yAxis(reversed = F, min = 0, title = list(text =  trans_internal$plot_yaxis_gender_fb)) # %>% 
           # hc_chart(inverted = TRUE)
         
       }

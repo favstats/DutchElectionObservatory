@@ -457,8 +457,8 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
         
         hc_plot <-  highchart() %>%
           hc_xAxis(type = "category") %>%
-          hc_add_series_list(hc_data)%>%
-          hc_yAxis(reversed = F, min = 0, title = list(text =  trans_internal$plot_yaxis_gender_fb)) # %>% 
+          hc_add_series_list(hc_data, tooltip = list(pointFormat = "hello")) %>%
+          hc_yAxis(reversed = F, min = 0, title = list(text =  trans_internal$plot_yaxis_gender_fb))
           # hc_chart(inverted = TRUE)
         
       }

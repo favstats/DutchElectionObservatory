@@ -345,6 +345,8 @@ search_fields=c("ad_creation_time",
                 "ad_snapshot_url",
                 "demographic_distribution",
                 "funding_entity",
+                "potential_reach",
+                "publisher_platforms",
                 "impressions",
                 "region_distribution") %>% 
   stringr::str_c(., collapse=", ")
@@ -393,6 +395,39 @@ while(length(next_link)>0) {
 
 # saveRDS(df_imp, "fb_dat/fb_dat_experimental.rds")
 
+# missing <- fb_dat %>% 
+#   mutate(date_range_start = as.Date(ad_delivery_start_time)) %>%
+#   filter(date_range_start >= as.Date("2020-09-01")) %>% 
+#   anti_join(df_imp %>% 
+#               mutate(date_range_start = as.Date(ad_delivery_start_time)) %>%
+#               filter(date_range_start >= as.Date("2020-09-01")) %>% select(id))%>% filter(date_range_start <= as.Date("2020-12-01")) %>%  select(id)
+# 
+# data.table::fwrite(missing, file = "missings.csv")
+# 
+# fb_dat %>% 
+#   mutate(date_range_start = as.Date(ad_delivery_start_time)) %>%
+#   filter(date_range_start >= as.Date("2020-09-01")) %>% 
+#   anti_join(df_imp %>% 
+#               mutate(date_range_start = as.Date(ad_delivery_start_time)) %>%
+#               filter(date_range_start >= as.Date("2020-09-01")) %>% select(id)) %>% 
+#   unnest_wider(spend, names_sep = "_") %>%
+#   unnest_wider(impressions, names_sep = "_") %>%
+#   mutate_at(vars(spend_lower_bound, spend_upper_bound, impressions_lower_bound, impressions_upper_bound), as.numeric) %>% 
+#   arrange(desc(spend_upper_bound)) %>% View
+# 
+# fb_dat %>% 
+#   mutate(date_range_start = as.Date(ad_delivery_start_time)) %>%
+#   filter(date_range_start >= as.Date("2020-09-01")) %>% mutate(collection = "old") %>% 
+#   bind_rows(df_imp %>% 
+#               mutate(date_range_start = as.Date(ad_delivery_start_time)) %>%
+#               filter(date_range_start >= as.Date("2020-09-01")) %>% mutate(collection = "new")) %>%
+#   count(date_range_start, collection) %>% 
+#   ggplot(aes(date_range_start, n, color = collection)) +
+#   geom_line()
+# 
+# df_imp %>% 
+#   mutate(date_range_start = as.Date(ad_delivery_start_time)) %>%
+#   filter(date_range_start >= as.Date("2020-09-01")) %>% nrow
 
 dutch_parties <- c("VVD", "D66", "FvD", "SP", "GroenLinks", "Volt Nederland", "PvdA", "CDA", "PvdD", "ChristenUnie", "SGP", "DENK")
 
@@ -509,7 +544,8 @@ fb_total <- total_times  %>%
   ungroup() %>% 
   left_join(color_dat)  %>% 
   assign_colors() %>% 
-  left_join(facebook_id_dat)
+  left_join(facebook_id_dat)# %>% 
+  # left_join(total_spend_fb)
 
 cat("\n\nFB Data: Get times\n\n")  
 
@@ -544,6 +580,14 @@ fb_times <- total_times %>%
   left_join(color_dat) %>% 
   assign_colors()  %>% 
   left_join(facebook_id_dat)
+
+# fb_times %>% 
+#   left_join(daily_spend_fb) %>%
+#   # count(date_range_start, advertiser_name) %>% 
+#   filter(advertiser_name %in% dutch_parties) %>% 
+#   drop_na(amount_spent_eur) %>% 
+#     ggplot(aes(date_range_start, amount_spent_eur, color = advertiser_name)) +
+#     geom_line()
 
 # fb_times %>% 
 #   dplyr::filter(advertiser_name == "VVD") %>% 
