@@ -157,6 +157,10 @@ observe({
     )
 ```
 
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et quam et velit fringilla mattis nec vel diam. Morbi ut nibh vitae dolor accumsan consequat vel at massa. Vestibulum ipsum odio, posuere a pretium vitae, vulputate at elit. Phasellus eu faucibus mauris, vel blandit ligula. Phasellus molestie hendrerit magna sed convallis. Vivamus bibendum elit purus, vel vehicula tortor lacinia id. In consequat fringilla lobortis. Aenean ornare leo lorem, sit amet commodo eros vehicula sed. Aliquam ac ullamcorper felis, sit amet varius risus. Integer ullamcorper commodo sem a efficitur. Proin vitae viverra erat. Quisque euismod, mi sit amet luctus suscipit, ipsum eros vestibulum tellus, vel accumsan lacus purus et arcu. Etiam vehicula est laoreet nisl bibendum dictum.
+
+
+
 ### Google Platforms (incl. YouTube)
 
 ```{r}
@@ -169,6 +173,9 @@ observe({
            last_updated = update_time
     )
 ```
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et quam et velit fringilla mattis nec vel diam. Morbi ut nibh vitae dolor accumsan consequat vel at massa. Vestibulum ipsum odio, posuere a pretium vitae, vulputate at elit. Phasellus eu faucibus mauris, vel blandit ligula. Phasellus molestie hendrerit magna sed convallis. Vivamus bibendum elit purus, vel vehicula tortor lacinia id. In consequat fringilla lobortis. Aenean ornare leo lorem, sit amet commodo eros vehicula sed. Aliquam ac ullamcorper felis, sit amet varius risus. Integer ullamcorper commodo sem a efficitur. Proin vitae viverra erat. Quisque euismod, mi sit amet luctus suscipit, ipsum eros vestibulum tellus, vel accumsan lacus purus et arcu. Etiam vehicula est laoreet nisl bibendum dictum.
+
 
 
 ## Over Time Unique Ads {.tabset .tabset-fade .tabset-pills}
@@ -186,6 +193,10 @@ observe({
     )
 ```
 
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et quam et velit fringilla mattis nec vel diam. Morbi ut nibh vitae dolor accumsan consequat vel at massa. Vestibulum ipsum odio, posuere a pretium vitae, vulputate at elit. Phasellus eu faucibus mauris, vel blandit ligula. Phasellus molestie hendrerit magna sed convallis. Vivamus bibendum elit purus, vel vehicula tortor lacinia id. In consequat fringilla lobortis. Aenean ornare leo lorem, sit amet commodo eros vehicula sed. Aliquam ac ullamcorper felis, sit amet varius risus. Integer ullamcorper commodo sem a efficitur. Proin vitae viverra erat. Quisque euismod, mi sit amet luctus suscipit, ipsum eros vestibulum tellus, vel accumsan lacus purus et arcu. Etiam vehicula est laoreet nisl bibendum dictum.
+
+
+
 ### Google Platforms (incl. YouTube)
 
 ```{r}
@@ -198,3 +209,6 @@ observe({
            last_updated = update_time
     )
 ```
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et quam et velit fringilla mattis nec vel diam. Morbi ut nibh vitae dolor accumsan consequat vel at massa. Vestibulum ipsum odio, posuere a pretium vitae, vulputate at elit. Phasellus eu faucibus mauris, vel blandit ligula. Phasellus molestie hendrerit magna sed convallis. Vivamus bibendum elit purus, vel vehicula tortor lacinia id. In consequat fringilla lobortis. Aenean ornare leo lorem, sit amet commodo eros vehicula sed. Aliquam ac ullamcorper felis, sit amet varius risus. Integer ullamcorper commodo sem a efficitur. Proin vitae viverra erat. Quisque euismod, mi sit amet luctus suscipit, ipsum eros vestibulum tellus, vel accumsan lacus purus et arcu. Etiam vehicula est laoreet nisl bibendum dictum.
+
