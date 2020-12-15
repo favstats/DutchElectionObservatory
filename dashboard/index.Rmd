@@ -35,7 +35,7 @@ observe({
 ```{r}
 library(shiny)
 # renderUI({
-  shiny::HTML('<iframe style="height:100%; width:100%"; src="about.html"></iframe>')
+  shiny::HTML('<iframe style="height:150%; width:100%"; src="about.html"></iframe>')
 # })
 
 
@@ -50,7 +50,7 @@ library(shiny)
 ```{r}
 library(shiny)
 # renderUI({
-  shiny::HTML('<iframe style="height:100%; width:100%"; src="number_of_ads.html"></iframe>')
+  shiny::HTML('<iframe style="height:150%; width:100%"; src="number_of_ads.html"></iframe>')
 # })
 
 
@@ -67,7 +67,7 @@ library(shiny)
 library(shiny)
 # renderUI({
 
-shiny::HTML('<iframe style="height:100%; width:100%"; src="money.html"></iframe>')
+shiny::HTML('<iframe style="height:150%; width:100%"; src="money.html"></iframe>')
 
 # })
 
