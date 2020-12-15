@@ -1,5 +1,10 @@
 ---
-output: html_document
+output:
+  html_document:
+    toc: true
+    toc_float:
+      collapsed: false
+      smooth_scroll: false
 ---
 
 ```{r global, include=FALSE, echo=F, context="setup", results='hide'}
@@ -167,7 +172,7 @@ observe({
 
 ## Over Time Unique Ads {.tabset .tabset-fade .tabset-pills}
 
-### Facebook
+### Facebook Platforms (incl. Instagram)
 
 ```{r}
   fb_aggr %>% 
@@ -180,7 +185,7 @@ observe({
     )
 ```
 
-### Google
+### Google Platforms (incl. YouTube)
 
 ```{r}
   ggl_aggr %>% 
