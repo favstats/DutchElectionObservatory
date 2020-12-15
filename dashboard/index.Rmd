@@ -27,6 +27,20 @@ observe({
 
 ```
 
+**About**
+=========================================
+
+## Report
+
+```{r}
+library(shiny)
+# renderUI({
+  shiny::HTML('<iframe style="height:100%; width:100%"; src="about.html"></iframe>')
+# })
+
+
+```
+
 
 **Number of Ads**
 =========================================
