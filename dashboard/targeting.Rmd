@@ -108,33 +108,21 @@ defaults_ggl <- advertiser_names_ggl %>%
 
 
 
-## Total Impressions {.tabset .tabset-fade .tabset-pills}
+## Gender Targeting {.tabset .tabset-fade .tabset-pills}
 
 ### Facebook Platforms (incl. Instagram) {.tabset .tabset-fade .tabset-pills}
-#### Minimum
 
 ```{r}
   fb_aggr %>% 
     hc_plotter(filters = dutch_parties_fb,
-           plot_type = unlist_it(trans$choices, 3),
-           plot_type_sub = unlist_it(trans$total_text, 1),
+           plot_type = unlist_it(trans$choices, 4),
+           plot_type_sub = unlist_it(trans$targeted_ads_choices, 1),
            platform = "Facebook",
            trans_internal = trans,
            last_updated = update_time, minmax = "Minimum"
     )
 ```
 
-#### Maximum
-```{r}
-  fb_aggr %>% 
-    hc_plotter(filters = dutch_parties_fb,
-           plot_type = unlist_it(trans$choices, 3),
-           plot_type_sub = unlist_it(trans$total_text, 1),
-           platform = "Facebook",
-           trans_internal = trans,
-           last_updated = update_time, minmax = "Maximum"
-    )
-```
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et quam et velit fringilla mattis nec vel diam. Morbi ut nibh vitae dolor accumsan consequat vel at massa. Vestibulum ipsum odio, posuere a pretium vitae, vulputate at elit. Phasellus eu faucibus mauris, vel blandit ligula. Phasellus molestie hendrerit magna sed convallis. Vivamus bibendum elit purus, vel vehicula tortor lacinia id. In consequat fringilla lobortis. Aenean ornare leo lorem, sit amet commodo eros vehicula sed. Aliquam ac ullamcorper felis, sit amet varius risus. Integer ullamcorper commodo sem a efficitur. Proin vitae viverra erat. Quisque euismod, mi sit amet luctus suscipit, ipsum eros vestibulum tellus, vel accumsan lacus purus et arcu. Etiam vehicula est laoreet nisl bibendum dictum.
 
@@ -142,29 +130,16 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et quam et velit 
 
 ### Google Platforms (incl. YouTube)
 
-#### Minimum
+
 
 ```{r}
-  fb_aggr %>% 
+  ggl_aggr %>% 
     hc_plotter(filters = dutch_parties,
-           plot_type = unlist_it(trans$choices, 3),
-           plot_type_sub = unlist_it(trans$total_text, 2),
+           plot_type = unlist_it(trans$choices, 4),
+           plot_type_sub = unlist_it(trans$targeted_ads_choices, 1),
            platform = "Google",
            trans_internal = trans,
            last_updated = update_time, minmax = "Minimum"
-    )
-```
-
-#### Maximum
-
-```{r}
-  fb_aggr %>% 
-    hc_plotter(filters = dutch_parties,
-           plot_type = unlist_it(trans$choices, 3),
-           plot_type_sub = unlist_it(trans$total_text, 2),
-           platform = "Google",
-           trans_internal = trans,
-           last_updated = update_time, minmax = "Maximum"
     )
 ```
 
@@ -172,35 +147,21 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et quam et velit 
 
 
 
-## Over Time Impressions {.tabset .tabset-fade .tabset-pills}
+## Age Targeting {.tabset .tabset-fade .tabset-pills}
 
 ### Facebook Platforms (incl. Instagram) {.tabset .tabset-fade .tabset-pills}
-
-#### Minimum
 
 ```{r}
   fb_aggr %>% 
     hc_plotter(filters = dutch_parties_fb,
-           plot_type = unlist_it(trans$choices, 3),
-           plot_type_sub = unlist_it(trans$total_text, 2),
+           plot_type = unlist_it(trans$choices, 4),
+           plot_type_sub = unlist_it(trans$targeted_ads_choices, 2),
            platform = "Facebook",
            trans_internal = trans,
            last_updated = update_time, minmax = "Minimum"
     )
 ```
 
-#### Maximum
-
-```{r}
-  fb_aggr %>% 
-    hc_plotter(filters = dutch_parties_fb,
-           plot_type = unlist_it(trans$choices, 3),
-           plot_type_sub = unlist_it(trans$total_text, 2),
-           platform = "Facebook",
-           trans_internal = trans,
-           last_updated = update_time, minmax = "Maximum"
-    )
-```
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et quam et velit fringilla mattis nec vel diam. Morbi ut nibh vitae dolor accumsan consequat vel at massa. Vestibulum ipsum odio, posuere a pretium vitae, vulputate at elit. Phasellus eu faucibus mauris, vel blandit ligula. Phasellus molestie hendrerit magna sed convallis. Vivamus bibendum elit purus, vel vehicula tortor lacinia id. In consequat fringilla lobortis. Aenean ornare leo lorem, sit amet commodo eros vehicula sed. Aliquam ac ullamcorper felis, sit amet varius risus. Integer ullamcorper commodo sem a efficitur. Proin vitae viverra erat. Quisque euismod, mi sit amet luctus suscipit, ipsum eros vestibulum tellus, vel accumsan lacus purus et arcu. Etiam vehicula est laoreet nisl bibendum dictum.
 
@@ -208,33 +169,58 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et quam et velit 
 
 ### Google Platforms (incl. YouTube)
 
-#### Minimum
+
 
 ```{r}
-  fb_aggr %>% 
+  ggl_aggr %>% 
     hc_plotter(filters = dutch_parties,
-           plot_type = unlist_it(trans$choices, 3),
-           plot_type_sub = unlist_it(trans$total_text, 2),
+           plot_type = unlist_it(trans$choices, 4),
+           plot_type_sub = unlist_it(trans$targeted_ads_choices, 2),
            platform = "Google",
            trans_internal = trans,
            last_updated = update_time, minmax = "Minimum"
     )
 ```
 
-#### Maximum
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et quam et velit fringilla mattis nec vel diam. Morbi ut nibh vitae dolor accumsan consequat vel at massa. Vestibulum ipsum odio, posuere a pretium vitae, vulputate at elit. Phasellus eu faucibus mauris, vel blandit ligula. Phasellus molestie hendrerit magna sed convallis. Vivamus bibendum elit purus, vel vehicula tortor lacinia id. In consequat fringilla lobortis. Aenean ornare leo lorem, sit amet commodo eros vehicula sed. Aliquam ac ullamcorper felis, sit amet varius risus. Integer ullamcorper commodo sem a efficitur. Proin vitae viverra erat. Quisque euismod, mi sit amet luctus suscipit, ipsum eros vestibulum tellus, vel accumsan lacus purus et arcu. Etiam vehicula est laoreet nisl bibendum dictum.
+
+
+
+
+## Geo Targeting {.tabset .tabset-fade .tabset-pills}
+
+### Facebook Platforms (incl. Instagram) {.tabset .tabset-fade .tabset-pills}
 
 ```{r}
   fb_aggr %>% 
-    hc_plotter(filters = dutch_parties,
-           plot_type = unlist_it(trans$choices, 3),
-           plot_type_sub = unlist_it(trans$total_text, 2),
-           platform = "Google",
+    hc_plotter(filters = dutch_parties_fb,
+           plot_type = unlist_it(trans$choices, 4),
+           plot_type_sub = unlist_it(trans$targeted_ads_choices, 3),
+           platform = "Facebook",
            trans_internal = trans,
-           last_updated = update_time, minmax = "Maximum"
+           last_updated = update_time, minmax = "Minimum"
     )
 ```
 
 
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et quam et velit fringilla mattis nec vel diam. Morbi ut nibh vitae dolor accumsan consequat vel at massa. Vestibulum ipsum odio, posuere a pretium vitae, vulputate at elit. Phasellus eu faucibus mauris, vel blandit ligula. Phasellus molestie hendrerit magna sed convallis. Vivamus bibendum elit purus, vel vehicula tortor lacinia id. In consequat fringilla lobortis. Aenean ornare leo lorem, sit amet commodo eros vehicula sed. Aliquam ac ullamcorper felis, sit amet varius risus. Integer ullamcorper commodo sem a efficitur. Proin vitae viverra erat. Quisque euismod, mi sit amet luctus suscipit, ipsum eros vestibulum tellus, vel accumsan lacus purus et arcu. Etiam vehicula est laoreet nisl bibendum dictum.
+
+
+
+### Google Platforms (incl. YouTube)
+
+
+
+```{r}
+  ggl_aggr %>% 
+    hc_plotter(filters = dutch_parties,
+           plot_type = unlist_it(trans$choices, 4),
+           plot_type_sub = unlist_it(trans$targeted_ads_choices, 3),
+           platform = "Google",
+           trans_internal = trans,
+           last_updated = update_time, minmax = "Minimum"
+    )
+```
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et quam et velit fringilla mattis nec vel diam. Morbi ut nibh vitae dolor accumsan consequat vel at massa. Vestibulum ipsum odio, posuere a pretium vitae, vulputate at elit. Phasellus eu faucibus mauris, vel blandit ligula. Phasellus molestie hendrerit magna sed convallis. Vivamus bibendum elit purus, vel vehicula tortor lacinia id. In consequat fringilla lobortis. Aenean ornare leo lorem, sit amet commodo eros vehicula sed. Aliquam ac ullamcorper felis, sit amet varius risus. Integer ullamcorper commodo sem a efficitur. Proin vitae viverra erat. Quisque euismod, mi sit amet luctus suscipit, ipsum eros vestibulum tellus, vel accumsan lacus purus et arcu. Etiam vehicula est laoreet nisl bibendum dictum.
 

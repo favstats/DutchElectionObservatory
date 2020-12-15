@@ -389,18 +389,18 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
       if(platform == "Facebook"){
         n_cols <- length(unique(hc_data$advertiser_name))
         
-        if(n_cols > 3){
-          # #print("hello")
-          Sys.sleep(2)
-          hc_fin <- tibble(text = trans_internal$plot_message_geo, value = 12) %>% 
-            hchart("wordcloud", hcaes(name = text, weight = value)) %>% hw_grid(ncol = 1) 
-          
-          return(hc_fin)
-        }
+        # if(n_cols > 3){
+        #   # #print("hello")
+        #   Sys.sleep(2)
+        #   hc_fin <- tibble(text = trans_internal$plot_message_geo, value = 12) %>% 
+        #     hchart("wordcloud", hcaes(name = text, weight = value)) %>% hw_grid(ncol = 1) 
+        #   
+        #   return(hc_fin)
+        # }
         
         hc_fin <- hc_data %>% 
           group_split(advertiser_name) %>% 
-          map(~{chart_maps(.x, F, mapdata, trans_internal)}) %>% hw_grid(ncol = n_cols) %>% 
+          map(~{chart_maps(.x, F, mapdata, trans_internal)}) %>% hw_grid(ncol = 3) %>% 
           htmltools::browsable()
         
         return(hc_fin)             

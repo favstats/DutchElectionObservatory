@@ -85,7 +85,7 @@ shiny::HTML('<iframe style="height:150%; width:100%"; src="money.html"></iframe>
 library(shiny)
 # renderUI({
 
-shiny::HTML('<iframe style="height:150%; width:100%"; src="money.html"></iframe>')
+shiny::HTML('<iframe style="height:150%; width:100%"; src="impressions.html"></iframe>')
 
 # })
 
@@ -102,7 +102,7 @@ shiny::HTML('<iframe style="height:150%; width:100%"; src="money.html"></iframe>
 library(shiny)
 # renderUI({
 
-shiny::HTML('<iframe style="height:150%; width:100%"; src="impressions.html"></iframe>')
+shiny::HTML('<iframe style="height:150%; width:100%"; src="targeting.html"></iframe>')
 
 # })
 
