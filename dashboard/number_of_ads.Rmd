@@ -5,6 +5,7 @@ output:
     toc_float:
       collapsed: false
       smooth_scroll: false
+    anchor_sections: false
 ---
 
 ```{r global, include=FALSE, echo=F, context="setup", results='hide'}
