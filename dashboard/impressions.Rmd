@@ -140,7 +140,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et quam et velit 
 
 
 
-### Google Platforms (incl. YouTube)
+### Google Platforms (incl. YouTube) {.tabset .tabset-fade .tabset-pills}
 
 #### Minimum
 
@@ -206,7 +206,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et quam et velit 
 
 
 
-### Google Platforms (incl. YouTube)
+### Google Platforms (incl. YouTube) {.tabset .tabset-fade .tabset-pills}
 
 #### Minimum
 
