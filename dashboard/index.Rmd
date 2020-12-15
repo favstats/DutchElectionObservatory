@@ -8,11 +8,21 @@ output:
     theme: lumen
     logo: https://politieke-advertenties.nl/wp-content/uploads/2020/11/logo-e1604404707339.png
     favicon: https://politieke-advertenties.nl/wp-content/uploads/2020/11/logo-e1604404707339.png
+runtime: shiny_prerendered
 ---
 
-```{r, context = "server", eval=F}
+```{r global, include=FALSE, echo=F, context="setup", results='hide'}
+library(tidyverse)
+library(shiny)
 library(shinyWidgets)
+source("helpers.R")
 
+trans <- readRDS("data/trans_dutch.rds")
+
+
+
+```
+```{r, context = "server"}
 observe({
   sendSweetAlert(session, 
                  title = trans$welcome_title,
@@ -28,34 +38,57 @@ observe({
 ```
 
 
-Number of Ads
-=========================================
 
-## Report
+Sidebar {.sidebar}
+-----------------------------------------------------------------------
 
 ```{r}
-library(shiny)
-# renderUI({
-  shiny::HTML('<iframe style="height:200%; width:100%"; src="number_of_ads.html"></iframe>')
-# })
+# shiny inputs defined here
+```
+
+
+
+
+```{r}
+prettyRadioButtons(
+   inputId = "plot_type",
+   label = trans$plot_type,
+   choices = unlist_it(trans$choices), 
+   selected = unlist_it(trans$choices, 1),
+   # icon = icon("check"), 
+   status = "info",
+   animation = "smooth"
+)
+
+```
+
+
+```{r, context = "server"}
+
+output$render_frame <- renderUI({
+  
+    if(input$plot_type %in% unlist_it(trans$choices, 1)){
+
+        shiny::HTML('<iframe style="height:400%; width:100%"; src="https://refined-github-html-preview.kidonng.workers.dev/favstats/DutchElectionObservatory/raw/main/dashboard/money.html"></iframe>')
+          
+    } else if(input$plot_type %in% unlist_it(trans$choices, 2)){
+      
+      shiny::HTML('<iframe style="height:200%; width:100%"; src="money.html"></iframe>')
+
+    }
+ })
 
 
 ```
 
 
+Column  {data-height=2000}
+-----------------------------------------------------------------------
 
-Money Spent
-=========================================
-
-## Report
+### Output
 
 ```{r}
-library(shiny)
-# renderUI({
-
-shiny::HTML('<iframe style="height:200%; width:100%"; src="money.html"></iframe>')
-
-# })
+uiOutput("render_frame")
 
 ```
 
