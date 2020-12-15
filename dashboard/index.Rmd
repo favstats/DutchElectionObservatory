@@ -73,3 +73,38 @@ shiny::HTML('<iframe style="height:150%; width:100%"; src="money.html"></iframe>
 
 ```
 
+
+
+
+**Impressions**
+=========================================
+
+## Report
+
+```{r}
+library(shiny)
+# renderUI({
+
+shiny::HTML('<iframe style="height:150%; width:100%"; src="money.html"></iframe>')
+
+# })
+
+```
+
+
+
+**Targeting**
+=========================================
+
+## Report
+
+```{r}
+library(shiny)
+# renderUI({
+
+shiny::HTML('<iframe style="height:150%; width:100%"; src="impressions.html"></iframe>')
+
+# })
+
+```
+
