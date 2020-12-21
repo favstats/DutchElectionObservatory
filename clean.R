@@ -52,6 +52,7 @@ last_updated_time <- as.character(Sys.time())
 
 cat(last_updated_time, file = "app/production/data/last_updated.txt", append = T, sep = "\n")
 cat(last_updated_time, file = "app/staging/data/last_updated.txt", append = T, sep = "\n")
+cat(last_updated_time, file = "dashboard/data/last_updated.txt", append = T, sep = "\n")
 
 
 ### ---- Get Google data  ####
@@ -251,6 +252,7 @@ ggl_aggr <- list(total = ggl_total, times = ggl_times, gender = ggl_gender, age 
 
 saveRDS(ggl_aggr, file = "app/production/data/ggl_aggr.rds")
 saveRDS(ggl_aggr, file = "app/staging/data/ggl_aggr.rds")
+saveRDS(ggl_aggr, file = "dashboard/data/ggl_aggr.rds")
 
 
 
@@ -429,7 +431,7 @@ while(length(next_link)>0) {
 #   mutate(date_range_start = as.Date(ad_delivery_start_time)) %>%
 #   filter(date_range_start >= as.Date("2020-09-01")) %>% nrow
 
-dutch_parties <- c("VVD", "D66", "FvD", "SP", "GroenLinks", "Volt Nederland", "PvdA", "CDA", "PvdD", "ChristenUnie", "SGP", "DENK")
+dutch_parties <- c("VVD", "D66", "FvD", "SP", "GroenLinks", "Volt Nederland", "PvdA", "CDA", "PvdD", "ChristenUnie", "SGP", "DENK", "50PLUS")
 
 cat("\n\nFB Data: Read in old data\n\n")  
 
@@ -449,16 +451,21 @@ cat("\n\nFB Data: Merge data\n\n")
 fb_dat <- df_imp %>% 
   rename(advertiser_name = page_name) %>% 
   rename(advertiser_id = page_id) %>% 
-  bind_rows(fb_dat) %>% 
+  bind_rows(fb_dat) %>%
   distinct(id, .keep_all = T) %>% 
   mutate(advertiser_name = case_when(
     advertiser_name == 'Partij voor de Dieren' ~ "PvdD",
     advertiser_name == 'Partij van de Arbeid (PvdA)' ~ "PvdA",
     advertiser_name == 'Forum voor Democratie -FVD' ~ "FvD",
+    advertiser_name == '50PLUSpartij' ~ "50PLUS",
     T ~ advertiser_name
   ))
 
 saveRDS(fb_dat, "fb_dat/fb_dat.rds")
+
+
+# saveRDS(fb_dat, "fb_dat/fb_dat_old.rds")
+
 
 cat("\n\nFB Data: Save data\n\n")  
 
@@ -487,8 +494,8 @@ cat("\n\nGarbage collected\n\n")
 # fb_ads <- get_fb_ads()
 
 color_dat <- tibble(
-  color = c("#00b13d", "#80c31c", "#cd503e", "#008067", "#6f2421", "#e3101c", "#e01003", "#036b2c", "#02a6e9", "#562883", "#eeaa00", "#34c1c4"),
-  advertiser_name = c("D66", "GroenLinks", "VVD", "CDA", "FvD", "PvdA", "SP", "PvdD", "ChristenUnie", "Volt Nederland", "SGP", "DENK"))
+  color = c("#00b13d", "#80c31c", "#cd503e", "#008067", "#6f2421", "#e3101c", "#e01003", "#036b2c", "#02a6e9", "#562883", "#eeaa00", "#34c1c4", "#92107d"),
+  advertiser_name = c("D66", "GroenLinks", "VVD", "CDA", "FvD", "PvdA", "SP", "PvdD", "ChristenUnie", "Volt Nederland", "SGP", "DENK", "50PLUS"))
 
 cat("\n\nFB Data: Get totals\n\n")  
 
@@ -497,8 +504,11 @@ total_times <- fb_dat %>%
   mutate(date_range_start = as.Date(ad_delivery_start_time)) %>%
   filter(date_range_start >= as.Date("2020-09-01")) %>% 
   unnest_wider(spend, names_sep = "_") %>%
-  unnest_wider(impressions, names_sep = "_") %>%
-  mutate_at(vars(spend_lower_bound, spend_upper_bound, impressions_lower_bound, impressions_upper_bound), as.numeric) %>% 
+  unnest_wider(impressions, names_sep = "_") %>% 
+  unnest_wider(potential_reach , names_sep = "_") %>%
+  mutate_at(vars(spend_lower_bound, spend_upper_bound, 
+                 impressions_lower_bound, impressions_upper_bound, 
+                 potential_reach_lower_bound, potential_reach_upper_bound), as.numeric) %>% 
   # drop_na(spend_lower_bound, spend_upper_bound, impressions_lower_bound, impressions_upper_bound) %>% 
   mutate(impressions_lower_bound = case_when(
     # is.na(impressions_upper_bound) ~ 0, 
@@ -525,16 +535,22 @@ facebook_id_dat <- total_times  %>%
 fb_total <- total_times  %>% 
   left_join(batch_id_dat) %>% 
   group_by(batch_id, advertiser_name) %>% 
-  summarise(spend_range_min = median(spend_lower_bound),
-            spend_range_max = median(spend_upper_bound),
-            spend_range_mid = median(get_mid(spend_lower_bound, spend_upper_bound)),
-            impressions_range_min = median(impressions_lower_bound) * n(),
-            impressions_range_max = median(impressions_upper_bound) * n(),
-            impressions_range_mid = median(get_mid(impressions_lower_bound, impressions_upper_bound))* n(),
+  summarise(potential_reach_min = median(potential_reach_lower_bound) ,
+            # potential_reach_max = median(potential_reach_upper_bound) ,
+            # potential_reach_mid = median(get_mid(potential_reach_lower_bound, potential_reach_upper_bound)),
+            spend_range_min = median(spend_lower_bound) ,
+            spend_range_max = median(spend_upper_bound) ,
+            spend_range_mid = median(get_mid(spend_lower_bound, spend_upper_bound)) ,
+            impressions_range_min = median(impressions_lower_bound) ,
+            impressions_range_max = median(impressions_upper_bound) ,
+            impressions_range_mid = median(get_mid(impressions_lower_bound, impressions_upper_bound)),
             n_ids = n()) %>% 
   ungroup() %>% 
   group_by(advertiser_name) %>%# View
-  summarise(spend_range_min = sum(spend_range_min),
+  summarise(potential_reach_min = sum(potential_reach_min),
+            # potential_reach_max = sum(potential_reach_max),
+            # potential_reach_mid = sum(potential_reach_mid),
+            spend_range_min = sum(spend_range_min),
             spend_range_max = sum(spend_range_max),
             spend_range_mid = sum(spend_range_mid),
             impressions_range_min = sum(impressions_range_min),
@@ -559,16 +575,22 @@ fb_times <- total_times %>%
   ungroup() %>% 
   group_by(batch_id, advertiser_name, date_range_start) %>% 
   # group_by(date_range_start, ad_creative_body, ad_creative_link_title, advertiser_name) %>% 
-  summarise(spend_range_min = median(spend_lower_bound),
-            spend_range_max = median(spend_upper_bound),
-            spend_range_mid = median(get_mid(spend_lower_bound, spend_upper_bound)),
-            impressions_range_min = median(impressions_lower_bound) * n(),
-            impressions_range_max = median(impressions_upper_bound) * n(),
-            impressions_range_mid = median(get_mid(impressions_lower_bound, impressions_upper_bound)) * n(),
+  summarise(potential_reach_min = median(potential_reach_lower_bound) ,
+            # potential_reach_max = median(potential_reach_upper_bound) ,
+            # potential_reach_mid = median(get_mid(potential_reach_lower_bound, potential_reach_upper_bound)),
+            spend_range_min = median(spend_lower_bound) ,
+            spend_range_max = median(spend_upper_bound) ,
+            spend_range_mid = median(get_mid(spend_lower_bound, spend_upper_bound)) ,
+            impressions_range_min = median(impressions_lower_bound) ,
+            impressions_range_max = median(impressions_upper_bound) ,
+            impressions_range_mid = median(get_mid(impressions_lower_bound, impressions_upper_bound)) ,
             n_ids = n()) %>% 
   ungroup() %>% 
   group_by(date_range_start, advertiser_name) %>%# View
-  summarise(spend_range_min = sum(spend_range_min),
+  summarise(potential_reach_min = sum(potential_reach_min),
+            # potential_reach_max = sum(potential_reach_max),
+            # potential_reach_mid = sum(potential_reach_mid),
+            spend_range_min = sum(spend_range_min),
             spend_range_max = sum(spend_range_max),
             spend_range_mid = sum(spend_range_mid),
             impressions_range_min = sum(impressions_range_min),
@@ -754,9 +776,21 @@ fb_geo <- fb_geo %>%
   mutate(percentage = round(100*percentage, 2))
 
 
-fb_aggr <- list(total = fb_total, times = fb_times, geo = fb_geo, gender = fb_gender, age = fb_age)
+fb_reach <- total_times  %>% 
+  left_join(batch_id_dat) %>% 
+  group_by(batch_id, advertiser_name) %>% 
+  summarise(potential_reach_min = median(potential_reach_lower_bound),
+            n_ids = n()) %>% 
+  ungroup() %>% 
+  left_join(color_dat)  %>% 
+  assign_colors() %>% 
+  left_join(facebook_id_dat)
+                        
+
+fb_aggr <- list(total = fb_total, times = fb_times, geo = fb_geo, gender = fb_gender, age = fb_age, reach = fb_reach)
 
 saveRDS(fb_aggr, "app/production/data/fb_aggr.rds")
 saveRDS(fb_aggr, "app/staging/data/fb_aggr.rds")
+saveRDS(fb_aggr, file = "dashboard/data/fb_aggr.rds")
 
 cat("\n\nFB Data: Done\n\n") 

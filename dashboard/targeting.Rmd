@@ -76,7 +76,7 @@ source("helpers.R")
 
 
 ### Facebook setup
-dutch_parties_fb <- c("VVD", "D66", "FvD", "SP", "GroenLinks", "Volt Nederland", "PvdA", "CDA", "PvdD", "ChristenUnie", "SGP", "DENK")
+dutch_parties_fb <- c("VVD", "D66", "FvD", "SP", "GroenLinks", "Volt Nederland", "PvdA", "CDA", "PvdD", "ChristenUnie", "SGP", "DENK", "50PLUS")
 
 advertiser_names_fb <- fb_aggr$times %>%
   distinct(advertiser_name) %>% 
@@ -103,6 +103,7 @@ advertiser_names_ggl <- ggl_aggr$total %>%
 defaults_ggl <- advertiser_names_ggl %>% 
   keep(~magrittr::is_in(.x, dutch_parties))
 
+map_data <- readRDS("data/mapdata.RDS")
 
 ```
 
@@ -192,14 +193,23 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et quam et velit 
 ### Facebook Platforms (incl. Instagram) {.tabset .tabset-fade .tabset-pills}
 
 ```{r}
+# debugonce(hc_plotter)
+
+# fb_aggr$geo %>% filter(advertiser_name == "CDA")
   fb_aggr %>% 
     hc_plotter(filters = dutch_parties_fb,
            plot_type = unlist_it(trans$choices, 4),
            plot_type_sub = unlist_it(trans$targeted_ads_choices, 3),
            platform = "Facebook",
+           mapdata = map_data,
            trans_internal = trans,
            last_updated = update_time, minmax = "Minimum"
     )
+  
+   # hc_data %>% 
+   #   chart_maps(F, mapdata, trans) %>% hw_grid(ncol = 1) %>% list
+   #        group_split(advertiser_name) %>% 
+   #        map(~{chart_maps(.x, F, mapdata, trans)}) %>% hw_grid(ncol = 3) 
 ```
 
 
@@ -223,4 +233,45 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et quam et velit 
 ```
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et quam et velit fringilla mattis nec vel diam. Morbi ut nibh vitae dolor accumsan consequat vel at massa. Vestibulum ipsum odio, posuere a pretium vitae, vulputate at elit. Phasellus eu faucibus mauris, vel blandit ligula. Phasellus molestie hendrerit magna sed convallis. Vivamus bibendum elit purus, vel vehicula tortor lacinia id. In consequat fringilla lobortis. Aenean ornare leo lorem, sit amet commodo eros vehicula sed. Aliquam ac ullamcorper felis, sit amet varius risus. Integer ullamcorper commodo sem a efficitur. Proin vitae viverra erat. Quisque euismod, mi sit amet luctus suscipit, ipsum eros vestibulum tellus, vel accumsan lacus purus et arcu. Etiam vehicula est laoreet nisl bibendum dictum.
+
+## Potential Reach
+
+### Facebook Platforms (incl. Instagram) 
+
+```{r}
+hc_data <- fb_aggr$reach %>% 
+  filter(advertiser_name %in% dutch_parties_fb) 
+
+  
+hc_data %>% data_to_boxplot(potential_reach_min, color, advertiser_name) %>% 
+  unnest(data) %>% unnest(data)
+
+hc_plot <-  highchart() %>%
+  hc_xAxis(type = "category") %>%
+  hc_add_series_list(hc_data %>% data_to_boxplot(potential_reach_min, advertiser_name, color))%>%
+  hc_yAxis(reversed = F, min = 0, title = list(text = "Potential Reach")) %>% 
+  hc_colors(unique(hc_data$color)) 
+
+hc_plot
+
+hcboxplot(
+  x = hc_data$potential_reach_min,
+  var = hc_data$advertiser_name,
+  outliers = TRUE,
+  color = "#2980b9"
+  ) %>% 
+  hc_chart(type = "column") %>% 
+  hc_colors(unique(hc_data$color)) 
+
+
+
+fb_aggr$reach %>% 
+  filter(advertiser_name %in% dutch_parties_fb) %>% 
+  ggplot(aes(advertiser_name, potential_reach_min)) +
+  geom_boxplot() +
+  scale_y_log10(labels = scales::label_number()) +
+  theme_minimal() 
+```
+
+
 
