@@ -48,7 +48,6 @@ gitpush <- function(dir = getwd()){
 
 while(T){
   
-  Sys.sleep(60*60*24)
   
   currentTime <- Sys.time()
   
@@ -81,6 +80,7 @@ while(T){
   gitpush()
   
   
+  Sys.sleep(60*60*24)
   
   # Sys.sleep(60*60*60)
   

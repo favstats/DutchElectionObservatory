@@ -2737,7 +2737,8 @@ window.FlexDashboardComponents.push({
 <p><div id="sub2_fb" class="shiny-html-output"></div><div class="form-group shiny-input-container">
 <label class="control-label" for="advertisers__fb">Selecteer adverteerders</label>
 <div>
-<select id="advertisers__fb" class="form-control" multiple="multiple"><option value="CDA" selected>CDA</option>
+<select id="advertisers__fb" class="form-control" multiple="multiple"><option value="50PLUS" selected>50PLUS</option>
+<option value="CDA" selected>CDA</option>
 <option value="ChristenUnie" selected>ChristenUnie</option>
 <option value="D66" selected>D66</option>
 <option value="DENK" selected>DENK</option>
@@ -3047,7 +3048,7 @@ source("helpers.R")
 
 
 ### Facebook setup
-dutch_parties_fb <- c("VVD", "D66", "FvD", "SP", "GroenLinks", "Volt Nederland", "PvdA", "CDA", "PvdD", "ChristenUnie", "SGP", "DENK")
+dutch_parties_fb <- c("VVD", "D66", "FvD", "SP", "GroenLinks", "Volt Nederland", "PvdA", "CDA", "PvdD", "ChristenUnie", "SGP", "DENK", "50PLUS")
 
 advertiser_names_fb <- fb_aggr$times %>%
   distinct(advertiser_name) %>% 
