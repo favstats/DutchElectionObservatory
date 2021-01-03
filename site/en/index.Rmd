@@ -1,28 +1,19 @@
 ---
+title: "About"
 output:
   html_document:
-    toc: true
-    toc_float:
-      collapsed: false
-      smooth_scroll: false
     anchor_sections: false
 ---
 
-## Lorem ipsum
+This dashboard is still a work in progress that we plan to regularly update and improve during the Dutch election. Please check out this [blog post](https://politieke-advertenties.nl/waar-komen-onze-data-vandaan/) for more detailed explanations of the metrics shown here.
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et quam et velit fringilla mattis nec vel diam. Morbi ut nibh vitae dolor accumsan consequat vel at massa. Vestibulum ipsum odio, posuere a pretium vitae, vulputate at elit. Phasellus eu faucibus mauris, vel blandit ligula. Phasellus molestie hendrerit magna sed convallis. Vivamus bibendum elit purus, vel vehicula tortor lacinia id. In consequat fringilla lobortis. Aenean ornare leo lorem, sit amet commodo eros vehicula sed. Aliquam ac ullamcorper felis, sit amet varius risus. Integer ullamcorper commodo sem a efficitur. Proin vitae viverra erat. Quisque euismod, mi sit amet luctus suscipit, ipsum eros vestibulum tellus, vel accumsan lacus purus et arcu. Etiam vehicula est laoreet nisl bibendum dictum.
+There are four main questions that we are trying to tackle with our current version of the dashboard:
 
++ How many ads are the Dutch political parties placing on the platforms that we look at?
++ How much money are the parties spending on each platform?
++ How many people are reached through these ads?
++ How are the political ads targeted towards individuals?
 
-Proin rutrum lorem et libero rutrum, sed bibendum nibh maximus. Sed sit amet lectus non turpis blandit laoreet eu in leo. Donec gravida tortor et blandit laoreet. Aliquam auctor diam id eros ultrices tempus. Pellentesque tincidunt augue aliquet massa eleifend blandit. Duis lobortis leo ac pretium volutpat. Integer facilisis ultrices justo vitae aliquam. Donec sem diam, fringilla in volutpat non, egestas sollicitudin magna. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec pulvinar, orci eu iaculis aliquam, nulla elit vehicula velit, at cursus nibh urna fermentum ligula. Duis ante sapien, ornare in lorem a, varius accumsan neque. Aliquam vel sagittis eros. Praesent laoreet eleifend leo ac finibus.
+> Disclaimer: the data shown in this dashboard is based on the platform's respective ad libraries. For this reason the data shown here might not reflect the full picture nor all political ads that were targeted at voters.
 
-
-## Proin rutrum
-
-Etiam vel ex ut enim interdum efficitur. Nulla mi diam, sollicitudin eu velit a, condimentum laoreet nunc. Nunc eu magna egestas, rutrum ante sed, luctus orci. Aenean in bibendum orci, sed sagittis justo. Cras vestibulum orci sed metus venenatis, non semper lorem semper. Curabitur ac convallis augue. Duis a leo nec nibh volutpat mattis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aliquam pharetra, eros eget dapibus rhoncus, mauris augue feugiat sapien, varius posuere dolor massa gravida est. Proin pharetra massa sapien, eget semper enim interdum sed. Sed pretium vulputate turpis molestie volutpat. Praesent vitae odio mollis, suscipit dui nec, placerat leo. Pellentesque bibendum semper lacus, quis ultricies ante. Morbi lobortis mauris sit amet maximus malesuada. Fusce in dui risus.
-
-
-Quisque pharetra urna vel imperdiet euismod. Donec auctor, lacus at ornare scelerisque, risus sapien vulputate sem, vel rhoncus lorem ipsum at est. Maecenas sed scelerisque purus. Maecenas sed odio nec elit tincidunt aliquet. Quisque non libero nulla. Phasellus turpis sem, volutpat ut turpis quis, blandit rutrum dui. In hac habitasse platea dictumst. Aenean volutpat efficitur dolor, at pellentesque mauris pretium vitae. Nulla nec est ac lectus porttitor scelerisque eu eget tortor.
-
-## Etiam vel ex
-
-Nunc hendrerit ligula ac urna fringilla tempus. Pellentesque nec sapien quis quam finibus fermentum et sed ex. Sed vel ultricies sem. Vestibulum mattis, sem non elementum blandit, velit augue fermentum purus, at dictum risus ligula eu turpis. Suspendisse ultrices rutrum diam eu aliquet. Duis porta tincidunt nisi, in molestie magna venenatis id. Nam commodo tempus placerat. Integer vel massa pulvinar, vehicula ante vel, feugiat sem. Vivamus non dolor ornare, finibus velit sed, accumsan felis. Integer quis pretium turpis. Sed vestibulum ornare lacus eu porta. Proin tincidunt porttitor ultricies. Nulla sagittis dignissim felis, vel volutpat enim iaculis eu.
+Visit [politieke-advertenties.nl](https://politieke-advertenties.nl/) for more info (Website is in Dutch).

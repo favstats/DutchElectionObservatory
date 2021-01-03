@@ -52,7 +52,7 @@ last_updated_time <- as.character(Sys.time())
 
 cat(last_updated_time, file = "app/production/data/last_updated.txt", append = T, sep = "\n")
 cat(last_updated_time, file = "app/staging/data/last_updated.txt", append = T, sep = "\n")
-cat(last_updated_time, file = "dashboard/data/last_updated.txt", append = T, sep = "\n")
+cat(last_updated_time, file = "site/data/last_updated.txt", append = T, sep = "\n")
 
 
 ### ---- Get Google data  ####
@@ -252,7 +252,7 @@ ggl_aggr <- list(total = ggl_total, times = ggl_times, gender = ggl_gender, age 
 
 saveRDS(ggl_aggr, file = "app/production/data/ggl_aggr.rds")
 saveRDS(ggl_aggr, file = "app/staging/data/ggl_aggr.rds")
-saveRDS(ggl_aggr, file = "dashboard/data/ggl_aggr.rds")
+saveRDS(ggl_aggr, file = "site/data/ggl_aggr.rds")
 
 
 
@@ -791,6 +791,6 @@ fb_aggr <- list(total = fb_total, times = fb_times, geo = fb_geo, gender = fb_ge
 
 saveRDS(fb_aggr, "app/production/data/fb_aggr.rds")
 saveRDS(fb_aggr, "app/staging/data/fb_aggr.rds")
-saveRDS(fb_aggr, file = "dashboard/data/fb_aggr.rds")
+saveRDS(fb_aggr, file = "site/data/fb_aggr.rds")
 
 cat("\n\nFB Data: Done\n\n") 

@@ -391,7 +391,7 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
         
         hc_fin <- hc_data %>% 
           group_split(advertiser_name) %>% 
-          map(~{chart_maps(.x, F, mapdata, trans_internal)}) %>% hw_grid(ncol = 4) %>% 
+          map(~{chart_maps(.x, F, mapdata, trans_internal)}) %>% hw_grid(ncol = 3) %>% 
           htmltools::browsable()
         
         return(hc_fin)             
@@ -653,4 +653,3 @@ hc_plot_boxes <- function(x, trans_internal, subtitle = subtitle_text, credits =
   
   return(hc_plot)
 }
-

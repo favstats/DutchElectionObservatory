@@ -1,0 +1,19 @@
+---
+title: "Over"
+output:
+  html_document:
+    anchor_sections: false
+---
+
+Dit dashboard is nog in ontwikkeling en wordt gedurende de verkiezingscampagne verbeterd en aangevuld. Zie deze [blogpost](https://politieke-advertenties.nl/waar-komen-onze-data-vandaan/) voor een uitgebreide uitleg van de variabelen in dit dashboard.	
+
+Er zijn vier hoofdvragen die we met deze versie van het dashboard proberen te beantwoorden:
+
++ Hoeveel advertenties plaatsen Nederlandse politieke partijen op de platforms die we bekijken?
++ Hoeveel geld besteden deze politieke partijen op elk platform?
++ Hoeveel mensen worden bereikt door deze advertenties?
++ Hoe worden deze politieke advertenties getarget richting individuen?
+
+> Let op: de gegevens in dit dashboard zijn gebaseerd op advertentiebibliotheken van de platforms, waardoor sommige gegevens mogelijk ontbreken.	
+
+Bezoek [political-advertenties.nl](https://politieke-advertenties.nl/) voor meer informatie.

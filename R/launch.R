@@ -1,3 +1,5 @@
+
+
 library(git2r)
 # sudo systemctl restart shiny-server.service
 file.copy(from = "app/staging/helpers.R", to = "app/production", recursive = T, overwrite = T)
@@ -43,6 +45,30 @@ gitpush <- function(dir = getwd()){
   cmd <- paste(unlist(cmd_list),collapse = " & ")
   system(cmd)
 }
+
+## translation
+# trans <- read_csv2("data/translation.csv")  %>%
+#   select(text_id, contains("dutch")) %>%
+#   data.table::transpose() %>% #glimpse
+#   janitor::row_to_names(1) %>%
+#   mutate_all(str_trim)%>%
+#   mutate_all(~str_replace_all(.x, ", ", ","))
+# 
+# saveRDS(trans_eng, file = "data/trans_eng.rds")
+# 
+# trans_dutch <- translation %>%
+#   select(text_id, contains("dutch")) %>%
+#   data.table::transpose() %>%
+#   janitor::row_to_names(1)
+# 
+# saveRDS(trans, file = "data/trans_dutch.rds")
+# 
+# trans_eng <- translation %>%
+#   select(text_id, contains("english")) %>%
+#   data.table::transpose() %>%
+#   janitor::row_to_names(1)
+# 
+# saveRDS(trans, file = "data/trans_eng.rds")
 
 
 

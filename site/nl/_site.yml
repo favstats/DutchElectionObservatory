@@ -1,20 +1,20 @@
-name: "Dutch Election Observatory Dashboard"
+name: "Nederlands Verkiezingsobservatorium"
 navbar:
-  title: "Dutch Election Observatory Dashboard"
+  title: "Nederlands Verkiezingsobservatorium"
   left:
-    - text: "About"
+    - text: "Over"
       href: index.html
-    - text: "Number of Ads"
+    - text: "Aantal Ads"
       href: number_of_ads.html
-    - text: "Money Spent"
+    - text: "Uitgegeven"
       href: money.html
-    - text: "Impressions"
+    - text: "Impressies"
       href: impressions.html
-    - text: "Targeting"
+    - text: "Getargete Advertenties"
       href: targeting.html
   right:
-    - text: "Dutch"
-      href: https://dutchelectionobservatory.bitbucket.io/nl/
+    - text: "English"
+      href: https://dutchelectionobservatory.bitbucket.io/en/
     - text: "Code"
       icon: fa-code  fa-lg
       href: https://bitbucket.org/DutchElectionObservatory/dutchelectionobservatory.bitbucket.io/src/main/
