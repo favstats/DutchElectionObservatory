@@ -1,0 +1,363 @@
+---
+output:
+  html_document:
+    toc: true
+    toc_float:
+      collapsed: false
+      smooth_scroll: false
+    anchor_sections: false
+---
+
+
+```{r global, include=FALSE, echo=F, context="setup", results='hide'}
+
+
+library(flexdashboard)
+knitr::opts_chunk$set(echo = F, message = F, warning = F)
+
+library(shiny)
+library(janitor)
+library(DT)
+library(magrittr)
+library(glue)
+library(highcharter)
+library(lubridate)
+library(knitr)
+library(tidyverse)
+library(htmltools)
+library(shinyWidgets)
+
+
+
+# ggl_ads <- readRDS("data/ggl_ads.RDS")
+
+ggl_aggr <- readRDS("../data/ggl_aggr.rds")
+fb_aggr <- readRDS("../data/fb_aggr.rds") 
+
+# fb_aggr$total
+
+update_time <- read_lines("../data/last_updated.txt") %>% 
+  .[length(.)]
+
+
+# 
+# saveRDS(trans_eng, file = "data/trans_eng.rds")
+# 
+# trans_dutch <- translation %>% 
+#   select(text_id, contains("dutch")) %>%
+#   data.table::transpose() %>% 
+#   janitor::row_to_names(1)
+# 
+# saveRDS(trans, file = "data/trans_dutch.rds")
+
+# trans_eng <- translation %>%
+#   select(text_id, contains("english")) %>%
+#   data.table::transpose() %>%
+#   janitor::row_to_names(1)
+
+# saveRDS(trans, file = "data/trans_eng.rds")
+
+# snap_ads <- readRDS("data/snap_ads.RDS")
+# 
+trans <- readRDS("../data/trans_dutch.rds")
+# trans <- readRDS("data/trans_eng.rds")
+# 
+# 
+
+# trans <- read_csv2("data/translation.csv")  %>%
+#   select(text_id, contains("dutch")) %>%
+#   data.table::transpose() %>% #glimpse
+#   janitor::row_to_names(1) %>%
+#   mutate_all(str_trim)%>%
+#   mutate_all(~str_replace_all(.x, ", ", ","))
+
+
+source("../../R/helpers.R")
+
+
+### Facebook setup
+dutch_parties_fb <- c("VVD", "D66", "FvD", "SP", "GroenLinks", "Volt Nederland", "PvdA", "CDA", "PvdD", "ChristenUnie", "SGP", "DENK", "50PLUS")
+
+advertiser_names_fb <- fb_aggr$times %>%
+  distinct(advertiser_name) %>% 
+  # filter(advertiser_name %in% more_than_5_fb) %>% 
+  dplyr::pull(advertiser_name) %>% 
+  ## only keep national political parties
+  keep(~magrittr::is_in(.x, dutch_parties_fb))
+
+defaults_fb <- advertiser_names_fb %>% 
+  keep(~magrittr::is_in(.x, dutch_parties_fb))
+
+
+dutch_parties <- c("D66", "VVD",
+                   "GroenLinks", "SP", 
+                   "Volt Nederland", "CDA", 
+                   "PvdA", "FvD")
+
+advertiser_names_ggl <- ggl_aggr$total %>%
+  pull(advertiser_name) %>% 
+  keep(~magrittr::is_in(.x, dutch_parties))  %>% 
+  discard(~magrittr::is_in(.x, c( "FvD")))
+
+
+defaults_ggl <- advertiser_names_ggl %>% 
+  keep(~magrittr::is_in(.x, dutch_parties))
+
+map_data <- readRDS("../data/mapdata.RDS")
+
+```
+
+
+
+## Gender Targeting {.tabset .tabset-fade .tabset-pills}
+
+### Facebook Platforms (incl. Instagram) {.tabset .tabset-fade .tabset-pills}
+
+
+#### All at Once
+
+```{r, out.width="100%", fig.height=15}
+
+  fb_aggr %>%
+    hc_plotter(filters = dutch_parties_fb,
+           plot_type = unlist_it(trans$choices, 4),
+           plot_type_sub = unlist_it(trans$targeted_ads_choices, 1),
+           platform = "Facebook",
+           trans_internal = trans,
+           last_updated = update_time, minmax = "Minimum"
+    )
+
+```
+
+
+#### Per Party
+
+```{r, out.width="100%", fig.height=15}
+
+
+gg_gender <- fb_aggr$gender %>% 
+  filter(advertiser_name %in% dutch_parties_fb)  %>% 
+          filter(gender %in% c("male", "female")) %>% 
+          mutate(gender = ifelse(gender == "male", trans$gender_male, trans$gender_female)) %>% 
+  ggplot(aes(gender, percentage, color = gender)) +
+  geom_boxplot() +
+  ggthemes::scale_color_hc() +
+  facet_wrap(~advertiser_name, ncol = 3, scales = "free_x") +
+  ylim(0, 100) +
+  theme_minimal() +
+  labs(y = "", x = "") +
+  theme(legend.position = "top", 
+        strip.background =element_rect(fill="lightgrey"), 
+        strip.text = element_text(colour = 'black'), axis.title.x = element_text(size = 0.1))
+
+
+gg_gender %>% 
+  plotly::ggplotly(dynamicTicks = F) %>%
+  plotly::layout(
+    xaxis = list(automargin=TRUE),
+    yaxis = list(automargin=TRUE,
+                 title = trans$plot_yaxis_gender_fb,
+                 titlefont  = list(size = 0.1)),
+    legend = list(
+    orientation = "h",
+    y = 1.05
+    )
+  ) 
+```
+
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et quam et velit fringilla mattis nec vel diam. Morbi ut nibh vitae dolor accumsan consequat vel at massa. Vestibulum ipsum odio, posuere a pretium vitae, vulputate at elit. Phasellus eu faucibus mauris, vel blandit ligula. Phasellus molestie hendrerit magna sed convallis. Vivamus bibendum elit purus, vel vehicula tortor lacinia id. In consequat fringilla lobortis. Aenean ornare leo lorem, sit amet commodo eros vehicula sed. Aliquam ac ullamcorper felis, sit amet varius risus. Integer ullamcorper commodo sem a efficitur. Proin vitae viverra erat. Quisque euismod, mi sit amet luctus suscipit, ipsum eros vestibulum tellus, vel accumsan lacus purus et arcu. Etiam vehicula est laoreet nisl bibendum dictum.
+
+
+
+### Google Platforms (incl. YouTube)
+
+
+
+```{r}
+  ggl_aggr %>% 
+    hc_plotter(filters = dutch_parties,
+           plot_type = unlist_it(trans$choices, 4),
+           plot_type_sub = unlist_it(trans$targeted_ads_choices, 1),
+           platform = "Google",
+           trans_internal = trans,
+           last_updated = update_time, minmax = "Minimum"
+    )
+```
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et quam et velit fringilla mattis nec vel diam. Morbi ut nibh vitae dolor accumsan consequat vel at massa. Vestibulum ipsum odio, posuere a pretium vitae, vulputate at elit. Phasellus eu faucibus mauris, vel blandit ligula. Phasellus molestie hendrerit magna sed convallis. Vivamus bibendum elit purus, vel vehicula tortor lacinia id. In consequat fringilla lobortis. Aenean ornare leo lorem, sit amet commodo eros vehicula sed. Aliquam ac ullamcorper felis, sit amet varius risus. Integer ullamcorper commodo sem a efficitur. Proin vitae viverra erat. Quisque euismod, mi sit amet luctus suscipit, ipsum eros vestibulum tellus, vel accumsan lacus purus et arcu. Etiam vehicula est laoreet nisl bibendum dictum.
+
+
+
+## Age Targeting {.tabset .tabset-fade .tabset-pills}
+
+### Facebook Platforms (incl. Instagram) {.tabset .tabset-fade .tabset-pills}
+
+
+
+
+
+
+#### All at Once
+
+```{r}
+  fb_aggr %>%
+    hc_plotter(filters = dutch_parties_fb,
+           plot_type = unlist_it(trans$choices, 4),
+           plot_type_sub = unlist_it(trans$targeted_ads_choices, 2),
+           platform = "Facebook",
+           trans_internal = trans,
+           last_updated = update_time, minmax = "Minimum"
+    )
+```
+
+
+#### Per Party
+
+```{r, out.width="100%", fig.height=15, fig.width=10}
+
+# debugonce(hc_plot_boxes)
+
+
+
+
+
+gg_age <- fb_aggr$age %>% 
+  filter(advertiser_name %in% dutch_parties_fb)  %>% 
+  ggplot(aes(age, percentage, color = age)) +
+  geom_boxplot() +
+  ggthemes::scale_color_hc() +
+  facet_wrap(~advertiser_name, ncol = 2, scales = "free_x") +
+  ylim(0, 100) +
+  theme_minimal() +
+  labs(y = "", x = "") +
+  theme(legend.position = "top", 
+        strip.background =element_rect(fill="lightgrey"), 
+        strip.text = element_text(colour = 'black'), axis.title.x = element_text(size = 0.1))
+
+
+gg_age %>% 
+  plotly::ggplotly(dynamicTicks = F) %>%
+  plotly::layout(
+    xaxis = list(automargin=TRUE),
+    yaxis = list(automargin=TRUE,
+                 title = trans$plot_yaxis_age_fb,
+                 titlefont  = list(size = 0.1)),
+    legend = list(
+    orientation = "h",
+    y = 1.05
+    )
+  ) 
+```
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et quam et velit fringilla mattis nec vel diam. Morbi ut nibh vitae dolor accumsan consequat vel at massa. Vestibulum ipsum odio, posuere a pretium vitae, vulputate at elit. Phasellus eu faucibus mauris, vel blandit ligula. Phasellus molestie hendrerit magna sed convallis. Vivamus bibendum elit purus, vel vehicula tortor lacinia id. In consequat fringilla lobortis. Aenean ornare leo lorem, sit amet commodo eros vehicula sed. Aliquam ac ullamcorper felis, sit amet varius risus. Integer ullamcorper commodo sem a efficitur. Proin vitae viverra erat. Quisque euismod, mi sit amet luctus suscipit, ipsum eros vestibulum tellus, vel accumsan lacus purus et arcu. Etiam vehicula est laoreet nisl bibendum dictum.
+
+
+
+### Google Platforms (incl. YouTube)
+
+
+
+```{r}
+  ggl_aggr %>% 
+    hc_plotter(filters = dutch_parties,
+           plot_type = unlist_it(trans$choices, 4),
+           plot_type_sub = unlist_it(trans$targeted_ads_choices, 2),
+           platform = "Google",
+           trans_internal = trans,
+           last_updated = update_time, minmax = "Minimum"
+    )
+```
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et quam et velit fringilla mattis nec vel diam. Morbi ut nibh vitae dolor accumsan consequat vel at massa. Vestibulum ipsum odio, posuere a pretium vitae, vulputate at elit. Phasellus eu faucibus mauris, vel blandit ligula. Phasellus molestie hendrerit magna sed convallis. Vivamus bibendum elit purus, vel vehicula tortor lacinia id. In consequat fringilla lobortis. Aenean ornare leo lorem, sit amet commodo eros vehicula sed. Aliquam ac ullamcorper felis, sit amet varius risus. Integer ullamcorper commodo sem a efficitur. Proin vitae viverra erat. Quisque euismod, mi sit amet luctus suscipit, ipsum eros vestibulum tellus, vel accumsan lacus purus et arcu. Etiam vehicula est laoreet nisl bibendum dictum.
+
+
+
+
+## Geo Targeting {.tabset .tabset-fade .tabset-pills}
+
+### Facebook Platforms (incl. Instagram) {.tabset .tabset-fade .tabset-pills}
+
+```{r}
+# debugonce(hc_plotter)
+
+# fb_aggr$geo %>% filter(advertiser_name == "CDA")
+  fb_aggr %>% 
+    hc_plotter(filters = dutch_parties_fb,
+           plot_type = unlist_it(trans$choices, 4),
+           plot_type_sub = unlist_it(trans$targeted_ads_choices, 3),
+           platform = "Facebook",
+           mapdata = map_data,
+           trans_internal = trans,
+           last_updated = update_time, minmax = "Minimum"
+    )
+  
+   # hc_data %>% 
+   #   chart_maps(F, mapdata, trans) %>% hw_grid(ncol = 1) %>% list
+   #        group_split(advertiser_name) %>% 
+   #        map(~{chart_maps(.x, F, mapdata, trans)}) %>% hw_grid(ncol = 3) 
+```
+
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et quam et velit fringilla mattis nec vel diam. Morbi ut nibh vitae dolor accumsan consequat vel at massa. Vestibulum ipsum odio, posuere a pretium vitae, vulputate at elit. Phasellus eu faucibus mauris, vel blandit ligula. Phasellus molestie hendrerit magna sed convallis. Vivamus bibendum elit purus, vel vehicula tortor lacinia id. In consequat fringilla lobortis. Aenean ornare leo lorem, sit amet commodo eros vehicula sed. Aliquam ac ullamcorper felis, sit amet varius risus. Integer ullamcorper commodo sem a efficitur. Proin vitae viverra erat. Quisque euismod, mi sit amet luctus suscipit, ipsum eros vestibulum tellus, vel accumsan lacus purus et arcu. Etiam vehicula est laoreet nisl bibendum dictum.
+
+
+
+### Google Platforms (incl. YouTube)
+
+
+
+```{r}
+  ggl_aggr %>% 
+    hc_plotter(filters = dutch_parties,
+           plot_type = unlist_it(trans$choices, 4),
+           plot_type_sub = unlist_it(trans$targeted_ads_choices, 3),
+           platform = "Google",
+           trans_internal = trans,
+           last_updated = update_time, minmax = "Minimum"
+    )
+```
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et quam et velit fringilla mattis nec vel diam. Morbi ut nibh vitae dolor accumsan consequat vel at massa. Vestibulum ipsum odio, posuere a pretium vitae, vulputate at elit. Phasellus eu faucibus mauris, vel blandit ligula. Phasellus molestie hendrerit magna sed convallis. Vivamus bibendum elit purus, vel vehicula tortor lacinia id. In consequat fringilla lobortis. Aenean ornare leo lorem, sit amet commodo eros vehicula sed. Aliquam ac ullamcorper felis, sit amet varius risus. Integer ullamcorper commodo sem a efficitur. Proin vitae viverra erat. Quisque euismod, mi sit amet luctus suscipit, ipsum eros vestibulum tellus, vel accumsan lacus purus et arcu. Etiam vehicula est laoreet nisl bibendum dictum.
+
+## Potential Reach
+
+### Facebook Platforms (incl. Instagram) 
+
+```{r, out.width="100%", fig.height=6, fig.width=8}
+
+
+color_dat <- fb_aggr$reach %>% 
+  rename(colors = color) %>% 
+  filter(advertiser_name %in% dutch_parties_fb) %>% 
+  distinct(advertiser_name, .keep_all = T) %>% 
+  arrange(advertiser_name)
+
+# color_dat <- set_names(color_dat$colors, color_dat$advertiser_name)
+
+gg_reach <- fb_aggr$reach %>% 
+  rename(colors = color) %>% 
+  filter(advertiser_name %in% dutch_parties_fb) %>% 
+  ggplot(aes(advertiser_name, potential_reach_min, color = advertiser_name)) +
+  geom_boxplot() +
+  scale_y_log10(labels = scales::label_number()) +
+  scale_color_manual(values = unique(color_dat$colors)) +
+  theme_minimal() +
+  labs(y = "", x = "") +
+  theme(legend.position = "none", 
+        strip.background =element_rect(fill="lightgrey"), 
+        strip.text = element_text(colour = 'black'), axis.title.x = element_text(size = 0.1))
+
+
+gg_reach %>% 
+  plotly::ggplotly(dynamicTicks = F) %>%
+  plotly::layout(
+    xaxis = list(automargin=TRUE),
+    yaxis = list(automargin=TRUE,
+                 title = "Potential Reach (Minimum)",
+                 titlefont  = list(size = 0.1))
+  )
+```
+
+
+

@@ -1,0 +1,20 @@
+name: "Dutch Election Observatory Dashboard"
+navbar:
+  title: "Dutch Election Observatory Dashboard"
+  left:
+    - text: "About"
+      href: index.html
+    - text: "Number of Ads"
+      href: number_of_ads.html
+    - text: "Money Spent"
+      href: money.html
+    - text: "Impressions"
+      href: impressions.html
+    - text: "Targeting"
+      href: targeting.html
+  right:
+    - text: "Dutch"
+      href: http://dashboard.politieke-advertenties.nl/
+    - text: "Code"
+      icon: fab fa-github  fa-lg
+      href: http://github.com/favstats/DutchElectionObservatory
