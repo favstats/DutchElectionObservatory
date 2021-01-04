@@ -785,9 +785,171 @@ fb_reach <- total_times  %>%
   left_join(color_dat)  %>% 
   assign_colors() %>% 
   left_join(facebook_id_dat)
-                        
 
-fb_aggr <- list(total = fb_total, times = fb_times, geo = fb_geo, gender = fb_gender, age = fb_age, reach = fb_reach)
+## Extract Spending data from report
+dir("../../../data/spending/daily", full.names = T) %>% 
+  # discard(~str_detect(.x, "2020-11")) %>%
+  walk(~unzip(.x, exdir = "data/fb_spending", overwrite = T))
+
+read_in_spend <- function(x) {
+  read_csv(x) %>%
+    mutate(date_range_start = str_remove_all(x, "data/fb_spending//FacebookAdLibraryReport_|_NL_last_90_days_advertisers.csv|_NL_yesterday.csv|data/fb_spending/90days/FacebookAdLibraryReport_") %>% lubridate::as_date()
+    ) %>% 
+    janitor::clean_names()  %>% 
+    rename(advertiser_name = page_name) %>% 
+    rename(advertiser_id = page_id) %>% 
+    mutate(advertiser_name = case_when(
+      advertiser_name == 'Partij voor de Dieren' ~ "PvdD",
+      advertiser_name == 'Partij van de Arbeid (PvdA)' ~ "PvdA",
+      advertiser_name == 'Forum voor Democratie -FVD' ~ "FvD",
+      advertiser_name == '50PLUSpartij' ~ "50PLUS",
+      T ~ advertiser_name
+    ))
+}
+
+### Data Since September 1st
+
+sepfirst <- read_in_spend("data/fb_spending/90days/FacebookAdLibraryReport_2020-12-01_NL_last_90_days_advertisers.csv") %>% 
+  rename(spent_since_sepfirst = amount_spent_eur) %>%
+  ## treat spent under 100 as NA
+  mutate(spent_since_sepfirst = ifelse(spent_since_sepfirst == "≤100", NA,
+                                       as.numeric(spent_since_sepfirst))) %>% 
+  ## group by advertiser name because sometimes they appear twice (with different disclaimer)
+  group_by(advertiser_name, date_range_start) %>%
+  summarize(n_below_100 = sum(is.na(spent_since_sepfirst)),
+            spent_since_sepfirst = sum(spent_since_sepfirst, na.rm = T)) %>% 
+  ungroup() %>% 
+  bind_rows(
+    tibble(advertiser_name = "50PLUS",
+           date_range_start = lubridate::as_date("2020-12-01"),
+           n_below_100 = 0,
+           spent_since_sepfirst = 0)    
+  )
+
+### Daily Spending data
+
+daily_spend_fb <- dir("data/fb_spending/", full.names = T) %>% 
+  keep(~str_detect(.x, "advertisers")) %>% 
+  map_dfr(read_in_spend) %>% 
+  filter(date_range_start >= as.Date("2020-12-02")) %>%
+  # select(-advertiser_id, -disclaimer)%>%
+  complete(advertiser_name, date_range_start = seq.Date(min(date_range_start), max(date_range_start), by="day"),
+           fill = list(amount_spent_eur = 0, number_of_ads_in_library = 0)) %>%
+  mutate(amount_spent_eur = ifelse(amount_spent_eur == "≤100", 50,
+                                   as.numeric(amount_spent_eur))) %>% 
+  # filter(advertiser_name == "DENK")# %>%
+  group_by(advertiser_name, date_range_start) %>%
+  summarize( n_below_100 = sum(amount_spent_eur==50),
+             amount_spent_eur = sum(amount_spent_eur, na.rm = T),
+  ) %>% 
+  ungroup() 
+
+
+### Prep sepfirst data for merging
+
+
+sepfirst_merger <- sepfirst %>% 
+  mutate(cum_spent = spent_since_sepfirst) %>% 
+  select(advertiser_name, cum_spent, spent_since_sepfirst, date_range_start, n_below_100) %>% 
+  mutate(spent_lower_bound = cum_spent, 
+         spent_upper_bound = cum_spent)  %>% 
+  # just keep party data for now
+  filter(advertiser_name %in% color_dat$advertiser_name) 
+
+
+### Combine Spending data
+
+
+
+spend_times_data <- sepfirst %>% 
+  ## we don't need these two variables
+  select(-n_below_100, -date_range_start) %>%
+  ## merge the sep first data into the daily spend data
+  right_join(daily_spend_fb %>% select(advertiser_name, n_below_100, amount_spent_eur, date_range_start)) %>% 
+  # just keep party data for now
+  filter(advertiser_name %in% color_dat$advertiser_name) %>%
+  ## arrange by advertiser and date start
+  arrange(desc(advertiser_name), date_range_start) %>% 
+  group_by(advertiser_name)  %>% 
+  ## first value is data so far plus 2nd December
+  mutate(spent = ifelse(row_number()==1, amount_spent_eur + spent_since_sepfirst, amount_spent_eur)) %>%
+  ## cumulative spent
+  mutate(cum_spent = cumsum(spent)) %>%
+  ## the lower bound
+  mutate(spent_lower_bound = case_when(
+    n_below_100 != 0 & row_number()==1 ~ cum_spent+(n_below_100*-49.99),
+    n_below_100 != 0 ~ (n_below_100*0.01),
+    T ~ spent
+  )) %>% 
+  ## the upper bound
+  mutate(spent_upper_bound = case_when(
+    n_below_100 != 0 & row_number()==1 ~ cum_spent+(n_below_100*100),
+    n_below_100 != 0 ~ (n_below_100*100),
+    T ~ spent
+  )) %>%
+  ## cumulative sum of lower and upper bound
+  mutate(spent_lower_bound = cumsum(spent_lower_bound)) %>% 
+  mutate(spent_upper_bound = cumsum(spent_upper_bound)) %>% 
+  ungroup() %>% 
+  select(-amount_spent_eur, -spent) %>% 
+  bind_rows(sepfirst_merger)
+
+spending <- spend_times_data %>% 
+  distinct(advertiser_name, .keep_all = T) %>% 
+  ## estimate daily growth data with mean
+  mutate(daily_growth = spent_since_sepfirst/90) %>% 
+  select(advertiser_name, spent_since_sepfirst, daily_growth) %>% 
+  mutate(date_range_start = as.Date("2020-09-01")) %>% 
+  ## complete data
+  complete(advertiser_name, date_range_start = seq.Date(as.Date("2020-09-01"), as.Date("2020-12-01"), by="day")) %>%
+  group_by(advertiser_name) %>% 
+  mutate(spent_since_sepfirst = spent_since_sepfirst[1],
+         daily_growth = daily_growth[1]) %>% 
+  mutate(cum_spent = cumsum(daily_growth)) %>% 
+  ungroup() %>% 
+  mutate(type = "before",
+         n_below_100 = 0,
+         spent_lower_bound = cum_spent,
+         spent_upper_bound = cum_spent) %>% 
+  ## add spend times data
+  bind_rows(spend_times_data %>% mutate(type = "after")) %>% 
+  left_join(color_dat)
+
+read_in_spend_loc <- function(x) {
+  read_csv(x) %>% 
+    janitor::clean_names() %>% 
+    mutate(path = x) 
+}
+
+fb_spend_locs <- dir("data/fb_spending/regions", full.names = T) %>% map_dfr(read_in_spend_loc)
+
+spending_loc <- fb_spend_locs %>% 
+  mutate(date_region = str_remove_all(path, "data/fb_spending/regions/FacebookAdLibraryReport_|_NL_yesterday|.csv")) %>% 
+  separate(date_region, into = c("date_range_started", "region"), sep = "_") %>% 
+  mutate(date_range_started = lubridate::as_date(date_range_started)) %>% 
+  mutate(amount_spent_eur = ifelse(amount_spent_eur == "≤100", sample(1:100, length(.)),
+                                   as.numeric(amount_spent_eur))) %>% 
+  arrange(desc(amount_spent_eur))  %>%
+  rename(advertiser_name = page_name) %>% 
+  rename(advertiser_id = page_id) %>% 
+  mutate(advertiser_name = case_when(
+    advertiser_name == 'Partij voor de Dieren' ~ "PvdD",
+    advertiser_name == 'Partij van de Arbeid (PvdA)' ~ "PvdA",
+    advertiser_name == 'Forum voor Democratie -FVD' ~ "FvD",
+    advertiser_name == '50PLUSpartij' ~ "50PLUS",
+    T ~ advertiser_name
+  )) 
+
+
+fb_aggr <- list(total = fb_total, times = fb_times,
+                geo = fb_geo, gender = fb_gender,
+                age = fb_age, reach = fb_reach,
+                report_spending = spending,
+                report_spending_loc = spending_loc)
+
+# fb_aggr$report_spending <- spending 
+# fb_aggr$report_spending_loc <- spending_loc
+
 
 saveRDS(fb_aggr, "app/production/data/fb_aggr.rds")
 saveRDS(fb_aggr, "app/staging/data/fb_aggr.rds")

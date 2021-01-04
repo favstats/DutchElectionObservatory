@@ -37,3 +37,8 @@ advertiser_names_ggl <- ggl_aggr$total %>%
 defaults_ggl <- advertiser_names_ggl %>% 
   keep(~magrittr::is_in(.x, dutch_parties))
 
+
+color_dat <- tibble(
+  color = c("#00b13d", "#80c31c", "#cd503e", "#008067", "#6f2421", "#e3101c", "#e01003", "#036b2c", "#02a6e9", "#562883", "#eeaa00", "#34c1c4", "#92107d"),
+  advertiser_name = c("D66", "GroenLinks", "VVD", "CDA", "FvD", "PvdA", "SP", "PvdD", "ChristenUnie", "Volt Nederland", "SGP", "DENK", "50PLUS"))
+

@@ -37,9 +37,11 @@ library(shinyWidgets)
 trans <- readRDS("../data/trans_eng.rds")
 
 
+    
 source("../../R/helpers.R")
 source("../../R/dashboard_data.R")
 
+last_updated <- update_time
 
 
 ```
@@ -49,35 +51,183 @@ source("../../R/dashboard_data.R")
 ## Total Spent {.tabset .tabset-fade .tabset-pills}
 
 ### Facebook Platforms (incl. Instagram) {.tabset .tabset-fade .tabset-pills}
-#### Minimum
 
-```{r}
-  fb_aggr %>% 
-    hc_plotter(filters = dutch_parties_fb,
-           plot_type = unlist_it(trans$choices, 2),
-           plot_type_sub = unlist_it(trans$total_text, 1),
-           platform = "Facebook",
-           trans_internal = trans,
-           last_updated = update_time, minmax = "Minimum"
-    )
+#### Spending 
+
+
+```{r, out.width="100%"}
+color_dat <- fb_aggr$reach %>% 
+  rename(colors = color) %>% 
+  filter(advertiser_name %in% dutch_parties_fb) %>% 
+  distinct(advertiser_name, .keep_all = T) %>% 
+  arrange(advertiser_name)
+
+
+
+
+# fb_aggr$report_spending %>% 
+#   filter(type == "after") %>%
+#   hchart(
+#     "line",
+#     hcaes(
+#       x = date_range_start,
+#       y = cum_spent,
+#       group = advertiser_name))%>%
+#         # hc_title(
+#         #   text = title_text
+#         # ) %>%
+#         # hc_yAxis(
+#         #   align = "left",
+#         #   title = list(text = trans_internal$plot_yaxis_number_of_ads)
+#         # ) %>%
+#         # hc_xAxis(
+#         #   align = "left",
+#         #   title = list(text = trans_internal$plot_xaxis_number_of_ads)
+#         # ) %>%
+#         hc_colors(unique(fb_aggr$report_spending $color)) %>% 
+#         hc_plotOptions(line = list(
+#           marker = F#list(radius = 3)
+#         )) %>%
+#         hc_tooltip(
+#           crosshairs = TRUE,
+#           backgroundColor = "#F0F0F0",
+#           shared = FALSE
+#         )
+# 
+# 
+# spending <- fb_aggr$report_spending %>% 
+#   filter(type == "after") # %>% 
+# highchart() %>% 
+#   hc_add_series(spending, type = "arearange",
+#                 hcaes(x = cum_spent, low = spent_lower_bound,
+#                       high = spent_upper_bound, group = advertiser_name))
+
+
+
+
+latest_spending_dat <- fb_aggr$report_spending %>% 
+  # count(advertiser_name)
+  filter(type == "after") %>% 
+  filter(date_range_start == max(date_range_start)) 
+
+        lvls <- latest_spending_dat %>% 
+          mutate(advertiser_name = fct_reorder(advertiser_name, cum_spent)) %>% 
+          dplyr::pull(advertiser_name) %>% 
+          levels() %>% 
+          rev()  
+        
+    credits_text <- glue::glue(trans$plot_credits_text_fb)
+    href_text <- "https://www.facebook.com/ads/library/"
+
+latest_spending_dat %>% 
+  filter(date_range_start == max(date_range_start))  %>% 
+      hchart(
+        type = "bar",
+        hcaes(
+          x = advertiser_name,
+          y = cum_spent,
+          color = color),
+        tooltip = list(pointFormat = "<b>Euros spent on Facebook Ads:</b> €{point.cum_spent:,.0f}")) %>%
+      hc_yAxis(reversed = F, min = 0, title = list(text = "€ spent on Ads"))  %>% 
+      hc_xAxis(categories = lvls, title = list(text = "")#,  
+               # labels = list(
+               #   formatter = JS(js_scrip)
+               # )
+               ) %>% 
+      hc_chart(inverted = TRUE)  %>% 
+    hc_title(
+      text = "Euros Spent on Facebook Ads"
+    ) %>%
+    hc_subtitle(
+      text = "Euros spent since September 1st"
+    ) %>% 
+    hc_credits(
+      enabled = T,
+      text = credits_text,
+      href = href_text
+    )  %>%
+    hc_exporting(
+      enabled = TRUE
+    ) 
 ```
 
-The Facebook Ad library only provides very broad "lower" and "upper bounds" of Euros spent for an individual ad ID. In order to calculate this metric by advertiser, we use the median amount of the lower and upper bound of money spent for each unique ad (i.e., each ad with unique text and link) and sum the lower and upper bound for every advertiser. 
+
+#### Spending by Region 
+
+```{r, out.width="100%"}
 
 
-#### Maximum
-```{r}
-  fb_aggr %>% 
-    hc_plotter(filters = dutch_parties_fb,
-           plot_type = unlist_it(trans$choices, 2),
-           plot_type_sub = unlist_it(trans$total_text, 1),
-           platform = "Facebook",
-           trans_internal = trans,
-           last_updated = update_time, minmax = "Maximum"
-    )
+report_spending_loc_cum <- fb_aggr$report_spending_loc %>% 
+  filter(advertiser_name %in% dutch_parties_fb) %>% 
+  rename(date_range_start = date_range_started) %>% 
+  group_by(advertiser_name, date_range_start, region) %>% 
+  summarize(amount_spent_eur = sum(amount_spent_eur)) %>% 
+  ungroup() %>% 
+  complete(advertiser_name, region, date_range_start = seq.Date(min(date_range_start), max(date_range_start), by="day"),
+           fill = list(amount_spent_eur = 0)) %>% 
+  arrange(advertiser_name, region, date_range_start) %>% 
+  group_by(advertiser_name) %>% 
+  mutate(amount_spent_eur_cumsum = cumsum(amount_spent_eur)) %>% 
+  ungroup() 
+
+
+latest_spending_loc_dat <- report_spending_loc_cum %>% 
+  group_by(advertiser_name) %>% 
+  filter(date_range_start == max(date_range_start)) %>% 
+  ungroup()
+  # arrange(desc(date_range_start)) %>% 
+  # distinct(advertiser_name, region, .keep_all = T)
+
+      mapdata <- readRDS("../data/mapdata.RDS")
+
+         
+      
+map_latest <- latest_spending_loc_dat %>% 
+  group_by(advertiser_name) %>%
+  mutate(budget_share = amount_spent_eur_cumsum/sum(amount_spent_eur_cumsum)*100) %>% 
+  left_join(color_dat) %>% 
+  rename(colorful = colors) %>% 
+  mutate(name = ifelse(region == "North Brabant", "Noord-Brabant", region)) %>% 
+  ungroup()
+      
+
+
+map_latest %>% 
+  group_split(advertiser_name) %>% 
+  map(~{chart_maps2(.x, F, mapdata, trans, value_to_be_plotted = "budget_share", max = max(map_latest$budget_share)*1.1)}) %>% hw_grid(ncol = 3) %>% 
+  htmltools::browsable()
 ```
 
-The Facebook Ad library only provides very broad "lower" and "upper bounds" of Euros spent for an individual ad ID. In order to calculate this metric by advertiser, we use the median amount of the lower and upper bound of money spent for each unique ad (i.e., each ad with unique text and link) and sum the lower and upper bound for every advertiser. 
+<!-- #### Minimum -->
+
+<!-- ```{r} -->
+<!--   fb_aggr %>%  -->
+<!--     hc_plotter(filters = dutch_parties_fb, -->
+<!--            plot_type = unlist_it(trans$choices, 2), -->
+<!--            plot_type_sub = unlist_it(trans$total_text, 1), -->
+<!--            platform = "Facebook", -->
+<!--            trans_internal = trans, -->
+<!--            last_updated = update_time, minmax = "Minimum" -->
+<!--     ) -->
+<!-- ``` -->
+
+<!-- The Facebook Ad library only provides very broad "lower" and "upper bounds" of Euros spent for an individual ad ID. In order to calculate this metric by advertiser, we use the median amount of the lower and upper bound of money spent for each unique ad (i.e., each ad with unique text and link) and sum the lower and upper bound for every advertiser.  -->
+
+
+<!-- #### Maximum -->
+
+<!-- ```{r} -->
+<!--   fb_aggr %>%  -->
+<!--     hc_plotter(filters = dutch_parties_fb, -->
+<!--            plot_type = unlist_it(trans$choices, 2), -->
+<!--            plot_type_sub = unlist_it(trans$total_text, 1), -->
+<!--            platform = "Facebook", -->
+<!--            trans_internal = trans, -->
+<!--            last_updated = update_time, minmax = "Maximum" -->
+<!--     ) -->
+<!-- ``` -->
+
+<!-- The Facebook Ad library only provides very broad "lower" and "upper bounds" of Euros spent for an individual ad ID. In order to calculate this metric by advertiser, we use the median amount of the lower and upper bound of money spent for each unique ad (i.e., each ad with unique text and link) and sum the lower and upper bound for every advertiser.  -->
 
 
 ### Google Platforms (incl. YouTube)
@@ -99,31 +249,62 @@ For Google platforms, data accessed via the [Google Transparency Report](https:/
 
 ### Facebook Platforms (incl. Instagram) {.tabset .tabset-fade .tabset-pills}
 
-#### Minimum
+```{r, out.width="100%"}
+gg_spending_time <- fb_aggr$report_spending %>% 
+  # count(advertiser_name)
+  filter(type == "after") %>%
+  # select(-type) %>% 
+  ggplot(aes(date_range_start, cum_spent, color = advertiser_name)) +
+  geom_ribbon(aes(ymin = spent_lower_bound, ymax = spent_upper_bound), fill = "lightgrey", alpha = .5, linetype = "dashed") +
+  geom_line() +
+  # facet_wrap(~advertiser_name) +
+  
+  scale_color_manual(values = unique(color_dat$colors)) +
+  theme_minimal() +
+  theme(legend.position = "top") +
+  labs(y = "Euros spent on Facebook ads", x = "Date")
 
-```{r}
-  fb_aggr %>% 
-    hc_plotter(filters = dutch_parties_fb,
-           plot_type = unlist_it(trans$choices, 2),
-           plot_type_sub = unlist_it(trans$total_text, 2),
-           platform = "Facebook",
-           trans_internal = trans,
-           last_updated = update_time, minmax = "Minimum"
+
+gg_spending_time %>% 
+  plotly::ggplotly(dynamicTicks = F) %>%
+  plotly::layout(
+    xaxis = list(automargin=TRUE),
+    yaxis = list(automargin=TRUE,
+                 title = "Euros Spent on Facebook Ads",
+                 titlefont  = list(size = 0.1)),
+    legend = list(
+    orientation = "h",
+    y = 1.1
     )
+  ) 
 ```
 
-#### Maximum
 
-```{r}
-  fb_aggr %>% 
-    hc_plotter(filters = dutch_parties_fb,
-           plot_type = unlist_it(trans$choices, 2),
-           plot_type_sub = unlist_it(trans$total_text, 2),
-           platform = "Facebook",
-           trans_internal = trans,
-           last_updated = update_time, minmax = "Maximum"
-    )
-```
+<!-- #### Minimum -->
+
+<!-- ```{r} -->
+<!--   fb_aggr %>%  -->
+<!--     hc_plotter(filters = dutch_parties_fb, -->
+<!--            plot_type = unlist_it(trans$choices, 2), -->
+<!--            plot_type_sub = unlist_it(trans$total_text, 2), -->
+<!--            platform = "Facebook", -->
+<!--            trans_internal = trans, -->
+<!--            last_updated = update_time, minmax = "Minimum" -->
+<!--     ) -->
+<!-- ``` -->
+
+<!-- #### Maximum -->
+
+<!-- ```{r} -->
+<!--   fb_aggr %>%  -->
+<!--     hc_plotter(filters = dutch_parties_fb, -->
+<!--            plot_type = unlist_it(trans$choices, 2), -->
+<!--            plot_type_sub = unlist_it(trans$total_text, 2), -->
+<!--            platform = "Facebook", -->
+<!--            trans_internal = trans, -->
+<!--            last_updated = update_time, minmax = "Maximum" -->
+<!--     ) -->
+<!-- ``` -->
 
 
 

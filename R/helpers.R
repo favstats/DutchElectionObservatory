@@ -517,13 +517,13 @@ hc_plotter <- function(plot_dat, filters, plot_type, plot_type_sub, mapdata = NU
 }
 
 
-chart_maps <- function(x, download_data = T, mapdata, trans_internal) {
+chart_maps <- function(x, download_data = T, mapdata, trans_internal, value_to_be_plotted = "percentage") {
   hc <- hcmap2(
     "https://code.highcharts.com/mapdata/countries/nl/nl-all.js",
     custom_map = mapdata,
     data = x,
     download_map_data = F,
-    value = "percentage",
+    value = value_to_be_plotted,
     joinBy = c("name", "name"),
     name = trans_internal$plot_tooltip_geo,
     dataLabels = list(enabled = TRUE, format = "{point.name}"),
@@ -539,6 +539,41 @@ chart_maps <- function(x, download_data = T, mapdata, trans_internal) {
       maxColor = unique(x$colorful),
       min = 0,
       max = 35
+    )%>% 
+    hc_title(
+      text = unique(x$advertiser_name)
+    ) %>%
+    hc_exporting(
+      enabled = TRUE
+    )
+  
+  # download_data <<- F
+  
+  return(hc)
+}
+
+chart_maps2 <- function(x, download_data = T, mapdata, trans_internal, value_to_be_plotted = "percentage", max) {
+  hc <- hcmap2(
+    "https://code.highcharts.com/mapdata/countries/nl/nl-all.js",
+    custom_map = mapdata,
+    data = x,
+    download_map_data = F,
+    value = value_to_be_plotted,
+    joinBy = c("name", "name"),
+    name = "Share of Budget spent in Region",
+    dataLabels = list(enabled = TRUE, format = "{point.name}"),
+    borderColor = "#FAFAFA",
+    borderWidth = 0.1,
+    tooltip = list(
+      valueDecimals = 2,
+      valueSuffix = "%"
+    )
+  ) %>% 
+    hc_colorAxis(
+      minColor = "white",
+      maxColor = unique(x$colorful),
+      min = 0,
+      max = max
     )%>% 
     hc_title(
       text = unique(x$advertiser_name)
