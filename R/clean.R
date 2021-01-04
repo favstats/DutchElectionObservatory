@@ -3,6 +3,8 @@
 
 pacman::p_load(tidyverse, janitor, highcharter, httr, furrr, lubridate)
 
+setwd(here::here())
+
 if(!dir.exists("data")) dir.create("data")
 
 get_mid <- function(spend_upper_bound, spend_lower_bound) {
