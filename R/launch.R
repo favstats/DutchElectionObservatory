@@ -1,4 +1,5 @@
 
+setwd("/home/fabio/main/DutchElectionObservatory")
 
 library(git2r)
 # sudo systemctl restart shiny-server.service
@@ -78,7 +79,7 @@ while(T){
   currentTime <- Sys.time()
   
   cat("1. Load and Clean Data\n")
-  source("clean.R")
+  source(here::here("R", "clean.R"))
   
   cat("2. Deploy App\n")
   
