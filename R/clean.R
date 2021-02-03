@@ -397,7 +397,16 @@ while(length(next_link)>0) {
   
 }
 
-# saveRDS(df_imp, "fb_dat/fb_dat_experimental.rds")
+# library(feather)
+# # saveRDS(df_imp, "fb_dat/fb_dat_experimental.rds")
+# write_feather(df_imp, "fb_dat/fb_dat_nl.feather")
+# 
+# library(jsonlite)
+# 
+# dat_r = toJSON(df_imp, dataframe = "rows")
+
+# nl <- feather::read_feather("fb_dat/fb_dat_nl.feather")
+
 
 # missing <- fb_dat %>% 
 #   mutate(date_range_start = as.Date(ad_delivery_start_time)) %>%
