@@ -546,15 +546,15 @@ facebook_id_dat <- total_times  %>%
 fb_total <- total_times  %>% 
   left_join(batch_id_dat) %>% 
   group_by(batch_id, advertiser_name) %>% 
-  summarise(potential_reach_min = median(potential_reach_lower_bound) ,
+  summarise(potential_reach_min = median(potential_reach_lower_bound) * n(),
             # potential_reach_max = median(potential_reach_upper_bound) ,
             # potential_reach_mid = median(get_mid(potential_reach_lower_bound, potential_reach_upper_bound)),
-            spend_range_min = median(spend_lower_bound) ,
-            spend_range_max = median(spend_upper_bound) ,
-            spend_range_mid = median(get_mid(spend_lower_bound, spend_upper_bound)) ,
-            impressions_range_min = median(impressions_lower_bound) ,
-            impressions_range_max = median(impressions_upper_bound) ,
-            impressions_range_mid = median(get_mid(impressions_lower_bound, impressions_upper_bound)),
+            spend_range_min = median(spend_lower_bound)  * n(),
+            spend_range_max = median(spend_upper_bound)  * n(),
+            spend_range_mid = median(get_mid(spend_lower_bound, spend_upper_bound)) * n() ,
+            impressions_range_min = median(impressions_lower_bound) * n() ,
+            impressions_range_max = median(impressions_upper_bound) * n() ,
+            impressions_range_mid = median(get_mid(impressions_lower_bound, impressions_upper_bound)) * n(),
             n_ids = n()) %>% 
   ungroup() %>% 
   group_by(advertiser_name) %>%# View
@@ -586,15 +586,15 @@ fb_times <- total_times %>%
   ungroup() %>% 
   group_by(batch_id, advertiser_name, date_range_start) %>% 
   # group_by(date_range_start, ad_creative_body, ad_creative_link_title, advertiser_name) %>% 
-  summarise(potential_reach_min = median(potential_reach_lower_bound) ,
+  summarise(potential_reach_min = median(potential_reach_lower_bound)  * n(),
             # potential_reach_max = median(potential_reach_upper_bound) ,
             # potential_reach_mid = median(get_mid(potential_reach_lower_bound, potential_reach_upper_bound)),
-            spend_range_min = median(spend_lower_bound) ,
-            spend_range_max = median(spend_upper_bound) ,
-            spend_range_mid = median(get_mid(spend_lower_bound, spend_upper_bound)) ,
-            impressions_range_min = median(impressions_lower_bound) ,
-            impressions_range_max = median(impressions_upper_bound) ,
-            impressions_range_mid = median(get_mid(impressions_lower_bound, impressions_upper_bound)) ,
+            spend_range_min = median(spend_lower_bound)  * n(),
+            spend_range_max = median(spend_upper_bound) * n() ,
+            spend_range_mid = median(get_mid(spend_lower_bound, spend_upper_bound)) * n() ,
+            impressions_range_min = median(impressions_lower_bound)  * n(),
+            impressions_range_max = median(impressions_upper_bound) * n() ,
+            impressions_range_mid = median(get_mid(impressions_lower_bound, impressions_upper_bound))  * n(),
             n_ids = n()) %>% 
   ungroup() %>% 
   group_by(date_range_start, advertiser_name) %>%# View
