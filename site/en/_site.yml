@@ -15,7 +15,7 @@ navbar:
       href: targeting.html
   right:
     - text: "Dutch"
-      href: favstats.github.io/DutchElectionObservatory/nl
+      href: https://favstats.github.io/DutchElectionObservatory/nl
     - text: "Code"
       icon: fa-code  fa-lg
       href: https://github.com/favstats/DutchElectionObservatory
