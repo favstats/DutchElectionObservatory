@@ -127,6 +127,7 @@ For every ad, the Facebook ad library provides a “percentage” which relates 
     )
 ```
 
+For Google platforms, the Google Transparency Report provides information about the groups that the advertiser chose to target rather than just information about the audience of an ad, like Facebook does.  This information is much more insightful as it reveals the targeting strategy set by the advertisers themselves. Per [Google](https://support.google.com/transparencyreport/answer/9575640), targeting for election ads is limited to "[g]eographic location (except radius around a location), age, and gender." The percentages shown relate to how many of the ads were targeted towards these specific criteria.  
 
 
 

@@ -93,6 +93,7 @@ Data from the Google Ad library is where every provided ad id is counted as ad.T
     )
 ```
 
+To count the number of unique advertisements placed by each party on Facebook’s platform, we have grouped ads that have the same text and advertisement link together and view them as a single unique ad.
 
 ### Google Platforms (incl. YouTube)
 
@@ -106,4 +107,7 @@ Data from the Google Ad library is where every provided ad id is counted as ad.T
            last_updated = update_time
     )
 ```
+
+
+Data from the Google Ad library is where every provided ad id is counted as ad.This may overcount the number of ads because the same ad could run with the same text.
 

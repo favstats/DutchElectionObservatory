@@ -50,12 +50,12 @@ map_data <- readRDS("../data/mapdata.RDS")
 
 
 
-## Gender Targeting {.tabset .tabset-fade .tabset-pills}
+## Gendertargeting {.tabset .tabset-fade .tabset-pills}
 
-### Facebook Platforms (incl. Instagram) {.tabset .tabset-fade .tabset-pills}
+### Facebook-platforms (inclusief Instagram) {.tabset .tabset-fade .tabset-pills}
 
 
-#### All at Once
+#### Alles in een keer
 
 ```{r, out.width="100%", fig.height=15}
 
@@ -69,10 +69,11 @@ map_data <- readRDS("../data/mapdata.RDS")
     )
 
 ```
-For every ad, the Facebook ad library provides a “percentage” which relates to the share of the specific demographic that has seen the ad. So, the audience of an ad could show, for example, that 60% of the users that have seen the ad were women. This metric is calculated by taking the median of percentages for every unique ad. The boxplots show the distribution of average audience shares per demographic group by advertiser. Knowing the share of the audience that saw an ad may give us an insight into how an individual party tried to target a specific demographic group. However, this metric does not relate to "targeting" 1-to-1 because it is possible that the Facebook ad placing algorithm is more likely to show ads to people that are likely to engage with the ads in the first place thus reflecting the demographics of party supporters rather than strategy.
 
 
-#### Per Party
+Voor elke advertentie biedt de Facebook-advertentiebibliotheek een "percentage" dat betrekking heeft op het aandeel van de specifieke demografie die de advertentie heeft gezien. Het publiek van een advertentie kan dus bijvoorbeeld laten zien dat 60% van de gebruikers die de advertentie hebben gezien, vrouwen waren. Deze statistiek wordt berekend door de mediaan van percentages te nemen voor elke unieke advertentie. De boxplots tonen de verdeling van de gemiddelde kijkersaandelen per demografische groep per adverteerder. Als we weten welk deel van het publiek een advertentie heeft gezien, kunnen we inzicht krijgen in hoe een individuele partij probeerde een specifieke demografische groep te targeten. Deze statistiek heeft echter geen betrekking op 1-op-1 "targeting", omdat het mogelijk is dat het algoritme voor het plaatsen van advertenties op Facebook eerder advertenties laat zien aan mensen die waarschijnlijk in de eerste plaats zullen reageren op de advertenties, waardoor de demografie wordt weerspiegeld. van partijaanhangers in plaats van strategie.
+
+#### Per partij
 
 ```{r, out.width="100%", fig.height=15}
 
@@ -108,12 +109,10 @@ gg_gender %>%
 ```
 
 
-For every ad, the Facebook ad library provides a “percentage” which relates to the share of the specific demographic that has seen the ad. So, the audience of an ad could show, for example, that 60% of the users that have seen the ad were women. This metric is calculated by taking the median of percentages for every unique ad. The boxplots show the distribution of average audience shares per demographic group by advertiser. Knowing the share of the audience that saw an ad may give us an insight into how an individual party tried to target a specific demographic group. However, this metric does not relate to "targeting" 1-to-1 because it is possible that the Facebook ad placing algorithm is more likely to show ads to people that are likely to engage with the ads in the first place thus reflecting the demographics of party supporters rather than strategy.
+Voor elke advertentie biedt de Facebook-advertentiebibliotheek een "percentage" dat betrekking heeft op het aandeel van de specifieke demografie die de advertentie heeft gezien. Het publiek van een advertentie kan dus bijvoorbeeld laten zien dat 60% van de gebruikers die de advertentie hebben gezien, vrouwen waren. Deze statistiek wordt berekend door de mediaan van percentages te nemen voor elke unieke advertentie. De boxplots tonen de verdeling van de gemiddelde kijkersaandelen per demografische groep per adverteerder. Als we weten welk deel van het publiek een advertentie heeft gezien, kunnen we inzicht krijgen in hoe een individuele partij probeerde een specifieke demografische groep te targeten. Deze statistiek heeft echter geen betrekking op 1-op-1 "targeting", omdat het mogelijk is dat het algoritme voor het plaatsen van advertenties op Facebook eerder advertenties laat zien aan mensen die waarschijnlijk in de eerste plaats zullen reageren op de advertenties, waardoor de demografie wordt weerspiegeld. van partijaanhangers in plaats van strategie.
 
 
-
-### Google Platforms (incl. YouTube)
-
+### Google-platforms (inclusief YouTube) 
 
 
 ```{r}
@@ -128,18 +127,18 @@ For every ad, the Facebook ad library provides a “percentage” which relates 
 ```
 
 
+Voor Google-platforms biedt het Google Transparantierapport informatie over de groepen die de adverteerder heeft gekozen om zich te targeten in plaats van alleen informatie over het publiek van een advertentie, zoals Facebook doet. Deze informatie is veel inzichtelijker omdat het de targetingstrategie onthult die door de adverteerders zelf is ingesteld. Per [Google](https://support.google.com/transparencyreport/answer/9575640) is de targeting voor verkiezingsadvertenties beperkt tot "[g] eografische locatie (behalve straal rond een locatie), leeftijd en geslacht. " De weergegeven percentages hebben betrekking op het aantal advertenties dat is getarget op deze specifieke criteria.
 
+## Leeftijdstargeting {.tabset .tabset-fade .tabset-pills}
 
-## Age Targeting {.tabset .tabset-fade .tabset-pills}
-
-### Facebook Platforms (incl. Instagram) {.tabset .tabset-fade .tabset-pills}
-
-
-
+### Facebook-platforms (inclusief Instagram) {.tabset .tabset-fade .tabset-pills}
 
 
 
-#### All at Once
+
+
+
+#### Alles in een keer
 
 ```{r}
   fb_aggr %>%
@@ -152,10 +151,9 @@ For every ad, the Facebook ad library provides a “percentage” which relates 
     )
 ```
 
-For every ad, the Facebook ad library provides a “percentage” which relates to the share of the specific demographic that has seen the ad. So, the audience of an ad could show, for example, that 60% of the users that have seen the ad were between 18-24 This metric is calculated by taking the median of percentages for every unique ad. The boxplots show the distribution of average audience shares per demographic group by advertiser. Knowing the share of the audience that saw an ad may give us an insight into how an individual party tried to target a specific demographic group. However, this metric does not relate to "targeting" 1-to-1 because it is possible that the Facebook ad placing algorithm is more likely to show ads to people that are likely to engage with the ads in the first place thus reflecting the demographics of party supporters rather than strategy.
+Voor elke advertentie biedt de Facebook-advertentiebibliotheek een "percentage" dat betrekking heeft op het aandeel van de specifieke demografie die de advertentie heeft gezien. Het publiek van een advertentie zou bijvoorbeeld kunnen laten zien dat 60% van de gebruikers die de advertentie hebben gezien tussen de 18 en 24 waren. Deze statistiek wordt berekend door de mediaan van percentages te nemen voor elke unieke advertentie. De boxplots tonen de verdeling van de gemiddelde kijkersaandelen per demografische groep per adverteerder. Als we weten welk deel van de doelgroep een advertentie heeft gezien, kunnen we inzicht krijgen in hoe een individuele partij probeerde een specifieke demografische groep te targeten. Deze statistiek heeft echter geen betrekking op 1-op-1 "targeting", omdat het mogelijk is dat het algoritme voor het plaatsen van advertenties op Facebook eerder advertenties laat zien aan mensen die waarschijnlijk in de eerste plaats zullen reageren op de advertenties, waardoor de demografie wordt weerspiegeld. van partijaanhangers in plaats van strategie.
 
-
-#### Per Party
+#### Per partij
 
 ```{r, out.width="100%", fig.height=15, fig.width=10}
 
@@ -193,11 +191,10 @@ gg_age %>%
   ) 
 ```
 
-For every ad, the Facebook ad library provides a “percentage” which relates to the share of the specific demographic that has seen the ad. So, the audience of an ad could show, for example, that 60% of the users that have seen the ad were between 18-24 This metric is calculated by taking the median of percentages for every unique ad. The boxplots show the distribution of average audience shares per demographic group by advertiser. Knowing the share of the audience that saw an ad may give us an insight into how an individual party tried to target a specific demographic group. However, this metric does not relate to "targeting" 1-to-1 because it is possible that the Facebook ad placing algorithm is more likely to show ads to people that are likely to engage with the ads in the first place thus reflecting the demographics of party supporters rather than strategy.
+Voor elke advertentie biedt de Facebook-advertentiebibliotheek een "percentage" dat betrekking heeft op het aandeel van de specifieke demografie die de advertentie heeft gezien. Het publiek van een advertentie zou bijvoorbeeld kunnen laten zien dat 60% van de gebruikers die de advertentie hebben gezien tussen de 18 en 24 waren. Deze statistiek wordt berekend door de mediaan van percentages te nemen voor elke unieke advertentie. De boxplots tonen de verdeling van de gemiddelde kijkersaandelen per demografische groep per adverteerder. Als we weten welk deel van de doelgroep een advertentie heeft gezien, kunnen we inzicht krijgen in hoe een individuele partij probeerde een specifieke demografische groep te targeten. Deze statistiek heeft echter geen betrekking op 1-op-1 "targeting", omdat het mogelijk is dat het algoritme voor het plaatsen van advertenties op Facebook eerder advertenties laat zien aan mensen die waarschijnlijk in de eerste plaats zullen reageren op de advertenties, waardoor de demografie wordt weerspiegeld. van partijaanhangers in plaats van strategie.
 
 
-
-### Google Platforms (incl. YouTube)
+### Google-platforms (inclusief YouTube) 
 
 
 
@@ -212,12 +209,12 @@ For every ad, the Facebook ad library provides a “percentage” which relates 
     )
 ```
 
-For Google platforms, the Google Transparency Report provides information about the groups that the advertiser chose to target rather than just information about the audience of an ad, like Facebook does.  This information is much more insightful as it reveals the targeting strategy set by the advertisers themselves. Per [Google]((https://support.google.com/transparencyreport/answer/9575640)), targeting for election ads is limited to "[g]eographic location (except radius around a location), age, and gender." The percentages shown relate to how many of the ads were targeted towards these specific criteria.  
+Voor Google-platforms biedt het Google Transparantierapport informatie over de groepen die de adverteerder heeft gekozen om zich te targeten in plaats van alleen informatie over het publiek van een advertentie, zoals Facebook doet. Deze informatie is veel inzichtelijker omdat het de targetingstrategie onthult die door de adverteerders zelf is ingesteld. Per [Google](https://support.google.com/transparencyreport/answer/9575640) is de targeting voor verkiezingsadvertenties beperkt tot "[g] eografische locatie (behalve straal rond een locatie), leeftijd en geslacht. " De weergegeven percentages hebben betrekking op het aantal advertenties dat is getarget op deze specifieke criteria.
 
 
-## Geo Targeting {.tabset .tabset-fade .tabset-pills}
+## Geotargeting {.tabset .tabset-fade .tabset-pills}
 
-### Facebook Platforms (incl. Instagram) {.tabset .tabset-fade .tabset-pills}
+### Facebook-platforms (inclusief Instagram) {.tabset .tabset-fade .tabset-pills}
 
 ```{r}
 # debugonce(hc_plotter)
@@ -239,10 +236,9 @@ For Google platforms, the Google Transparency Report provides information about 
    #        map(~{chart_maps(.x, F, mapdata, trans)}) %>% hw_grid(ncol = 3) 
 ```
 
-For every ad, the Facebook ad library provides a “percentage” which relates to the share of the specific demographic that has seen the ad. So, the audience of an ad could show, for example, that 60% of the users that have seen the ad were between from Utrecht. This metric is calculated by taking the median of percentages for every unique ad. The boxplots show the median audience shares per location by advertiser.
+Voor elke advertentie biedt de Facebook-advertentiebibliotheek een "percentage" dat betrekking heeft op het aandeel van de specifieke demografie die de advertentie heeft gezien. Zo zou het publiek van een advertentie bijvoorbeeld kunnen laten zien dat 60% van de gebruikers die de advertentie hebben gezien tussen uit Utrecht komt. Deze statistiek wordt berekend door de mediaan van percentages te nemen voor elke unieke advertentie. De boxplots tonen de gemiddelde doelgroepaandelen per locatie per adverteerder.
 
-
-### Google Platforms (incl. YouTube)
+### Google-platforms (inclusief YouTube)
 
 
 
@@ -257,11 +253,11 @@ For every ad, the Facebook ad library provides a “percentage” which relates 
     )
 ```
 
-For Google platforms, the Google Transparency Report provides information about the groups that the advertiser chose to target rather than just information about the audience of an ad, like Facebook does.  This information is much more insightful as it reveals the targeting strategy set by the advertisers themselves. Per [Google]((https://support.google.com/transparencyreport/answer/9575640)), targeting for election ads is limited to "[g]eographic location (except radius around a location), age, and gender." The percentages shown relate to how many of the ads were targeted towards these specific criteria.  
+Voor Google-platforms biedt het Google Transparantierapport informatie over de groepen die de adverteerder heeft gekozen om zich te targeten in plaats van alleen informatie over het publiek van een advertentie, zoals Facebook doet. Deze informatie is veel inzichtelijker omdat het de targetingstrategie onthult die door de adverteerders zelf is ingesteld. Per [Google](https://support.google.com/transparencyreport/answer/9575640) is de targeting voor verkiezingsadvertenties beperkt tot "[g] eografische locatie (behalve straal rond een locatie), leeftijd en geslacht. " De weergegeven percentages hebben betrekking op het aantal advertenties dat is getarget op deze specifieke criteria.
 
 ## Potential Reach
 
-### Facebook Platforms (incl. Instagram) 
+### Facebook-platforms (inclusief Instagram) {.tabset .tabset-fade .tabset-pills}
 
 ```{r, out.width="100%", fig.height=6, fig.width=8}
 
@@ -298,8 +294,8 @@ gg_reach %>%
   )
 ```
 
-Facebook says about this metric: 
+Facebook zegt over deze statistiek:
 
-> This is an estimate of the size of the audience that's eligible to see this ad. It's based on targeting criteria, ad placements and how many people were shown ads on Facebook apps and services in the past 30 days.
+> Dit is een schatting van de omvang van het publiek dat in aanmerking komt om deze advertentie te zien. Het is gebaseerd op targetingcriteria, advertentieplaatsingen en hoeveel mensen in de afgelopen 30 dagen advertenties te zien kregen in Facebook-apps en -services.
 
-Based on that, we can assume that a higher potential reach means that a party was trying to target a broader range of citizen whereas a lower potential reach means the party was engaging in more microtargeting. The metric shown here is calculated by taking the median of potential reach for every unique ad. The boxplots show the distribution of average minimum potential reach by advertiser.
+Op basis daarvan kunnen we aannemen dat een hoger potentieel bereik betekent dat een partij probeert een breder bereik van burgers te bereiken, terwijl een lager potentieel bereik betekent dat de partij zich meer bezighoudt met microtargeting. De statistiek die hier wordt weergegeven, wordt berekend door voor elke unieke advertentie de mediaan van het potentiële bereik te nemen. De boxplots tonen de verdeling van het gemiddelde minimale potentiële bereik per adverteerder.

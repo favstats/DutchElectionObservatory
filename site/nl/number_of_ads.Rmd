@@ -40,9 +40,9 @@ source("../../R/dashboard_data.R")
 
 
 
-## Total Unique Ads {.tabset .tabset-fade .tabset-pills}
+## Totaal aantal unieke advertenties {.tabset .tabset-fade .tabset-pills}
 
-### Facebook Platforms (incl. Instagram)
+### Facebook-platforms (inclusief Instagram) 
 
 ```{r}
   fb_aggr %>% 
@@ -56,13 +56,13 @@ source("../../R/dashboard_data.R")
 ```
 
 
-In calculating the number of unique advertisements plotted in this figure we already had to deal with several issues and make some key decisions.  Unfortunately, the way that Facebook provides data from its Ad Library does not allow for straightforward count of the number of ads. It appears that in Facebook’s data, ads that are identical in most ways but run at different times or are targeted towards different groups may appear as different ads with uniquely different identifiers (IDs). Therefore, it appears that Facebook advertisement IDs do not have a one-to-one correspondence with unique ads. In other words, depending on how one decides to count the number of ads, one might arrive at different figures for the number of ads that each political party has placed.  
+Bij het berekenen van het aantal unieke advertenties dat in deze figuur is uitgezet, moesten we al met verschillende problemen omgaan en een aantal belangrijke beslissingen nemen. Helaas maakt de manier waarop Facebook gegevens uit zijn advertentiebibliotheek verstrekt, het niet mogelijk om het aantal advertenties eenvoudig te tellen. Het lijkt erop dat in de gegevens van Facebook advertenties die op de meeste manieren identiek zijn, maar op verschillende tijdstippen worden weergegeven of op verschillende groepen zijn gericht, kunnen worden weergegeven als verschillende advertenties met uniek verschillende ID's (ID's). Daarom lijkt het erop dat de advertentie-ID's van Facebook geen één-op-één-correspondentie hebben met unieke advertenties. Met andere woorden, afhankelijk van hoe men besluit het aantal advertenties te tellen, kan men tot verschillende cijfers komen voor het aantal advertenties dat elke politieke partij heeft geplaatst.
 
-**To count the number of unique advertisements placed by each party on Facebook’s platform, we have grouped ads that have the same text and advertisement link together and view them as a single unique ad.** We have made this decision in order to more structurally count unique ads based on their actual content, rather than by the opaque and seemingly less structured processes by which Facebook assigns identifiers to advertisements placed on their platform.  In most cases, our method of grouping ads together leads to a comparable grouping of ads to what Facebook graphically displays on its ad archive website. However,we foresee that there is also the possibility that in certain cases we might undercount the number of unique ads.
+**Om het aantal unieke advertenties te tellen dat door elke partij op het Facebook-platform is geplaatst, hebben we advertenties gegroepeerd die dezelfde tekst en advertentielink hebben en deze als één unieke advertentie bekijken.** We hebben deze beslissing genomen om meer unieke advertenties structureel tellen op basis van hun daadwerkelijke inhoud, in plaats van door de ondoorzichtige en schijnbaar minder gestructureerde processen waarmee Facebook identificatiegegevens toewijst aan advertenties die op hun platform worden geplaatst. In de meeste gevallen leidt onze methode om advertenties te groeperen tot een vergelijkbare groepering van advertenties als wat Facebook grafisch weergeeft op zijn advertentiearchiefwebsite. We voorzien echter ook de mogelijkheid dat we in bepaalde gevallen het aantal unieke advertenties onderschatten.
 
 
 
-### Google Platforms (incl. YouTube)
+### Google-platforms (inclusief YouTube) 
 
 ```{r}
   ggl_aggr %>% 
@@ -75,12 +75,11 @@ In calculating the number of unique advertisements plotted in this figure we alr
     )
 ```
 
-Data from the Google Ad library is where every provided ad id is counted as ad.This may overcount the number of ads because the same ad could run with the same text.
+Gegevens uit de Google Ad-bibliotheek zijn waar elke opgegeven advertentie-ID als advertentie wordt geteld. Dit kan het aantal advertenties te hoog zijn, omdat dezelfde advertentie met dezelfde tekst kan worden weergegeven.
 
+## Na verloop van tijd unieke advertenties {.tabset .tabset-fade .tabset-pills}
 
-## Over Time Unique Ads {.tabset .tabset-fade .tabset-pills}
-
-### Facebook Platforms (incl. Instagram)
+### Facebook-platforms (inclusief Instagram) 
 
 ```{r}
   fb_aggr %>% 
@@ -93,8 +92,9 @@ Data from the Google Ad library is where every provided ad id is counted as ad.T
     )
 ```
 
+Om het aantal unieke advertenties te tellen dat door elke partij op het Facebook-platform is geplaatst, hebben we advertenties met dezelfde tekst en advertentielink bij elkaar gegroepeerd en deze als één unieke advertentie bekeken.
 
-### Google Platforms (incl. YouTube)
+### Google-platforms (inclusief YouTube) 
 
 ```{r}
   ggl_aggr %>% 
@@ -106,4 +106,7 @@ Data from the Google Ad library is where every provided ad id is counted as ad.T
            last_updated = update_time
     )
 ```
+
+Gegevens uit de Google Ad-bibliotheek zijn waar elke opgegeven advertentie-ID als advertentie wordt geteld. Dit kan het aantal advertenties te hoog zijn, omdat dezelfde advertentie met dezelfde tekst kan worden weergegeven.
+
 

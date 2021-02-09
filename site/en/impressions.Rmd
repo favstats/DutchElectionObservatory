@@ -63,6 +63,9 @@ source("../../R/dashboard_data.R")
     )
 ```
 
+The Facebook Ad library only provides very broad “lower” and “upper bounds” of impressions. In order to calculate this metric by advertiser, we use the median amount of the lower and upper bound of impressions for each unique ad (i.e., each ad with unique text and link) and sum the lower and upper bound for every advertiser. 
+
+
 #### Maximum
 ```{r}
   fb_aggr %>% 
@@ -92,6 +95,17 @@ The Facebook Ad library only provides very broad “lower” and “upper bounds
            last_updated = update_time, minmax = "Minimum"
     )
 ```
+
+The “lower” and “upper bounds” of impressions provided by the Google Transparency Report for Google platforms are even broader than those for Facebook. They only come in 5 categories:  
+
++ under 10k impressions 
++ 10k – 100k 
++ 100k – 1m 
++ 1m – 10m 
++ >= 10m 
+
+These very broad ranges lead to some severe difficulties if one wants to give impression statistics by party. And as the number of ads increases over time, the problem of these big boundaries only increases. 
+
 
 #### Maximum
 
@@ -133,6 +147,9 @@ These very broad ranges lead to some severe difficulties if one wants to give im
     )
 ```
 
+The Facebook Ad library only provides very broad “lower” and “upper bounds” of impressions. In order to calculate this metric by advertiser, we use the median amount of the lower and upper bound of impressions for each unique ad (i.e., each ad with unique text and link) and sum the lower and upper bound for every advertiser. 
+
+
 #### Maximum
 
 ```{r}
@@ -146,6 +163,7 @@ These very broad ranges lead to some severe difficulties if one wants to give im
     )
 ```
 
+The Facebook Ad library only provides very broad “lower” and “upper bounds” of impressions. In order to calculate this metric by advertiser, we use the median amount of the lower and upper bound of impressions for each unique ad (i.e., each ad with unique text and link) and sum the lower and upper bound for every advertiser. 
 
 
 
@@ -164,6 +182,17 @@ These very broad ranges lead to some severe difficulties if one wants to give im
     )
 ```
 
+The “lower” and “upper bounds” of impressions provided by the Google Transparency Report for Google platforms are even broader than those for Facebook. They only come in 5 categories:  
+
++ under 10k impressions 
++ 10k – 100k 
++ 100k – 1m 
++ 1m – 10m 
++ >= 10m 
+
+These very broad ranges lead to some severe difficulties if one wants to give impression statistics by party. And as the number of ads increases over time, the problem of these big boundaries only increases. 
+
+
 #### Maximum
 
 ```{r}
@@ -176,6 +205,17 @@ These very broad ranges lead to some severe difficulties if one wants to give im
            last_updated = update_time, minmax = "Maximum"
     )
 ```
+
+The “lower” and “upper bounds” of impressions provided by the Google Transparency Report for Google platforms are even broader than those for Facebook. They only come in 5 categories:  
+
++ under 10k impressions 
++ 10k – 100k 
++ 100k – 1m 
++ 1m – 10m 
++ >= 10m 
+
+These very broad ranges lead to some severe difficulties if one wants to give impression statistics by party. And as the number of ads increases over time, the problem of these big boundaries only increases. 
+
 
 
 

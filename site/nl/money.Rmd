@@ -49,11 +49,11 @@ last_updated <- update_time
 
 
 
-## Total Spent {.tabset .tabset-fade .tabset-pills}
+## Totaal uitgegeven {.tabset .tabset-fade .tabset-pills}
 
-### Facebook Platforms (incl. Instagram) {.tabset .tabset-fade .tabset-pills}
+### Facebook-platforms (inclusief Instagram) {.tabset .tabset-fade .tabset-pills}
 
-#### Spending 
+#### Uitgaven 
 
 
 ```{r, out.width="100%"}
@@ -152,8 +152,10 @@ latest_spending_dat %>%
     ) 
 ```
 
+Voor Facebook-platforms bieden de bestedingsgegevens van de API geen geaggregeerde statistieken per adverteerder. In plaats daarvan biedt het alleen zeer brede grenzen van het uitgegeven geld. Om deze reden zijn de gegevens die hier worden weergegeven afkomstig uit het [Facebook Ad Library Report](https://www.facebook.com/ads/library/report) die wel geld geeft dat door de adverteerder is uitgegeven en die dagelijks wordt opgehaald.
 
-#### Spending by Region 
+
+#### Uitgaven per regio
 
 ```{r, out.width="100%"}
 
@@ -199,6 +201,9 @@ map_latest %>%
   htmltools::browsable()
 ```
 
+Voor Facebook-platforms bieden de bestedingsgegevens van de API geen geaggregeerde statistieken per adverteerder. In plaats daarvan biedt het alleen zeer brede grenzen van het uitgegeven geld. Om deze reden zijn de gegevens die hier worden weergegeven afkomstig uit het [Facebook Ad Library Report](https://www.facebook.com/ads/library/report) die wel geld geeft dat door de adverteerder is uitgegeven en die dagelijks wordt opgehaald. Daarnaast laten de gegevens ook de uitgaven per regio zien.
+
+
 <!-- #### Minimum -->
 
 <!-- ```{r} -->
@@ -231,7 +236,7 @@ map_latest %>%
 <!-- The Facebook Ad library only provides very broad "lower" and "upper bounds" of Euros spent for an individual ad ID. In order to calculate this metric by advertiser, we use the median amount of the lower and upper bound of money spent for each unique ad (i.e., each ad with unique text and link) and sum the lower and upper bound for every advertiser.  -->
 
 
-### Google Platforms (incl. YouTube)
+### Google-platforms (inclusief YouTube)
 
 ```{r}
   ggl_aggr %>% 
@@ -244,11 +249,11 @@ map_latest %>%
     )
 ```
 
-For Google platforms, data accessed via the [Google Transparency Report](https://transparencyreport.google.com/political-ads/region/NL) provides weekly statistics on how much money was spent by parties.
- 
-## Over Time Spent {.tabset .tabset-fade .tabset-pills}
+Voor Google-platforms bieden gegevens die toegankelijk zijn via het [Google Transparantierapport](https://transparencyreport.google.com/political-ads/region/NL) wekelijkse statistieken over hoeveel geld door partijen is uitgegeven.
 
-### Facebook Platforms (incl. Instagram) {.tabset .tabset-fade .tabset-pills}
+## Na verloop van tijd {.tabset .tabset-fade .tabset-pills}
+
+### Facebook-platforms (inclusief Instagram) {.tabset .tabset-fade .tabset-pills}
 
 ```{r, out.width="100%"}
 gg_spending_time <- fb_aggr$report_spending %>% 
@@ -280,6 +285,7 @@ gg_spending_time %>%
   ) 
 ```
 
+Voor Facebook-platforms bieden de bestedingsgegevens van de API geen geaggregeerde statistieken per adverteerder. In plaats daarvan biedt het alleen zeer brede grenzen van het uitgegeven geld. Om deze reden zijn de gegevens die hier worden weergegeven afkomstig uit het [Facebook Ad Library Report](https://www.facebook.com/ads/library/report) die wel geld geeft dat door de adverteerder is uitgegeven en die dagelijks wordt opgehaald. Een voorbehoud is echter dat als een eigendom onder de 100 euro per dag wordt uitgegeven, het exacte bedrag niet wordt weergegeven. Om deze reden tonen we betrouwbaarheidsintervallen rond het bedrag.
 
 <!-- #### Minimum -->
 
@@ -309,7 +315,7 @@ gg_spending_time %>%
 
 
 
-### Google Platforms (incl. YouTube)
+### Google-platforms (inclusief YouTube)
 
 ```{r}
   ggl_aggr %>% 
@@ -321,4 +327,7 @@ gg_spending_time %>%
            last_updated = update_time, minmax = "Maximum"
     )
 ```
+
+Voor Google-platforms bieden gegevens die toegankelijk zijn via het [Google Transparantierapport](https://transparencyreport.google.com/political-ads/region/NL) wekelijkse statistieken over hoeveel geld door partijen is uitgegeven.
+
 

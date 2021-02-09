@@ -152,6 +152,9 @@ latest_spending_dat %>%
     ) 
 ```
 
+For Facebook platforms, spending data from the API does not provide aggregate statistics per advertiser. Instead, it only provides very broad boundaries of money spent. For this reason, the data displayed here is from the [Facebook Ad Library Report
+](https://www.facebook.com/ads/library/report) which does provide money spent by advertiser and is retrieved daily.
+
 
 #### Spending by Region 
 
@@ -198,6 +201,9 @@ map_latest %>%
   map(~{chart_maps2(.x, F, mapdata, trans, value_to_be_plotted = "budget_share", max = max(map_latest$budget_share)*1.1)}) %>% hw_grid(ncol = 3) %>% 
   htmltools::browsable()
 ```
+
+For Facebook platforms, spending data from the API does not provide aggregate statistics per advertiser. Instead, it only provides very broad boundaries of money spent. For this reason, the data displayed here is from the [Facebook Ad Library Report
+](https://www.facebook.com/ads/library/report) which does provide money spent by advertiser and is retrieved daily. In addition, the data also shows spending by region.
 
 <!-- #### Minimum -->
 
@@ -279,7 +285,8 @@ gg_spending_time %>%
     )
   ) 
 ```
-
+For Facebook platforms, spending data from the API does not provide aggregate statistics per advertiser. Instead, it only provides very broad boundaries of money spent. For this reason, the data displayed here is from the [Facebook Ad Library Report
+](https://www.facebook.com/ads/library/report) which does provide money spent by advertiser and is retrieved daily. However, one caveat is that if a perty spent below 100 Euros in a day it will not show the exact amount. For this reason we show confidence intervals around the amount.
 
 <!-- #### Minimum -->
 
@@ -321,4 +328,6 @@ gg_spending_time %>%
            last_updated = update_time, minmax = "Maximum"
     )
 ```
+
+For Google platforms, data accessed via the [Google Transparency Report](https://transparencyreport.google.com/political-ads/region/NL) provides weekly statistics on how much money was spent by parties.
 
