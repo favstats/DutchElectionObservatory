@@ -1,5 +1,5 @@
 name: "Dutch Election Observatory Dashboard"
-output_dir: "../../en"
+output_dir: "../../docs/en"
 navbar:
   title: "Dutch Election Observatory Dashboard"
   left:

@@ -1,6 +1,7 @@
 
 
 library(git2r)
+library(tidyverse)
 # sudo systemctl restart shiny-server.service
 # file.copy(from = "app/staging/helpers.R", to = "app/production", recursive = T, overwrite = T)
 # file.copy(from = "app/staging/index.html", to = "app/production", recursive = T, overwrite = T)
@@ -47,28 +48,25 @@ gitpush <- function(dir = getwd()){
 }
 
 ## translation
-trans <- read_csv2("data/translation.csv")  %>%
+translation <- read_csv2("site/data/translation.csv")  
+
+trans_dutch <- translation %>%
   select(text_id, contains("dutch")) %>%
-  data.table::transpose() %>% #glimpse
+  data.table::transpose() %>%
+  janitor::row_to_names(1) %>%
+  mutate_all(str_trim)%>%
+  mutate_all(~str_replace_all(.x, ", ", ","))
+
+saveRDS(trans_dutch, file = "data/trans_dutch.rds")
+
+trans_eng <- translation %>%
+  select(text_id, contains("english")) %>%
+  data.table::transpose() %>%
   janitor::row_to_names(1) %>%
   mutate_all(str_trim)%>%
   mutate_all(~str_replace_all(.x, ", ", ","))
 
 saveRDS(trans_eng, file = "data/trans_eng.rds")
-
-trans_dutch <- translation %>%
-  select(text_id, contains("dutch")) %>%
-  data.table::transpose() %>%
-  janitor::row_to_names(1)
-
-saveRDS(trans, file = "data/trans_dutch.rds")
-
-trans_eng <- translation %>%
-  select(text_id, contains("english")) %>%
-  data.table::transpose() %>%
-  janitor::row_to_names(1)
-
-saveRDS(trans, file = "data/trans_eng.rds")
 
 
 
@@ -78,7 +76,7 @@ while(T){
   currentTime <- Sys.time()
   
   cat("1. Load and Clean Data\n")
-  source("clean.R")
+  # source("clean.R")
   
   cat("2. Deploy App\n")
   

@@ -1,5 +1,5 @@
 name: "Nederlands Verkiezingsobservatorium"
-output_dir: "../../nl"
+output_dir: "../../docs/nl"
 navbar:
   title: "Nederlands Verkiezingsobservatorium"
   left:
