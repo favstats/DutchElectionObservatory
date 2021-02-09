@@ -70,7 +70,7 @@ saveRDS(trans_eng, file = "data/trans_eng.rds")
 
 
 
-while(T){
+# while(T){
   
   
   currentTime <- Sys.time()
@@ -116,10 +116,10 @@ while(T){
   gitpush()
   
   
-  Sys.sleep(60*60*24)
+  # Sys.sleep(60*60*24)
   
   # Sys.sleep(60*60*60)
   
   
-}
+# }
 

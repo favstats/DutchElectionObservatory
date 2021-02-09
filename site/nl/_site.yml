@@ -15,7 +15,7 @@ navbar:
       href: targeting.html
   right:
     - text: "English"
-      href: https://dutchelectionobservatory.bitbucket.io/en/
+      href: favstats.github.io/DutchElectionObservatory/en
     - text: "Code"
       icon: fa-code  fa-lg
-      href: https://bitbucket.org/DutchElectionObservatory/dutchelectionobservatory.bitbucket.io/src/main/
+      href: https://github.com/favstats/DutchElectionObservatory
