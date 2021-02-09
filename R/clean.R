@@ -77,8 +77,8 @@ unlink(ggl_file)
 # dutch_parties <- c("D66", "VVD", "GroenLinks", "SP (Socialistische Partij)", "Volt Nederland", "Christen Democratisch Appèl", "Partij van de Arbeid", "FvD")
 
 color_dat <- tibble(
-  color = c("#00b13d", "#80c31c", "#cd503e", "#008067", "#e01003", "#e3101c", "#6f2421"),
-  advertiser_name = c("D66", "GroenLinks", "VVD", "CDA", "SP", "PvdA", "FvD"))
+  color = c("#00b13d", "#80c31c", "#cd503e", "#008067", "#e01003", "#e3101c", "#6f2421", "#02a6e9"),
+  advertiser_name = c("D66", "GroenLinks", "VVD", "CDA", "SP", "PvdA", "FvD", "ChristenUnie"))
 
 
 ggl_ads <- data.table::fread("data/google-political-ads-transparency-bundle/google-political-ads-creative-stats.csv") %>% 
@@ -751,19 +751,22 @@ geo_targeted_dat <- geo_targeted  %>%
   filter(start_time >= as.Date("2020-09-01")) %>% 
   # filter(advertiser_name %in% dutch_parties) %>% 
   filter(region %in% dutch_regions) %>% 
-  mutate(percentage = as.numeric(percentage)) %>% 
-  complete(region, advertiser_name, fill = list(percentage = 0)) %>% 
+  mutate(percentage = as.numeric(percentage))%>% 
+  complete(id, region, fill = list(percentage = 0)) %>% 
+  group_by(id) %>%
+  tidyr::fill(start_time, advertiser_name, .direction = "downup") %>% 
+  ungroup() %>%
   group_by(id, region, advertiser_name) %>% 
   summarize(percentage = sum(percentage)) %>% 
   ungroup() %>% 
   left_join(batch_id_dat) %>% 
   drop_na(batch_id) %>% 
   group_by(advertiser_name, batch_id, region) %>%
-  summarise(percentage = median(percentage)) %>% 
+  summarise(percentage = mean(percentage)) %>% 
   ungroup() %>%  
   group_by(advertiser_name) %>% 
   complete(batch_id, region, fill = list(percentage = 0)) %>%
-  ungroup()
+  ungroup() 
 
 
 cat("\n\nFB Data: Get geo III\n\n")    

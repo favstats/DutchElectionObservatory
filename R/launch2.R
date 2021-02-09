@@ -83,22 +83,22 @@ while(T){
   cat("2. Deploy App\n")
   
   ## cleanup sites because they always cause merge conflicts
-  cleanup_docs <- dir("en", full.names = T, recursive = T) %>% 
-    c(dir("de", full.names = T, recursive = T))
-  
-  cleanup_docs %>%
-    walk(file.remove)
+  # cleanup_docs <- dir("en", full.names = T, recursive = T) %>% 
+  #   c(dir("de", full.names = T, recursive = T))
+  # 
+  # cleanup_docs %>%
+  #   walk(file.remove)
   
   rmarkdown::render_site("site/en")
   rmarkdown::render_site("site/nl")
   
-  R.utils::copyDirectory("site/en/_site", "en", recursive = T, overwrite = T)
-  R.utils::copyDirectory("site/nl/_site", "nl", recursive = T, overwrite = T)
+  # R.utils::copyDirectory("site/en/_site", "en", recursive = T, overwrite = T)
+  # R.utils::copyDirectory("site/nl/_site", "nl", recursive = T, overwrite = T)
   # R.utils::copyDirectory("site/de/", "site/en/")
   
   ## cleanup sites because they always cause merge conflicts
-  unlink("site/en/_site", recursive = T, force = T)
-  unlink("site/nl/_site", recursive = T, force = T)
+  # unlink("site/en/_site", recursive = T, force = T)
+  # unlink("site/nl/_site", recursive = T, force = T)
   
   # Configure git.
   git2r::config(user.name = "favstats", user.email = "fabio.votta@gmail.com")

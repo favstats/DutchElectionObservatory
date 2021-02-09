@@ -126,7 +126,7 @@ latest_spending_dat %>%
         hcaes(
           x = advertiser_name,
           y = cum_spent,
-          color = color),
+          color = colors),
         tooltip = list(pointFormat = "<b>Euros spent on Facebook Ads:</b> €{point.cum_spent:,.0f}")) %>%
       hc_yAxis(reversed = F, min = 0, title = list(text = "€ spent on Ads"))  %>% 
       hc_xAxis(categories = lvls, title = list(text = "")#,  

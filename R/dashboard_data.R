@@ -26,6 +26,7 @@ defaults_fb <- advertiser_names_fb %>%
 dutch_parties <- c("D66", "VVD",
                    "GroenLinks", "SP", 
                    "Volt Nederland", "CDA", 
+                   "ChristenUnie",
                    "PvdA", "FvD", "50PLUS")
 
 advertiser_names_ggl <- ggl_aggr$total %>%
