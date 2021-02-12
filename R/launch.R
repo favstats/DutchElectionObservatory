@@ -81,6 +81,9 @@ while(T){
   cat("1. Load and Clean Data\n")
   source(here::here("R", "clean.R"))
   
+  
+  source(here::here("R", "launch2.R"))
+  
   cat("2. Deploy App\n")
   
   # rsconnect::deployDoc("dashboard.Rmd", launch.browser = F, forceUpdate = T)

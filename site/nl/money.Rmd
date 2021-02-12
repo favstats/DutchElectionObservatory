@@ -128,7 +128,7 @@ latest_spending_dat %>%
           x = advertiser_name,
           y = cum_spent,
           color = color),
-        tooltip = list(pointFormat = "<b>Euros spent on Facebook Ads:</b> €{point.cum_spent:,.0f}")) %>%
+        tooltip = list(pointFormat = "<b>Totaal bedrag uitgegeven aan Facebookadvertenties:</b> €{point.cum_spent:,.0f}")) %>%
       hc_yAxis(reversed = F, min = 0, title = list(text = "€ spent on Ads"))  %>% 
       hc_xAxis(categories = lvls, title = list(text = "")#,  
                # labels = list(
@@ -137,10 +137,10 @@ latest_spending_dat %>%
                ) %>% 
       hc_chart(inverted = TRUE)  %>% 
     hc_title(
-      text = "Euros Spent on Facebook Ads"
+      text = "Totaal bedrag uitgegeven aan Facebookadvertenties"
     ) %>%
     hc_subtitle(
-      text = "Euros spent since September 1st"
+      text = "Uitgegeven sinds 1 September"
     ) %>% 
     hc_credits(
       enabled = T,
@@ -152,7 +152,7 @@ latest_spending_dat %>%
     ) 
 ```
 
-Voor Facebook-platforms bieden de bestedingsgegevens van de API geen geaggregeerde statistieken per adverteerder. In plaats daarvan biedt het alleen zeer brede grenzen van het uitgegeven geld. Om deze reden zijn de gegevens die hier worden weergegeven afkomstig uit het [Facebook Ad Library Report](https://www.facebook.com/ads/library/report) die wel geld geeft dat door de adverteerder is uitgegeven en die dagelijks wordt opgehaald.
+Voor Facebook-platforms bieden de bestedingsgegevens van de API geen geaggregeerde statistieken per adverteerder. In plaats daarvan biedt het alleen zeer brede grenzen van het uitgegeven geld. Om deze reden zijn de gegevens die hier worden weergegeven afkomstig uit het [Facebook Ad Library Report](https://www.facebook.com/ads/library/report) dat preciezer aangeeft wat door adverteerders is uitgegeven.
 
 
 #### Uitgaven per regio
@@ -201,7 +201,7 @@ map_latest %>%
   htmltools::browsable()
 ```
 
-Voor Facebook-platforms bieden de bestedingsgegevens van de API geen geaggregeerde statistieken per adverteerder. In plaats daarvan biedt het alleen zeer brede grenzen van het uitgegeven geld. Om deze reden zijn de gegevens die hier worden weergegeven afkomstig uit het [Facebook Ad Library Report](https://www.facebook.com/ads/library/report) die wel geld geeft dat door de adverteerder is uitgegeven en die dagelijks wordt opgehaald. Daarnaast laten de gegevens ook de uitgaven per regio zien.
+Voor Facebook-platforms bieden de bestedingsgegevens van de API geen geaggregeerde statistieken per adverteerder. In plaats daarvan biedt het alleen zeer brede grenzen van het uitgegeven geld. Om deze reden zijn de gegevens die hier worden weergegeven afkomstig uit het [Facebook Ad Library Report](https://www.facebook.com/ads/library/report) dat preciezer aangeeft wat door adverteerders is uitgegeven. Daarnaast laten de gegevens ook de uitgaven per regio zien.
 
 
 <!-- #### Minimum -->
@@ -268,7 +268,7 @@ gg_spending_time <- fb_aggr$report_spending %>%
   scale_color_manual(values = unique(color_dat$colors)) +
   theme_minimal() +
   theme(legend.position = "top") +
-  labs(y = "Euros spent on Facebook ads", x = "Date")
+  labs(y = "Totaal bedrag uitgegeven aan Facebookadvertenties", x = "Date")
 
 
 gg_spending_time %>% 
@@ -276,7 +276,7 @@ gg_spending_time %>%
   plotly::layout(
     xaxis = list(automargin=TRUE),
     yaxis = list(automargin=TRUE,
-                 title = "Euros Spent on Facebook Ads",
+                 title = "Totaal bedrag uitgegeven aan Facebookadvertenties",
                  titlefont  = list(size = 0.1)),
     legend = list(
     orientation = "h",
@@ -285,7 +285,7 @@ gg_spending_time %>%
   ) 
 ```
 
-Voor Facebook-platforms bieden de bestedingsgegevens van de API geen geaggregeerde statistieken per adverteerder. In plaats daarvan biedt het alleen zeer brede grenzen van het uitgegeven geld. Om deze reden zijn de gegevens die hier worden weergegeven afkomstig uit het [Facebook Ad Library Report](https://www.facebook.com/ads/library/report) die wel geld geeft dat door de adverteerder is uitgegeven en die dagelijks wordt opgehaald. Een voorbehoud is echter dat als een eigendom onder de 100 euro per dag wordt uitgegeven, het exacte bedrag niet wordt weergegeven. Om deze reden tonen we betrouwbaarheidsintervallen rond het bedrag.
+Voor Facebook-platforms bieden de bestedingsgegevens van de API geen geaggregeerde statistieken per adverteerder. In plaats daarvan biedt het alleen zeer brede grenzen van het uitgegeven geld. Om deze reden zijn de gegevens die hier worden weergegeven afkomstig uit het [Facebook Ad Library Report](https://www.facebook.com/ads/library/report) dat preciezer aangeeft wat door adverteerders is uitgegeven. Een voorbehoud is echter dat als een bedrag van onder de 100 euro per dag wordt uitgegeven, het exacte bedrag niet wordt weergegeven. Om deze reden tonen we betrouwbaarheidsintervallen rond het bedrag..
 
 <!-- #### Minimum -->
 

@@ -16,4 +16,4 @@ Er zijn vier hoofdvragen die we met deze versie van het dashboard proberen te be
 
 > Let op: de gegevens in dit dashboard zijn gebaseerd op advertentiebibliotheken van de platforms, waardoor sommige gegevens mogelijk ontbreken.	
 
-Bezoek [political-advertenties.nl](https://politieke-advertenties.nl/) voor meer informatie.
+Bezoek [politieke-advertenties.nl](https://politieke-advertenties.nl/) voor meer informatie.
