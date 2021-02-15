@@ -128,7 +128,7 @@ latest_spending_dat %>%
           x = advertiser_name,
           y = cum_spent,
           color = color),
-        tooltip = list(pointFormat = "<b>Totaal bedrag uitgegeven aan Facebookadvertenties:</b> €{point.cum_spent:,.0f}")) %>%
+        tooltip = list(pointFormat = "<b>Totaal bedrag:</b> €{point.cum_spent:,.0f}")) %>%
       hc_yAxis(reversed = F, min = 0, title = list(text = "€ spent on Ads"))  %>% 
       hc_xAxis(categories = lvls, title = list(text = "")#,  
                # labels = list(

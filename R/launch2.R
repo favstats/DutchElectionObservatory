@@ -109,9 +109,6 @@ saveRDS(trans_eng, file = "data/trans_eng.rds")
   # Configure git.
   git2r::config(user.name = "favstats", user.email = "fabio.votta@gmail.com")
   
-  dir()
-  
-  gert::git_add()
   
   # Check git status.
   gitstatus()
@@ -122,10 +119,11 @@ saveRDS(trans_eng, file = "data/trans_eng.rds")
   # NEED TO PUSH ONCE AND DO THIS BEFORE THIS WORKS
   # git config --global credential.helper 'cache --timeout=10000000'
   
-  gitcommit(msg = paste0(currentTime, " Automated Data Pull"))
+  gert::git_commit(message = paste0(currentTime, " Automated Data Pull"))
+  
   
   # Push changes to github.
-  gitpush()
+  gert::git_push()
   
   
   # Sys.sleep(60*60*24)
