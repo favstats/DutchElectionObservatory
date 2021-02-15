@@ -75,7 +75,7 @@ In calculating the number of unique advertisements plotted in this figure we alr
     )
 ```
 
-Data from the Google Ad library is where every provided ad id is counted as ad.This may overcount the number of ads because the same ad could run with the same text.
+In the Google Transparency Report every ad id is counted as an ad. This may overcount the number of ads because the same ad could run with the same text or video but Google does not provide that information in the Transparency Report.
 
 
 ## Over Time Unique Ads {.tabset .tabset-fade .tabset-pills}
@@ -109,5 +109,5 @@ To count the number of unique advertisements placed by each party on Facebook’
 ```
 
 
-Data from the Google Ad library is where every provided ad id is counted as ad.This may overcount the number of ads because the same ad could run with the same text.
+In the Google Transparency Report every ad id is counted as an ad. This may overcount the number of ads because the same ad could run with the same text or video but Google does not provide that information in the Transparency Report.
 

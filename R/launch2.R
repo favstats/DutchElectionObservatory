@@ -30,7 +30,7 @@ gitadd <- function(dir = getwd()){
   cmd_list <- list(
     # cmd1 = tolower(substr(dir,1,2)),
     cmd2 = paste("cd",dir),
-    cmd3 = "git add --all"
+    cmd3 = "git add -A"
   )
   cmd <- paste(unlist(cmd_list),collapse = " & ")
   system(cmd)
@@ -108,6 +108,10 @@ saveRDS(trans_eng, file = "data/trans_eng.rds")
   
   # Configure git.
   git2r::config(user.name = "favstats", user.email = "fabio.votta@gmail.com")
+  
+  dir()
+  
+  gert::git_add()
   
   # Check git status.
   gitstatus()

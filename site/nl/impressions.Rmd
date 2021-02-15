@@ -129,7 +129,7 @@ De "onder" en "bovengrenzen" van vertoningen die door het Google Transparantiera
 
 Deze zeer brede reeksen leiden tot enkele ernstige moeilijkheden als men indrukstatistieken per partij wil geven. En naarmate het aantal advertenties in de loop van de tijd toeneemt, neemt het probleem van deze grote grenzen alleen maar toe.
 
-## Impressies na verloop van tijd {.tabset .tabset-fade .tabset-pills}
+## Impressies over tijd {.tabset .tabset-fade .tabset-pills}
 
 ### Facebook-platforms (inclusief Instagram) {.tabset .tabset-fade .tabset-pills}
 

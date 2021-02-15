@@ -160,45 +160,64 @@ Voor Facebook-platforms bieden de bestedingsgegevens van de API geen geaggregeer
 ```{r, out.width="100%"}
 
 
-report_spending_loc_cum <- fb_aggr$report_spending_loc %>% 
-  filter(advertiser_name %in% dutch_parties_fb) %>% 
-  rename(date_range_start = date_range_started) %>% 
-  group_by(advertiser_name, date_range_start, region) %>% 
-  summarize(amount_spent_eur = sum(amount_spent_eur)) %>% 
-  ungroup() %>% 
-  complete(advertiser_name, region, date_range_start = seq.Date(min(date_range_start), max(date_range_start), by="day"),
-           fill = list(amount_spent_eur = 0)) %>% 
-  arrange(advertiser_name, region, date_range_start) %>% 
-  group_by(advertiser_name) %>% 
-  mutate(amount_spent_eur_cumsum = cumsum(amount_spent_eur)) %>% 
-  ungroup() 
-
-
-latest_spending_loc_dat <- report_spending_loc_cum %>% 
-  group_by(advertiser_name) %>% 
-  filter(date_range_start == max(date_range_start)) %>% 
-  ungroup()
+# report_spending_loc_cum <- fb_aggr$report_spending_loc %>% 
+# report_spending_loc_cum <- spending_loc %>%
+#   filter(advertiser_name %in% dutch_parties_fb) %>% 
+#   rename(date_range_start = date_range_started) %>% 
+#   group_by(advertiser_name, date_range_start, region) %>% 
+#   summarize(amount_spent_eur = sum(amount_spent_eur)) %>% 
+#   ungroup() %>% 
+#   complete(advertiser_name, region, date_range_start = seq.Date(min(date_range_start), max(date_range_start), by="day"),
+#            fill = list(amount_spent_eur = 0)) %>% 
+#   arrange(advertiser_name, region, date_range_start) %>% 
+#   group_by(advertiser_name) %>% 
+#   mutate(amount_spent_eur_cumsum = cumsum(amount_spent_eur)) %>% 
+#   ungroup() 
+# 
+# 
+# latest_spending_loc_dat <- report_spending_loc_cum %>% 
+#   group_by(advertiser_name) %>% 
+#   filter(date_range_start == max(date_range_start)) %>% 
+#   ungroup()
   # arrange(desc(date_range_start)) %>% 
   # distinct(advertiser_name, region, .keep_all = T)
 
-      mapdata <- readRDS("../data/mapdata.RDS")
 
+mapdata <- readRDS("../data/mapdata.RDS")
          
       
-map_latest <- latest_spending_loc_dat %>% 
+# map_latest <- latest_spending_loc_dat %>% 
+#   group_by(advertiser_name) %>%
+#   mutate(budget_share = amount_spent_eur_cumsum/sum(amount_spent_eur_cumsum)*100) %>% 
+#   left_join(color_dat) %>% 
+#   rename(colorful = colors) %>% 
+#   mutate(name = ifelse(region == "North Brabant", "Noord-Brabant", region)) %>% 
+#   ungroup()
+      
+report_spending_loc_budget_share <- spending_loc %>%
+  filter(advertiser_name %in% dutch_parties_fb) %>%
+  rename(date_range_start = date_range_started) %>%
+  group_by(advertiser_name, region) %>%
+  summarize(amount_spent_eur = sum(amount_spent_eur)) %>%
+  ungroup() %>%
+  complete(advertiser_name, region,
+           fill = list(amount_spent_eur = 0))  %>% 
   group_by(advertiser_name) %>%
-  mutate(budget_share = amount_spent_eur_cumsum/sum(amount_spent_eur_cumsum)*100) %>% 
+  mutate(budget_share = amount_spent_eur/sum(amount_spent_eur)*100) %>% 
   left_join(color_dat) %>% 
   rename(colorful = colors) %>% 
   mutate(name = ifelse(region == "North Brabant", "Noord-Brabant", region)) %>% 
+  # mutate(total = sum(budget_share))
   ungroup()
-      
 
 
-map_latest %>% 
+report_spending_loc_budget_share %>% 
   group_split(advertiser_name) %>% 
-  map(~{chart_maps2(.x, F, mapdata, trans, value_to_be_plotted = "budget_share", max = max(map_latest$budget_share)*1.1)}) %>% hw_grid(ncol = 3) %>% 
+  map(~{chart_maps2(.x, F, mapdata, trans, value_to_be_plotted = "budget_share", max = max(report_spending_loc_budget_share$budget_share)*1.1)}) %>% hw_grid(ncol = 3) %>% 
   htmltools::browsable()
+
+
+
 ```
 
 Voor Facebook-platforms bieden de bestedingsgegevens van de API geen geaggregeerde statistieken per adverteerder. In plaats daarvan biedt het alleen zeer brede grenzen van het uitgegeven geld. Om deze reden zijn de gegevens die hier worden weergegeven afkomstig uit het [Facebook Ad Library Report](https://www.facebook.com/ads/library/report) dat preciezer aangeeft wat door adverteerders is uitgegeven. Daarnaast laten de gegevens ook de uitgaven per regio zien.
@@ -251,7 +270,7 @@ Voor Facebook-platforms bieden de bestedingsgegevens van de API geen geaggregeer
 
 Voor Google-platforms bieden gegevens die toegankelijk zijn via het [Google Transparantierapport](https://transparencyreport.google.com/political-ads/region/NL) wekelijkse statistieken over hoeveel geld door partijen is uitgegeven.
 
-## Na verloop van tijd {.tabset .tabset-fade .tabset-pills}
+## Over tijd {.tabset .tabset-fade .tabset-pills}
 
 ### Facebook-platforms (inclusief Instagram) {.tabset .tabset-fade .tabset-pills}
 
