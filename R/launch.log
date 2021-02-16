@@ -21788,3 +21788,27 @@ Changes not staged for commit:
 	modified:   docs/nl/targeting.html
 
 no changes added to commit (use "git add" and/or "git commit -a")
+Warning messages:
+1: `mutate_()` is deprecated as of dplyr 0.7.0.
+Please use `mutate()` instead.
+See vignette('programming') for more help
+This warning is displayed once every 8 hours.
+Call `lifecycle::last_warnings()` to see where this warning was generated. 
+2: `group_by_()` is deprecated as of dplyr 0.7.0.
+Please use `group_by()` instead.
+See vignette('programming') for more help
+This warning is displayed once every 8 hours.
+Call `lifecycle::last_warnings()` to see where this warning was generated. 
+3: Removed 2 rows containing non-finite values (stat_boxplot). 
+4: Removed 2 rows containing non-finite values (stat_boxplot). 
+2. Deploy App
+sh: 1: /h: not found
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   R/launch.log
+
+no changes added to commit (use "git add" and/or "git commit -a")
