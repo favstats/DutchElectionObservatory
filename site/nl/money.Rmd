@@ -194,7 +194,7 @@ mapdata <- readRDS("../data/mapdata.RDS")
 #   mutate(name = ifelse(region == "North Brabant", "Noord-Brabant", region)) %>% 
 #   ungroup()
       
-report_spending_loc_budget_share <- spending_loc %>%
+report_spending_loc_budget_share <-  fb_aggr$report_spending_loc %>%
   filter(advertiser_name %in% dutch_parties_fb) %>%
   rename(date_range_start = date_range_started) %>%
   group_by(advertiser_name, region) %>%
@@ -287,7 +287,7 @@ gg_spending_time <- fb_aggr$report_spending %>%
   scale_color_manual(values = unique(color_dat$colors)) +
   theme_minimal() +
   theme(legend.position = "top") +
-  labs(y = "Totaal bedrag uitgegeven aan Facebookadvertenties", x = "Date")
+  labs(y = "Totaal bedrag uitgegeven", x = "Date")
 
 
 gg_spending_time %>% 

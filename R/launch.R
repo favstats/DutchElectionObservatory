@@ -1,6 +1,8 @@
 
 setwd("/home/fabio/main/DutchElectionObservatory")
 
+Sys.setenv(RSTUDIO_PANDOC="/usr/lib/rstudio-server/bin/pandoc")
+
 library(git2r)
 # sudo systemctl restart shiny-server.service
 file.copy(from = "app/staging/helpers.R", to = "app/production", recursive = T, overwrite = T)
@@ -73,7 +75,7 @@ gitpush <- function(dir = getwd()){
 
 
 
-while(T){
+# while(T){
   
   
   currentTime <- Sys.time()
@@ -115,4 +117,4 @@ while(T){
   # Sys.sleep(60*60*60)
   
   
-}
+# }

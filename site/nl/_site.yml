@@ -3,8 +3,6 @@ output_dir: "../../docs/nl"
 navbar:
   title: "Nederlands Verkiezingsobservatorium"
   left:
-    - text: "Over"
-      href: index.html
     - text: "Aantal Ads"
       href: number_of_ads.html
     - text: "Uitgegeven"
@@ -13,6 +11,8 @@ navbar:
       href: impressions.html
     - text: "Getargete Advertenties"
       href: targeting.html
+    - text: "Over"
+      href: index.html
   right:
     - text: "English"
       href: https://favstats.github.io/DutchElectionObservatory/en

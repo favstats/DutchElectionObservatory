@@ -3,8 +3,6 @@ output_dir: "../../docs/en"
 navbar:
   title: "Dutch Election Observatory Dashboard"
   left:
-    - text: "About"
-      href: index.html
     - text: "Number of Ads"
       href: number_of_ads.html
     - text: "Money Spent"
@@ -13,6 +11,8 @@ navbar:
       href: impressions.html
     - text: "Targeting"
       href: targeting.html
+    - text: "About"
+      href: index.html
   right:
     - text: "Dutch"
       href: https://favstats.github.io/DutchElectionObservatory/nl

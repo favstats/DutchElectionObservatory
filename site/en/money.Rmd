@@ -194,7 +194,7 @@ mapdata <- readRDS("../data/mapdata.RDS")
 #   mutate(name = ifelse(region == "North Brabant", "Noord-Brabant", region)) %>% 
 #   ungroup()
       
-report_spending_loc_budget_share <- spending_loc %>%
+report_spending_loc_budget_share <-  fb_aggr$report_spending_loc %>%
   filter(advertiser_name %in% dutch_parties_fb) %>%
   rename(date_range_start = date_range_started) %>%
   group_by(advertiser_name, region) %>%

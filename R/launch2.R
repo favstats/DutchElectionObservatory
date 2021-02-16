@@ -2,6 +2,10 @@
 
 library(git2r)
 library(tidyverse)
+
+setwd("/home/fabio/main/DutchElectionObservatory")
+Sys.setenv(RSTUDIO_PANDOC="/usr/lib/rstudio-server/bin/pandoc")
+
 # sudo systemctl restart shiny-server.service
 # file.copy(from = "app/staging/helpers.R", to = "app/production", recursive = T, overwrite = T)
 # file.copy(from = "app/staging/index.html", to = "app/production", recursive = T, overwrite = T)
