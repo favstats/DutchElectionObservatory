@@ -97,7 +97,7 @@ saveRDS(trans_eng, file = "data/trans_eng.rds")
   c('<!DOCTYPE html>',
     '<html>',
     '<head>',
-    '<meta http-equiv="refresh" content="0; url=https://favstats.github.io/DutchElectionObservatory/nl/">',
+    '<meta http-equiv="refresh" content="0; url=http://dashboard.politieke-advertenties.nl/nl">',
     '</head>',
     '</html>') %>%
     cat(file = "docs/index.html", sep = "\n")
