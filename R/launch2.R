@@ -94,13 +94,13 @@ saveRDS(trans_eng, file = "data/trans_eng.rds")
   rmarkdown::render_site("site/en")
   rmarkdown::render_site("site/nl")
   
-  c('<!DOCTYPE html>',
-    '<html>',
-    '<head>',
-    '<meta http-equiv="refresh" content="0; url=http://dashboard.politieke-advertenties.nl/nl">',
-    '</head>',
-    '</html>') %>%
-    cat(file = "docs/index.html", sep = "\n")
+  # c('<!DOCTYPE html>',
+  #   '<html>',
+  #   '<head>',
+  #   '<meta http-equiv="refresh" content="0; url=http://dashboard.politieke-advertenties.nl/nl">',
+  #   '</head>',
+  #   '</html>') %>%
+  #   cat(file = "docs/index.html", sep = "\n")
   
   # R.utils::copyDirectory("site/en/_site", "en", recursive = T, overwrite = T)
   # R.utils::copyDirectory("site/nl/_site", "nl", recursive = T, overwrite = T)

@@ -15,7 +15,7 @@ navbar:
       href: about.html
   right:
     - text: "Dutch"
-      href: http://dashboard.politieke-advertenties.nl/nl
+      href: ../nl/index.html
     - text: "Code"
       icon: fa-code  fa-lg
       href: https://github.com/favstats/DutchElectionObservatory
