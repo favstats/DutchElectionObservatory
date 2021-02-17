@@ -101,6 +101,9 @@ saveRDS(trans_eng, file = "data/trans_eng.rds")
   #   '</head>',
   #   '</html>') %>%
   #   cat(file = "docs/index.html", sep = "\n")
+  # getwd()
+  c('<script type="text/javascript" src="links.js"></script>') %>% 
+    cat(file = "docs/include_footer.html", sep = "\n")
   
   # R.utils::copyDirectory("site/en/_site", "en", recursive = T, overwrite = T)
   # R.utils::copyDirectory("site/nl/_site", "nl", recursive = T, overwrite = T)
