@@ -19,3 +19,7 @@ navbar:
     - text: "Code"
       icon: fa-code  fa-lg
       href: https://github.com/favstats/DutchElectionObservatory
+output:
+  html_document:
+    includes:
+      after_body: ../include_footer.html
