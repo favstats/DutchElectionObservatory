@@ -4,7 +4,7 @@ navbar:
   title: "Dutch Election Observatory Dashboard"
   left:
     - text: "Number of Ads"
-      href: number_of_ads.html
+      href: index.html
     - text: "Money Spent"
       href: money.html
     - text: "Impressions"
@@ -12,7 +12,7 @@ navbar:
     - text: "Targeting"
       href: targeting.html
     - text: "About"
-      href: index.html
+      href: about.html
   right:
     - text: "Dutch"
       href: https://favstats.github.io/DutchElectionObservatory/nl

@@ -1,0 +1,21 @@
+---
+title: "About"
+output:
+  html_document:
+    anchor_sections: false
+---
+
+This dashboard is still a work in progress that we plan to regularly update and improve during the Dutch election. Please check out this [blog post](https://politieke-advertenties.nl/waar-komen-onze-data-vandaan/) for more detailed explanations of the metrics shown here.
+
+There are four main questions that we are trying to tackle with our current version of the dashboard:
+
++ How many ads are the Dutch political parties placing on the platforms that we look at?
++ How much money are the parties spending on each platform?
++ How many people are reached through these ads?
++ How are the political ads targeted towards individuals?
+
+> Disclaimer: the data shown in this dashboard is based on the platform's respective ad libraries. For this reason the data shown here might not reflect the full picture nor all political ads that were targeted at voters.
+
+Visit [politieke-advertenties.nl](https://politieke-advertenties.nl/) for more info (Website is in Dutch).
+
+

@@ -1,19 +1,112 @@
 ---
-title: "Over"
+title: "Aantal Ads"
 output:
   html_document:
+    toc: true
+    toc_float:
+      collapsed: false
+      smooth_scroll: false
     anchor_sections: false
 ---
 
-Dit dashboard is nog in ontwikkeling en wordt gedurende de verkiezingscampagne verbeterd en aangevuld. Zie deze [blogpost](https://politieke-advertenties.nl/waar-komen-onze-data-vandaan/) voor een uitgebreide uitleg van de variabelen in dit dashboard.	
+```{r global, include=FALSE, echo=F, context="setup", results='hide'}
 
-Er zijn vier hoofdvragen die we met deze versie van het dashboard proberen te beantwoorden:
 
-+ Hoeveel advertenties plaatsen Nederlandse politieke partijen op de platforms die we bekijken?
-+ Hoeveel geld besteden deze politieke partijen op elk platform?
-+ Hoeveel mensen worden bereikt door deze advertenties?
-+ Hoe worden deze politieke advertenties getarget richting individuen?
+library(flexdashboard)
+knitr::opts_chunk$set(echo = F, message = F, warning = F)
 
-> Let op: de gegevens in dit dashboard zijn gebaseerd op advertentiebibliotheken van de platforms, waardoor sommige gegevens mogelijk ontbreken.	
+library(shiny)
+library(janitor)
+library(DT)
+library(magrittr)
+library(glue)
+library(highcharter)
+library(lubridate)
+library(knitr)
+library(tidyverse)
+library(htmltools)
+library(shinyWidgets)
 
-Bezoek [politieke-advertenties.nl](https://politieke-advertenties.nl/) voor meer informatie.
+# snap_ads <- readRDS("data/snap_ads.RDS")
+# 
+trans <- readRDS("../data/trans_dutch.rds")
+# trans <- readRDS("../data/trans_eng.rds")
+
+source("../../R/helpers.R")
+source("../../R/dashboard_data.R")
+
+
+```
+
+
+
+## Totaal aantal unieke advertenties {.tabset .tabset-fade .tabset-pills}
+
+### Facebook-platforms (inclusief Instagram) 
+
+```{r}
+  fb_aggr %>% 
+    hc_plotter(filters = dutch_parties_fb,
+           plot_type = unlist_it(trans$choices, 1),
+           plot_type_sub = unlist_it(trans$total_text, 1),
+           platform = "Facebook",
+           trans_internal = trans,
+           last_updated = update_time
+    )
+```
+
+
+Bij het berekenen van het aantal unieke advertenties dat in deze figuur is uitgezet, moesten we al met verschillende problemen omgaan en een aantal belangrijke beslissingen nemen. Helaas maakt de manier waarop Facebook gegevens uit zijn advertentiebibliotheek verstrekt, het niet mogelijk om het aantal advertenties eenvoudig te tellen. Het lijkt erop dat in de gegevens van Facebook advertenties die op de meeste manieren identiek zijn, maar op verschillende tijdstippen worden weergegeven of op verschillende groepen zijn gericht, kunnen worden weergegeven als verschillende advertenties met verschillende unieke ID’s (ID’s). Daarom lijkt het erop dat de advertentie-ID's van Facebook geen één-op-één-correspondentie hebben met unieke advertenties. Met andere woorden, afhankelijk van hoe men besluit het aantal advertenties te tellen, kan men tot verschillende cijfers komen voor het aantal advertenties dat elke politieke partij heeft geplaatst.
+
+**Om het aantal unieke advertenties te tellen dat door elke partij op het Facebook-platform is geplaatst, hebben we advertenties gegroepeerd die dezelfde tekst en advertentielink hebben en bekijken we die dus als één unieke advertentie.** We hebben deze beslissing genomen om meer unieke advertenties structureel tellen op basis van hun daadwerkelijke inhoud, in plaats van door de ondoorzichtige en schijnbaar minder gestructureerde processen waarmee Facebook identificatiegegevens toewijst aan advertenties die op hun platform worden geplaatst. In de meeste gevallen leidt onze methode om advertenties te groeperen tot een vergelijkbare groepering van advertenties als wat Facebook grafisch weergeeft op zijn advertentiearchiefwebsite. We voorzien echter ook de mogelijkheid dat we in bepaalde gevallen het aantal unieke advertenties onderschatten.
+
+
+
+### Google-platforms (inclusief YouTube) 
+
+```{r}
+  ggl_aggr %>% 
+    hc_plotter(filters = dutch_parties,
+           plot_type = unlist_it(trans$choices, 1),
+           plot_type_sub = unlist_it(trans$total_text, 1),
+           platform = "Google",
+           trans_internal = trans,
+           last_updated = update_time
+    )
+```
+
+In het Google Transparency Report wordt ieder identificatienummer van een advertentie gezien als een advertentie. Maar dit zou ervoor kunnen zorgen dat Google het aantal advertenties overschat omdat soms identieke advertenties verschillende identificatienummers krijgen. Helaas is het op basis van het Transparency Report niet mogelijk om informatie over de inhoud van de advertentie te krijgen. 
+
+## Unieke advertenties over tijd {.tabset .tabset-fade .tabset-pills}
+
+### Facebook-platforms (inclusief Instagram) 
+
+```{r}
+  fb_aggr %>% 
+    hc_plotter(filters = dutch_parties,
+           plot_type = unlist_it(trans$choices, 1),
+           plot_type_sub = unlist_it(trans$total_text, 2),
+           platform = "Facebook",
+           trans_internal = trans,
+           last_updated = update_time
+    )
+```
+
+Om het aantal unieke advertenties te tellen dat door elke partij op het Facebook-platform is geplaatst, hebben we advertenties met dezelfde tekst en advertentielink bij elkaar gegroepeerd en deze als één unieke advertentie bekeken.
+
+### Google-platforms (inclusief YouTube) 
+
+```{r}
+  ggl_aggr %>% 
+    hc_plotter(filters = dutch_parties,
+           plot_type = unlist_it(trans$choices, 1),
+           plot_type_sub = unlist_it(trans$total_text, 2),
+           platform = "Google",
+           trans_internal = trans,
+           last_updated = update_time
+    )
+```
+
+In het Google Transparency Report wordt ieder identificatienummer van een advertentie gezien als een advertentie. Maar dit zou ervoor kunnen zorgen dat Google het aantal advertenties overschat omdat soms identieke advertenties verschillende identificatienummers krijgen. Helaas is het op basis van het Transparency Report niet mogelijk om informatie over de inhoud van de advertentie te krijgen. 
+
+
