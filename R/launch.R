@@ -94,25 +94,25 @@ gitpush <- function(dir = getwd()){
   # unlink("data/PoliticalAds.csv")
   # unlink("data/readme.txt")
   
-  # Configure git.
-  git2r::config(user.name = "favstats", user.email = "fabio.votta@gmail.com")
+  # # Configure git.
+  # git2r::config(user.name = "favstats", user.email = "fabio.votta@gmail.com")
+  # 
+  # # Check git status.
+  # gitstatus()
+  # 
+  # # Add and commit changes. 
+  # gitadd()
+  # 
+  # # NEED TO PUSH ONCE AND DO THIS BEFORE THIS WORKS
+  # # git config --global credential.helper 'cache --timeout=10000000'
+  # 
+  # gitcommit(msg = paste0(currentTime, " Automated Data Pull"))
+  # 
+  # # Push changes to github.
+  # gitpush()
   
-  # Check git status.
-  gitstatus()
   
-  # Add and commit changes. 
-  gitadd()
-  
-  # NEED TO PUSH ONCE AND DO THIS BEFORE THIS WORKS
-  # git config --global credential.helper 'cache --timeout=10000000'
-  
-  gitcommit(msg = paste0(currentTime, " Automated Data Pull"))
-  
-  # Push changes to github.
-  gitpush()
-  
-  
-  Sys.sleep(60*60*24)
+  # Sys.sleep(60*60*24)
   
   # Sys.sleep(60*60*60)
   
