@@ -474,6 +474,7 @@ fb_dat <- df_imp %>%
 
 saveRDS(fb_dat, "fb_dat/fb_dat.rds")
 
+fb_dat %>% dplyr::filter(advertiser_name == "BIJ1")
 
 # saveRDS(fb_dat, "fb_dat/fb_dat_old.rds")
 
@@ -505,8 +506,8 @@ cat("\n\nGarbage collected\n\n")
 # fb_ads <- get_fb_ads()
 
 color_dat <- tibble(
-  color = c("#00b13d", "#80c31c", "#cd503e", "#008067", "#6f2421", "#e3101c", "#e01003", "#036b2c", "#02a6e9", "#562883", "#eeaa00", "#34c1c4", "#92107d"),
-  advertiser_name = c("D66", "GroenLinks", "VVD", "CDA", "FvD", "PvdA", "SP", "PvdD", "ChristenUnie", "Volt Nederland", "SGP", "DENK", "50PLUS"))
+  color = c("#00b13d", "#80c31c", "#cd503e", "#008067", "#6f2421", "#e3101c", "#e01003", "#036b2c", "#02a6e9", "#562883", "#eeaa00", "#34c1c4", "#92107d", "#202122", "#242b57"),
+  advertiser_name = c("D66", "GroenLinks", "VVD", "CDA", "FvD", "PvdA", "SP", "PvdD", "ChristenUnie", "Volt Nederland", "SGP", "DENK", "50PLUS", "BIJ1", "Ja21"))
 
 cat("\n\nFB Data: Get totals\n\n")  
 
@@ -834,11 +835,15 @@ sepfirst <- read_in_spend("data/fb_spending/90days/FacebookAdLibraryReport_2020-
             spent_since_sepfirst = sum(spent_since_sepfirst, na.rm = T)) %>% 
   ungroup() %>% 
   bind_rows(
-    tibble(advertiser_name = "50PLUS",
-           date_range_start = lubridate::as_date("2020-12-01"),
-           n_below_100 = 0,
-           spent_since_sepfirst = 0)    
+    tibble(advertiser_name = c("50PLUS", "BIJ1", "Ja21", "Volt Nederland"),
+           date_range_start = c(lubridate::as_date("2020-12-01"),
+                                lubridate::as_date("2020-12-01"),
+                                lubridate::as_date("2020-12-01"),
+                                lubridate::as_date("2020-12-01")),
+           n_below_100 = c(0, 0, 0, 0),
+           spent_since_sepfirst = c(0, 0, 0, 0))    
   )
+
 
 ### Daily Spending data
 
@@ -954,6 +959,7 @@ spending_loc <- fb_spend_locs %>%
     T ~ advertiser_name
   )) 
 
+# fb_aggr <- readRDS("site/data/fb_aggr.rds")
 
 fb_aggr <- list(total = fb_total, times = fb_times,
                 geo = fb_geo, gender = fb_gender,
@@ -961,7 +967,7 @@ fb_aggr <- list(total = fb_total, times = fb_times,
                 report_spending = spending,
                 report_spending_loc = spending_loc)
 
-# fb_aggr$report_spending <- spending 
+# fb_aggr$report_spending <- spending
 # fb_aggr$report_spending_loc <- spending_loc
 
 

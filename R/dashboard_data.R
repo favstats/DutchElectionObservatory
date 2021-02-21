@@ -10,7 +10,7 @@ update_time <- read_lines("../data/last_updated.txt") %>%
 
 
 ### Facebook setup
-dutch_parties_fb <- c("VVD", "D66", "FvD", "SP", "GroenLinks", "Volt Nederland", "PvdA", "CDA", "PvdD", "ChristenUnie", "SGP", "DENK", "50PLUS")
+dutch_parties_fb <- c("VVD", "D66", "FvD", "SP", "GroenLinks", "Volt Nederland", "PvdA", "CDA", "PvdD", "ChristenUnie", "SGP", "DENK", "50PLUS", "BIJ1", "Ja21")
 
 advertiser_names_fb <- fb_aggr$times %>%
   distinct(advertiser_name) %>% 
@@ -27,7 +27,8 @@ dutch_parties <- c("D66", "VVD",
                    "GroenLinks", "SP", 
                    "Volt Nederland", "CDA", 
                    "ChristenUnie",
-                   "PvdA", "FvD", "50PLUS")
+                   "PvdA", "FvD", "50PLUS", 
+                   "BIJ1", "Ja21")
 
 advertiser_names_ggl <- ggl_aggr$total %>%
   pull(advertiser_name) %>% 
@@ -40,6 +41,5 @@ defaults_ggl <- advertiser_names_ggl %>%
 
 
 color_dat <- tibble(
-  color = c("#00b13d", "#80c31c", "#cd503e", "#008067", "#6f2421", "#e3101c", "#e01003", "#036b2c", "#02a6e9", "#562883", "#eeaa00", "#34c1c4", "#92107d"),
-  advertiser_name = c("D66", "GroenLinks", "VVD", "CDA", "FvD", "PvdA", "SP", "PvdD", "ChristenUnie", "Volt Nederland", "SGP", "DENK", "50PLUS"))
-
+  color = c("#00b13d", "#80c31c", "#cd503e", "#008067", "#6f2421", "#e3101c", "#e01003", "#036b2c", "#02a6e9", "#562883", "#eeaa00", "#34c1c4", "#92107d", "#202122", "#242b57"),
+  advertiser_name = c("D66", "GroenLinks", "VVD", "CDA", "FvD", "PvdA", "SP", "PvdD", "ChristenUnie", "Volt Nederland", "SGP", "DENK", "50PLUS", "BIJ1", "Ja21"))
