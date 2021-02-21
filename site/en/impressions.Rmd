@@ -86,7 +86,7 @@ The Facebook Ad library only provides very broad “lower” and “upper bounds
 #### Minimum
 
 ```{r}
-  fb_aggr %>% 
+  ggl_aggr %>% 
     hc_plotter(filters = dutch_parties,
            plot_type = unlist_it(trans$choices, 3),
            plot_type_sub = unlist_it(trans$total_text, 1),
@@ -110,7 +110,7 @@ These very broad ranges lead to some severe difficulties if one wants to give im
 #### Maximum
 
 ```{r}
-  fb_aggr %>% 
+  ggl_aggr %>% 
     hc_plotter(filters = dutch_parties,
            plot_type = unlist_it(trans$choices, 3),
            plot_type_sub = unlist_it(trans$total_text, 1),
@@ -172,7 +172,7 @@ The Facebook Ad library only provides very broad “lower” and “upper bounds
 #### Minimum
 
 ```{r}
-  fb_aggr %>% 
+  ggl_aggr %>% 
     hc_plotter(filters = dutch_parties,
            plot_type = unlist_it(trans$choices, 3),
            plot_type_sub = unlist_it(trans$total_text, 2),
@@ -196,7 +196,7 @@ These very broad ranges lead to some severe difficulties if one wants to give im
 #### Maximum
 
 ```{r}
-  fb_aggr %>% 
+  ggl_aggr %>% 
     hc_plotter(filters = dutch_parties,
            plot_type = unlist_it(trans$choices, 3),
            plot_type_sub = unlist_it(trans$total_text, 2),

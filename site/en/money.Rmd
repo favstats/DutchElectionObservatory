@@ -44,7 +44,7 @@ source("../../R/dashboard_data.R")
 
 last_updated <- update_time
 
-
+options(scipen = 999)
 ```
 
 
@@ -152,8 +152,8 @@ latest_spending_dat %>%
     ) 
 ```
 
-For Facebook platforms, spending data from the API does not provide aggregate statistics per advertiser. Instead, it only provides very broad boundaries of money spent. For this reason, the data displayed here is from the [Facebook Ad Library Report
-](https://www.facebook.com/ads/library/report) which does provide money spent by advertiser and is retrieved daily.
+The API does not provide aggregate statistics per advertiser. Instead, it only provides very broad boundaries of money spent. For this reason, the data displayed here is from the [Facebook Ad Library Report
+](https://www.facebook.com/ads/library/report) which does provide money statistics aggregated by advertiser. This data is retrieved daily but it's possible that days are missing sometimes because the script fails to download it (or because Facebook does not provide data on that day). This may lead to *lower* numbers than from what you can see in the Ad Library Report yourself. In addition, if a party spends less than 100 Euros in a day it will not show the exact amount. In that case we show confidence intervals around the spending amount.
 
 
 #### Spending by Region 
@@ -217,8 +217,8 @@ report_spending_loc_budget_share %>%
   htmltools::browsable()
 ```
 
-For Facebook platforms, spending data from the API does not provide aggregate statistics per advertiser. Instead, it only provides very broad boundaries of money spent. For this reason, the data displayed here is from the [Facebook Ad Library Report
-](https://www.facebook.com/ads/library/report) which does provide money spent by advertiser and is retrieved daily. In addition, the data also shows spending by region.
+The API does not provide aggregate statistics per advertiser. Instead, it only provides very broad boundaries of money spent. For this reason, the data displayed here is from the [Facebook Ad Library Report
+](https://www.facebook.com/ads/library/report) which does provide money statistics aggregated by advertiser. This data is retrieved daily but it's possible that days are missing sometimes because the script fails to download it (or because Facebook does not provide data on that day). This may lead to *lower* numbers than from what you can see in the Ad Library Report yourself. In addition, if a party spends less than 100 Euros in a day it will not show the exact amount. In that case we show confidence intervals around the spending amount. In addition, the data also shows spending by region.
 
 <!-- #### Minimum -->
 
@@ -300,8 +300,10 @@ gg_spending_time %>%
     )
   ) 
 ```
-For Facebook platforms, spending data from the API does not provide aggregate statistics per advertiser. Instead, it only provides very broad boundaries of money spent. For this reason, the data displayed here is from the [Facebook Ad Library Report
-](https://www.facebook.com/ads/library/report) which does provide money spent by advertiser and is retrieved daily. However, one caveat is that if a perty spent below 100 Euros in a day it will not show the exact amount. For this reason we show confidence intervals around the amount.
+The API does not provide aggregate statistics per advertiser. Instead, it only provides very broad boundaries of money spent. For this reason, the data displayed here is from the [Facebook Ad Library Report
+](https://www.facebook.com/ads/library/report) which does provide money statistics aggregated by advertiser. This data is retrieved daily but it's possible that days are missing sometimes because the script fails to download it (or because Facebook does not provide data on that day). This may lead to *lower* numbers than from what you can see in the Ad Library Report yourself. In addition, if a party spends less than 100 Euros in a day it will not show the exact amount. In that case we show confidence intervals around the spending amount.
+
+
 
 <!-- #### Minimum -->
 

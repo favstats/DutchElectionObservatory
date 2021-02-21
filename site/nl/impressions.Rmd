@@ -86,7 +86,7 @@ De Facebook-advertentiebibliotheek biedt alleen zeer brede "onder" en "bovengren
 #### Minimum
 
 ```{r}
-  fb_aggr %>% 
+  ggl_aggr %>% 
     hc_plotter(filters = dutch_parties,
            plot_type = unlist_it(trans$choices, 3),
            plot_type_sub = unlist_it(trans$total_text, 2),
@@ -109,7 +109,7 @@ Deze zeer brede reeksen leiden tot enkele ernstige moeilijkheden als men indruks
 #### Maximum
 
 ```{r}
-  fb_aggr %>% 
+  ggl_aggr %>% 
     hc_plotter(filters = dutch_parties,
            plot_type = unlist_it(trans$choices, 3),
            plot_type_sub = unlist_it(trans$total_text, 2),
@@ -171,7 +171,7 @@ De Facebook-advertentiebibliotheek biedt alleen zeer brede "onder" en "bovengren
 #### Minimum
 
 ```{r}
-  fb_aggr %>% 
+  ggl_aggr %>% 
     hc_plotter(filters = dutch_parties,
            plot_type = unlist_it(trans$choices, 3),
            plot_type_sub = unlist_it(trans$total_text, 2),
@@ -195,7 +195,7 @@ Deze zeer brede reeksen leiden tot enkele ernstige moeilijkheden als men indruks
 #### Maximum
 
 ```{r}
-  fb_aggr %>% 
+  ggl_aggr %>% 
     hc_plotter(filters = dutch_parties,
            plot_type = unlist_it(trans$choices, 3),
            plot_type_sub = unlist_it(trans$total_text, 2),
