@@ -89,7 +89,7 @@ The Facebook Ad library only provides very broad “lower” and “upper bounds
   fb_aggr %>% 
     hc_plotter(filters = dutch_parties,
            plot_type = unlist_it(trans$choices, 3),
-           plot_type_sub = unlist_it(trans$total_text, 2),
+           plot_type_sub = unlist_it(trans$total_text, 1),
            platform = "Google",
            trans_internal = trans,
            last_updated = update_time, minmax = "Minimum"
@@ -113,7 +113,7 @@ These very broad ranges lead to some severe difficulties if one wants to give im
   fb_aggr %>% 
     hc_plotter(filters = dutch_parties,
            plot_type = unlist_it(trans$choices, 3),
-           plot_type_sub = unlist_it(trans$total_text, 2),
+           plot_type_sub = unlist_it(trans$total_text, 1),
            platform = "Google",
            trans_internal = trans,
            last_updated = update_time, minmax = "Maximum"

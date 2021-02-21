@@ -6,12 +6,6 @@ library(tidyverse)
 setwd("/home/fabio/main/DutchElectionObservatory")
 Sys.setenv(RSTUDIO_PANDOC="/usr/lib/rstudio-server/bin/pandoc")
 
-# sudo systemctl restart shiny-server.service
-# file.copy(from = "app/staging/helpers.R", to = "app/production", recursive = T, overwrite = T)
-# file.copy(from = "app/staging/index.html", to = "app/production", recursive = T, overwrite = T)
-# file.copy(from = "app/staging/index.Rmd", to = "app/production", recursive = T, overwrite = T)
-# file.copy(from = "app/staging/data", to = "app/production", recursive = T, overwrite = T)
-
 # Git commit.
 gitcommit <- function(msg = "commit from Rstudio", dir = getwd()){
   cmd = sprintf("git commit -m\"%s\"",msg)
@@ -84,34 +78,14 @@ saveRDS(trans_eng, file = "data/trans_eng.rds")
   
   cat("2. Deploy App\n")
   
-  ## cleanup sites because they always cause merge conflicts
-  # cleanup_docs <- dir("en", full.names = T, recursive = T) %>% 
-  #   c(dir("de", full.names = T, recursive = T))
-  # 
-  # cleanup_docs %>%
-  #   walk(file.remove)
   
   rmarkdown::render_site("site/en")
   rmarkdown::render_site("site/nl")
   
-  # c('<!DOCTYPE html>',
-  #   '<html>',
-  #   '<head>',
-  #   '<meta http-equiv="refresh" content="0; url=http://dashboard.politieke-advertenties.nl/nl">',
-  #   '</head>',
-  #   '</html>') %>%
-  #   cat(file = "docs/index.html", sep = "\n")
-  # getwd()
+  
   c('<script type="text/javascript" src="links.js"></script>') %>% 
     cat(file = "docs/include_footer.html", sep = "\n")
   
-  # R.utils::copyDirectory("site/en/_site", "en", recursive = T, overwrite = T)
-  # R.utils::copyDirectory("site/nl/_site", "nl", recursive = T, overwrite = T)
-  # R.utils::copyDirectory("site/de/", "site/en/")
-  
-  ## cleanup sites because they always cause merge conflicts
-  # unlink("site/en/_site", recursive = T, force = T)
-  # unlink("site/nl/_site", recursive = T, force = T)
   
   # Configure git.
   git2r::config(user.name = "favstats", user.email = "fabio.votta@gmail.com")
