@@ -967,6 +967,75 @@ fb_aggr <- list(total = fb_total, times = fb_times,
                 report_spending = spending,
                 report_spending_loc = spending_loc)
 
+### create graph ######
+
+color_dat <- tibble(
+  color = c("#00b13d", "#80c31c", "#cd503e", "#008067", "#6f2421", "#e3101c", "#e01003", "#036b2c", "#02a6e9", "#562883", "#eeaa00", "#34c1c4", "#92107d", "#202122", "#242b57"),
+  advertiser_name = c("D66", "GroenLinks", "VVD", "CDA", "FvD", "PvdA", "SP", "PvdD", "ChristenUnie", "Volt Nederland", "SGP", "DENK", "50PLUS", "BIJ1", "Ja21")) %>% 
+  mutate(advertiser_name = as.factor(advertiser_name))
+
+extrastop <- c(lsa::stopwords_nl, "https", "een", "http", "te", "deze", "lid.php", "fvd.nl", "www.stemvolt.nl", "50pluspartij.nl", "ja", "bit.ly", "youtu.be")
+
+
+
+party_colors <- color_dat$color
+names(party_colors) <- color_dat$advertiser_name
+
+party_texts <- fb_dat %>% 
+  filter(advertiser_name %in% color_dat$advertiser_name) %>% 
+  mutate(text = paste0(ad_creative_body, " ", ad_creative_link_title)) %>% 
+  distinct(text, .keep_all = T) %>% 
+  unnest_tokens(word, text) %>% 
+  count(advertiser_name, word, sort = T)
+
+party_texts  %>% 
+  filter(!word %in% extrastop) %>% 
+  group_by(advertiser_name) %>% 
+  arrange(desc(n)) %>% 
+  slice(1:10) %>% 
+  # mutate(word = fct_reorder2(word, n, advertiser_name)) %>% 
+  mutate(word = reorder_within(word, n, advertiser_name))  %>% 
+  mutate(advertiser_name = as.factor(advertiser_name)) %>% 
+  ggplot(aes(word, n, fill = advertiser_name)) +
+  geom_col() +
+  scale_x_reordered() +
+  facet_wrap(~advertiser_name, scales = "free", ncol = 3) +
+  coord_flip() +
+  scale_fill_manual(values = party_colors) +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+ggsave(filename = here::here("images", "top_words.png"), height = 14, width = 12)
+
+party_bigrams <- fb_dat %>% 
+  filter(advertiser_name %in% color_dat$advertiser_name) %>% 
+  mutate(text = paste0(ad_creative_body, " ", ad_creative_link_title)) %>% 
+  distinct(text, .keep_all = T) %>% 
+  unnest_tokens(bigram, text, token = "ngrams", n = 2) %>% 
+  count(advertiser_name, bigram, sort = T)
+
+bigramstops <- c("https 50pluspartij.nl", "50pluspartij.nl actueel", "meer https", "leer meer", "meer over", "bij1 org", "fvd.nl ja", "https ja21", "ja21 nl", "bigram lid.php", "https www.partijvordedieren.nl", "www.stemvolt.nl na", "weten www.stemvolt.nl")
+
+party_bigrams  %>% 
+  filter(!bigram %in% bigramstops) %>% 
+  group_by(advertiser_name) %>% 
+  arrange(desc(n)) %>% 
+  slice(1:10) %>% 
+  # mutate(bigram = fct_reorder2(bigram, n, advertiser_name)) %>% 
+  mutate(bigram = reorder_within(bigram, n, advertiser_name))  %>% 
+  mutate(advertiser_name = as.factor(advertiser_name)) %>% 
+  ggplot(aes(bigram, n, fill = advertiser_name)) +
+  geom_col() +
+  scale_x_reordered() +
+  facet_wrap(~advertiser_name, scales = "free", ncol = 3) +
+  coord_flip() +
+  scale_fill_manual(values = party_colors) +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+
+ggsave(filename = here::here("images", "top_bigrams.png"), height = 14, width = 12)
+
 # fb_aggr$report_spending <- spending
 # fb_aggr$report_spending_loc <- spending_loc
 
