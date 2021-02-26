@@ -19,3 +19,20 @@ There are four main questions that we are trying to tackle with our current vers
 Visit [politieke-advertenties.nl](https://politieke-advertenties.nl/) for more info (Website is in Dutch).
 
 
+
+:::: {style="display: flex; justify-content: center; align-items: center;" }
+
+::: {}
+![](https://pbs.twimg.com/profile_images/1269917312821444610/Q-bBVTQq_400x400.jpg)
+:::
+
+::: {}
+Want to see how political parties target *you*? [Sign up](https://whotargets.me/) with our partners at **Who Targets Me** and download the gratis browser plugin to see how parties on Facebook use your data:
+
+[https://whotargets.me/](https://whotargets.me/)
+:::
+
+::::
+
+
+

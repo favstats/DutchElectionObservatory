@@ -1,7 +1,7 @@
 ### ---- Load Packages and Functions  ####
 
 
-pacman::p_load(tidyverse, janitor, highcharter, httr, furrr, lubridate)
+pacman::p_load(tidyverse, janitor, highcharter, httr, furrr, lubridate, tidytext)
 
 setwd(here::here())
 
@@ -1007,6 +1007,15 @@ party_texts  %>%
 
 ggsave(filename = here::here("images", "top_words.png"), height = 14, width = 12)
 
+# fb_aggr$report_spending <- spending
+# fb_aggr$report_spending_loc <- spending_loc
+
+
+saveRDS(fb_aggr, "app/production/data/fb_aggr.rds")
+saveRDS(fb_aggr, "app/staging/data/fb_aggr.rds")
+saveRDS(fb_aggr, file = "site/data/fb_aggr.rds")
+
+
 party_bigrams <- fb_dat %>% 
   filter(advertiser_name %in% color_dat$advertiser_name) %>% 
   mutate(text = paste0(ad_creative_body, " ", ad_creative_link_title)) %>% 
@@ -1036,12 +1045,5 @@ party_bigrams  %>%
 
 ggsave(filename = here::here("images", "top_bigrams.png"), height = 14, width = 12)
 
-# fb_aggr$report_spending <- spending
-# fb_aggr$report_spending_loc <- spending_loc
-
-
-saveRDS(fb_aggr, "app/production/data/fb_aggr.rds")
-saveRDS(fb_aggr, "app/staging/data/fb_aggr.rds")
-saveRDS(fb_aggr, file = "site/data/fb_aggr.rds")
 
 cat("\n\nFB Data: Done\n\n") 

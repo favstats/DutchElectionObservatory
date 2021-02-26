@@ -19,3 +19,17 @@ Er zijn vier hoofdvragen die we met deze versie van het dashboard proberen te be
 Bezoek [politieke-advertenties.nl](https://politieke-advertenties.nl/) voor meer informatie.
 
 
+
+:::: {style="display: flex; justify-content: center; align-items: center;" }
+
+::: {}
+![](https://pbs.twimg.com/profile_images/1269917312821444610/Q-bBVTQq_400x400.jpg)
+:::
+
+::: {}
+Help jij ons met onze studie naar politieke microtargeting? Installeer de plugin en zie hoe – en op welke manier – je getarget wordt door politieke partijen voor de Tweede Kamerverkiezingen. 
+
+[https://whotargets.me/nl](https://whotargets.me/nl)
+:::
+
+::::

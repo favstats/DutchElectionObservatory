@@ -1,1033 +1,0 @@
-── Attaching packages ─────────────────────────────────────── tidyverse 1.3.0 ──
-✔ ggplot2 3.3.2     ✔ purrr   0.3.4
-✔ tibble  3.0.4     ✔ dplyr   1.0.2
-✔ tidyr   1.1.2     ✔ stringr 1.4.0
-✔ readr   1.4.0     ✔ forcats 0.5.0
-── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-✖ dplyr::filter()   masks stats::filter()
-✖ purrr::is_empty() masks git2r::is_empty()
-✖ dplyr::lag()      masks stats::lag()
-✖ dplyr::pull()     masks git2r::pull()
-✖ purrr::when()     masks git2r::when()
-ℹ Using ',' as decimal and '.' as grouping mark. Use `read_delim()` for more control.
-
-── Column specification ────────────────────────────────────────────────────────
-cols(
-  text_id = col_character(),
-  english = col_character(),
-  dutch = col_character()
-)
-
-1. Load and Clean Data
-2. Deploy App
-
-Rendering: site/en/impressions.Rmd
-  |                                                                              |                                                                      |   0%  |                                                                              |....                                                                  |   5%
-  ordinary text without R code
-
-  |                                                                              |.......                                                               |  11%
-label: global (with options) 
-List of 4
- $ include: logi FALSE
- $ echo   : symbol F
- $ context: chr "setup"
- $ results: chr "hide"
-
-  |                                                                              |...........                                                           |  16%
-  ordinary text without R code
-
-  |                                                                              |...............                                                       |  21%
-label: unnamed-chunk-1
-  |                                                                              |..................                                                    |  26%
-  ordinary text without R code
-
-  |                                                                              |......................                                                |  32%
-label: unnamed-chunk-2
-  |                                                                              |..........................                                            |  37%
-  ordinary text without R code
-
-  |                                                                              |.............................                                         |  42%
-label: unnamed-chunk-3
-  |                                                                              |.................................                                     |  47%
-  ordinary text without R code
-
-  |                                                                              |.....................................                                 |  53%
-label: unnamed-chunk-4
-  |                                                                              |.........................................                             |  58%
-  ordinary text without R code
-
-  |                                                                              |............................................                          |  63%
-label: unnamed-chunk-5
-  |                                                                              |................................................                      |  68%
-  ordinary text without R code
-
-  |                                                                              |....................................................                  |  74%
-label: unnamed-chunk-6
-  |                                                                              |.......................................................               |  79%
-  ordinary text without R code
-
-  |                                                                              |...........................................................           |  84%
-label: unnamed-chunk-7
-  |                                                                              |...............................................................       |  89%
-  ordinary text without R code
-
-  |                                                                              |..................................................................    |  95%
-label: unnamed-chunk-8
-  |                                                                              |......................................................................| 100%
-  ordinary text without R code
-
-
-/usr/lib/rstudio-server/bin/pandoc/pandoc +RTS -K512m -RTS impressions.utf8.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output impressions.html --lua-filter /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmarkdown/lua/latex-div.lua --standalone --section-divs --table-of-contents --toc-depth 3 --variable toc_float=1 --variable toc_selectors=h1,h2,h3 --variable toc_print=1 --template /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --include-before-body /tmp/RtmpGIVHU9/rmarkdown-str248e617edc9f99.html --variable navbar=1 --variable body_padding=51 --variable header_padding=56 --variable 'theme:bootstrap' --include-in-header /tmp/RtmpGIVHU9/rmarkdown-str248e613a76d170.html --mathjax --variable 'mathjax-url:https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' 
-
-Rendering: site/en/index.Rmd
-  |                                                                              |                                                                      |   0%  |                                                                              |......................................................................| 100%
-  ordinary text without R code
-
-
-/usr/lib/rstudio-server/bin/pandoc/pandoc +RTS -K512m -RTS index.utf8.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output index.html --lua-filter /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmarkdown/lua/latex-div.lua --standalone --section-divs --template /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --include-before-body /tmp/RtmpGIVHU9/rmarkdown-str248e615ed05f4d.html --variable navbar=1 --variable body_padding=51 --variable header_padding=56 --variable 'theme:bootstrap' --include-in-header /tmp/RtmpGIVHU9/rmarkdown-str248e6137e78542.html --mathjax --variable 'mathjax-url:https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' 
-
-Rendering: site/en/money.Rmd
-  |                                                                              |                                                                      |   0%  |                                                                              |.....                                                                 |   8%
-  ordinary text without R code
-
-  |                                                                              |...........                                                           |  15%
-label: global (with options) 
-List of 4
- $ include: logi FALSE
- $ echo   : symbol F
- $ context: chr "setup"
- $ results: chr "hide"
-
-  |                                                                              |................                                                      |  23%
-  ordinary text without R code
-
-  |                                                                              |......................                                                |  31%
-label: unnamed-chunk-1 (with options) 
-List of 1
- $ out.width: chr "100%"
-
-  |                                                                              |...........................                                           |  38%
-  ordinary text without R code
-
-  |                                                                              |................................                                      |  46%
-label: unnamed-chunk-2 (with options) 
-List of 1
- $ out.width: chr "100%"
-
-Error in eval(lhs, parent, parent) : object 'spending_loc' not found
-Calls: <Anonymous> ... withCallingHandlers -> withVisible -> eval -> eval -> %>% -> eval -> eval
-
-Execution halted
-── Attaching packages ─────────────────────────────────────── tidyverse 1.3.0 ──
-✔ ggplot2 3.3.2     ✔ purrr   0.3.4
-✔ tibble  3.0.4     ✔ dplyr   1.0.2
-✔ tidyr   1.1.2     ✔ stringr 1.4.0
-✔ readr   1.4.0     ✔ forcats 0.5.0
-── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-✖ dplyr::filter()   masks stats::filter()
-✖ purrr::is_empty() masks git2r::is_empty()
-✖ dplyr::lag()      masks stats::lag()
-✖ dplyr::pull()     masks git2r::pull()
-✖ purrr::when()     masks git2r::when()
-ℹ Using ',' as decimal and '.' as grouping mark. Use `read_delim()` for more control.
-
-── Column specification ────────────────────────────────────────────────────────
-cols(
-  text_id = col_character(),
-  english = col_character(),
-  dutch = col_character()
-)
-
-1. Load and Clean Data
-2. Deploy App
-
-Rendering: site/en/impressions.Rmd
-  |                                                                              |                                                                      |   0%  |                                                                              |....                                                                  |   5%
-  ordinary text without R code
-
-  |                                                                              |.......                                                               |  11%
-label: global (with options) 
-List of 4
- $ include: logi FALSE
- $ echo   : symbol F
- $ context: chr "setup"
- $ results: chr "hide"
-
-  |                                                                              |...........                                                           |  16%
-  ordinary text without R code
-
-  |                                                                              |...............                                                       |  21%
-label: unnamed-chunk-1
-  |                                                                              |..................                                                    |  26%
-  ordinary text without R code
-
-  |                                                                              |......................                                                |  32%
-label: unnamed-chunk-2
-  |                                                                              |..........................                                            |  37%
-  ordinary text without R code
-
-  |                                                                              |.............................                                         |  42%
-label: unnamed-chunk-3
-  |                                                                              |.................................                                     |  47%
-  ordinary text without R code
-
-  |                                                                              |.....................................                                 |  53%
-label: unnamed-chunk-4
-  |                                                                              |.........................................                             |  58%
-  ordinary text without R code
-
-  |                                                                              |............................................                          |  63%
-label: unnamed-chunk-5
-  |                                                                              |................................................                      |  68%
-  ordinary text without R code
-
-  |                                                                              |....................................................                  |  74%
-label: unnamed-chunk-6
-  |                                                                              |.......................................................               |  79%
-  ordinary text without R code
-
-  |                                                                              |...........................................................           |  84%
-label: unnamed-chunk-7
-  |                                                                              |...............................................................       |  89%
-  ordinary text without R code
-
-  |                                                                              |..................................................................    |  95%
-label: unnamed-chunk-8
-  |                                                                              |......................................................................| 100%
-  ordinary text without R code
-
-
-/usr/lib/rstudio-server/bin/pandoc/pandoc +RTS -K512m -RTS impressions.utf8.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output impressions.html --lua-filter /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmarkdown/lua/latex-div.lua --standalone --section-divs --table-of-contents --toc-depth 3 --variable toc_float=1 --variable toc_selectors=h1,h2,h3 --variable toc_print=1 --template /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --include-before-body /tmp/RtmppLo3dF/rmarkdown-str248f625d0217d2.html --variable navbar=1 --variable body_padding=51 --variable header_padding=56 --variable 'theme:bootstrap' --include-in-header /tmp/RtmppLo3dF/rmarkdown-str248f6211697adc.html --mathjax --variable 'mathjax-url:https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' 
-
-Rendering: site/en/index.Rmd
-  |                                                                              |                                                                      |   0%  |                                                                              |......................................................................| 100%
-  ordinary text without R code
-
-
-/usr/lib/rstudio-server/bin/pandoc/pandoc +RTS -K512m -RTS index.utf8.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output index.html --lua-filter /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmarkdown/lua/latex-div.lua --standalone --section-divs --template /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --include-before-body /tmp/RtmppLo3dF/rmarkdown-str248f62215a9493.html --variable navbar=1 --variable body_padding=51 --variable header_padding=56 --variable 'theme:bootstrap' --include-in-header /tmp/RtmppLo3dF/rmarkdown-str248f6277f40544.html --mathjax --variable 'mathjax-url:https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' 
-
-Rendering: site/en/money.Rmd
-  |                                                                              |                                                                      |   0%  |                                                                              |.....                                                                 |   8%
-  ordinary text without R code
-
-  |                                                                              |...........                                                           |  15%
-label: global (with options) 
-List of 4
- $ include: logi FALSE
- $ echo   : symbol F
- $ context: chr "setup"
- $ results: chr "hide"
-
-  |                                                                              |................                                                      |  23%
-  ordinary text without R code
-
-  |                                                                              |......................                                                |  31%
-label: unnamed-chunk-1 (with options) 
-List of 1
- $ out.width: chr "100%"
-
-  |                                                                              |...........................                                           |  38%
-  ordinary text without R code
-
-  |                                                                              |................................                                      |  46%
-label: unnamed-chunk-2 (with options) 
-List of 1
- $ out.width: chr "100%"
-
-  |                                                                              |......................................                                |  54%
-  ordinary text without R code
-
-  |                                                                              |...........................................                           |  62%
-label: unnamed-chunk-3
-  |                                                                              |................................................                      |  69%
-  ordinary text without R code
-
-  |                                                                              |......................................................                |  77%
-label: unnamed-chunk-4 (with options) 
-List of 1
- $ out.width: chr "100%"
-
-  |                                                                              |...........................................................           |  85%
-  ordinary text without R code
-
-  |                                                                              |.................................................................     |  92%
-label: unnamed-chunk-5
-  |                                                                              |......................................................................| 100%
-  ordinary text without R code
-
-
-/usr/lib/rstudio-server/bin/pandoc/pandoc +RTS -K512m -RTS money.utf8.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output money.html --lua-filter /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmarkdown/lua/latex-div.lua --standalone --section-divs --table-of-contents --toc-depth 3 --variable toc_float=1 --variable toc_selectors=h1,h2,h3 --variable toc_print=1 --template /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --include-before-body /tmp/RtmppLo3dF/rmarkdown-str248f622e5d813d.html --variable navbar=1 --variable body_padding=51 --variable header_padding=56 --variable 'theme:bootstrap' --include-in-header /tmp/RtmppLo3dF/rmarkdown-str248f627f62cf27.html --mathjax --variable 'mathjax-url:https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' 
-
-Rendering: site/en/number_of_ads.Rmd
-  |                                                                              |                                                                      |   0%  |                                                                              |......                                                                |   9%
-  ordinary text without R code
-
-  |                                                                              |.............                                                         |  18%
-label: global (with options) 
-List of 4
- $ include: logi FALSE
- $ echo   : symbol F
- $ context: chr "setup"
- $ results: chr "hide"
-
-  |                                                                              |...................                                                   |  27%
-  ordinary text without R code
-
-  |                                                                              |.........................                                             |  36%
-label: unnamed-chunk-1
-  |                                                                              |................................                                      |  45%
-  ordinary text without R code
-
-  |                                                                              |......................................                                |  55%
-label: unnamed-chunk-2
-  |                                                                              |.............................................                         |  64%
-  ordinary text without R code
-
-  |                                                                              |...................................................                   |  73%
-label: unnamed-chunk-3
-  |                                                                              |.........................................................             |  82%
-  ordinary text without R code
-
-  |                                                                              |................................................................      |  91%
-label: unnamed-chunk-4
-  |                                                                              |......................................................................| 100%
-  ordinary text without R code
-
-
-/usr/lib/rstudio-server/bin/pandoc/pandoc +RTS -K512m -RTS number_of_ads.utf8.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output number_of_ads.html --lua-filter /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmarkdown/lua/latex-div.lua --standalone --section-divs --table-of-contents --toc-depth 3 --variable toc_float=1 --variable toc_selectors=h1,h2,h3 --variable toc_print=1 --template /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --include-before-body /tmp/RtmppLo3dF/rmarkdown-str248f626e951e73.html --variable navbar=1 --variable body_padding=51 --variable header_padding=56 --variable 'theme:bootstrap' --include-in-header /tmp/RtmppLo3dF/rmarkdown-str248f622797e4c6.html --mathjax --variable 'mathjax-url:https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' 
-
-Rendering: site/en/targeting.Rmd
-  |                                                                              |                                                                      |   0%  |                                                                              |...                                                                   |   5%
-  ordinary text without R code
-
-  |                                                                              |.......                                                               |  10%
-label: global (with options) 
-List of 4
- $ include: logi FALSE
- $ echo   : symbol F
- $ context: chr "setup"
- $ results: chr "hide"
-
-  |                                                                              |..........                                                            |  14%
-  ordinary text without R code
-
-  |                                                                              |.............                                                         |  19%
-label: unnamed-chunk-1 (with options) 
-List of 2
- $ out.width : chr "100%"
- $ fig.height: num 15
-
-  |                                                                              |.................                                                     |  24%
-  ordinary text without R code
-
-  |                                                                              |....................                                                  |  29%
-label: unnamed-chunk-2 (with options) 
-List of 2
- $ out.width : chr "100%"
- $ fig.height: num 15
-
-  |                                                                              |.......................                                               |  33%
-  ordinary text without R code
-
-  |                                                                              |...........................                                           |  38%
-label: unnamed-chunk-3
-  |                                                                              |..............................                                        |  43%
-  ordinary text without R code
-
-  |                                                                              |.................................                                     |  48%
-label: unnamed-chunk-4
-  |                                                                              |.....................................                                 |  52%
-  ordinary text without R code
-
-  |                                                                              |........................................                              |  57%
-label: unnamed-chunk-5 (with options) 
-List of 3
- $ out.width : chr "100%"
- $ fig.height: num 15
- $ fig.width : num 10
-
-  |                                                                              |...........................................                           |  62%
-  ordinary text without R code
-
-  |                                                                              |...............................................                       |  67%
-label: unnamed-chunk-6
-  |                                                                              |..................................................                    |  71%
-  ordinary text without R code
-
-  |                                                                              |.....................................................                 |  76%
-label: unnamed-chunk-7
-  |                                                                              |.........................................................             |  81%
-  ordinary text without R code
-
-  |                                                                              |............................................................          |  86%
-label: unnamed-chunk-8
-  |                                                                              |...............................................................       |  90%
-  ordinary text without R code
-
-  |                                                                              |...................................................................   |  95%
-label: unnamed-chunk-9 (with options) 
-List of 3
- $ out.width : chr "100%"
- $ fig.height: num 6
- $ fig.width : num 8
-
-  |                                                                              |......................................................................| 100%
-  ordinary text without R code
-
-
-/usr/lib/rstudio-server/bin/pandoc/pandoc +RTS -K512m -RTS targeting.utf8.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output targeting.html --lua-filter /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmarkdown/lua/latex-div.lua --standalone --section-divs --table-of-contents --toc-depth 3 --variable toc_float=1 --variable toc_selectors=h1,h2,h3 --variable toc_print=1 --template /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --include-before-body /tmp/RtmppLo3dF/rmarkdown-str248f6213505bfa.html --variable navbar=1 --variable body_padding=51 --variable header_padding=56 --variable 'theme:bootstrap' --include-in-header /tmp/RtmppLo3dF/rmarkdown-str248f6220798626.html --mathjax --variable 'mathjax-url:https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' 
-
-Output created: ../../docs/en/index.html
-Warning messages:
-1: `mutate_()` is deprecated as of dplyr 0.7.0.
-Please use `mutate()` instead.
-See vignette('programming') for more help
-This warning is displayed once every 8 hours.
-Call `lifecycle::last_warnings()` to see where this warning was generated. 
-2: `group_by_()` is deprecated as of dplyr 0.7.0.
-Please use `group_by()` instead.
-See vignette('programming') for more help
-This warning is displayed once every 8 hours.
-Call `lifecycle::last_warnings()` to see where this warning was generated. 
-3: Removed 1 rows containing non-finite values (stat_boxplot). 
-
-Rendering: site/nl/impressions.Rmd
-  |                                                                              |                                                                      |   0%  |                                                                              |....                                                                  |   5%
-  ordinary text without R code
-
-  |                                                                              |.......                                                               |  11%
-label: global (with options) 
-List of 4
- $ include: logi FALSE
- $ echo   : symbol F
- $ context: chr "setup"
- $ results: chr "hide"
-
-  |                                                                              |...........                                                           |  16%
-  ordinary text without R code
-
-  |                                                                              |...............                                                       |  21%
-label: unnamed-chunk-1
-  |                                                                              |..................                                                    |  26%
-  ordinary text without R code
-
-  |                                                                              |......................                                                |  32%
-label: unnamed-chunk-2
-  |                                                                              |..........................                                            |  37%
-  ordinary text without R code
-
-  |                                                                              |.............................                                         |  42%
-label: unnamed-chunk-3
-  |                                                                              |.................................                                     |  47%
-  ordinary text without R code
-
-  |                                                                              |.....................................                                 |  53%
-label: unnamed-chunk-4
-  |                                                                              |.........................................                             |  58%
-  ordinary text without R code
-
-  |                                                                              |............................................                          |  63%
-label: unnamed-chunk-5
-  |                                                                              |................................................                      |  68%
-  ordinary text without R code
-
-  |                                                                              |....................................................                  |  74%
-label: unnamed-chunk-6
-  |                                                                              |.......................................................               |  79%
-  ordinary text without R code
-
-  |                                                                              |...........................................................           |  84%
-label: unnamed-chunk-7
-  |                                                                              |...............................................................       |  89%
-  ordinary text without R code
-
-  |                                                                              |..................................................................    |  95%
-label: unnamed-chunk-8
-  |                                                                              |......................................................................| 100%
-  ordinary text without R code
-
-
-/usr/lib/rstudio-server/bin/pandoc/pandoc +RTS -K512m -RTS impressions.utf8.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output impressions.html --lua-filter /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmarkdown/lua/latex-div.lua --standalone --section-divs --table-of-contents --toc-depth 3 --variable toc_float=1 --variable toc_selectors=h1,h2,h3 --variable toc_print=1 --template /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --include-before-body /tmp/RtmppLo3dF/rmarkdown-str248f622894ce88.html --variable navbar=1 --variable body_padding=51 --variable header_padding=56 --variable 'theme:bootstrap' --include-in-header /tmp/RtmppLo3dF/rmarkdown-str248f6215d73c99.html --mathjax --variable 'mathjax-url:https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' 
-
-Rendering: site/nl/index.Rmd
-  |                                                                              |                                                                      |   0%  |                                                                              |......................................................................| 100%
-  ordinary text without R code
-
-
-/usr/lib/rstudio-server/bin/pandoc/pandoc +RTS -K512m -RTS index.utf8.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output index.html --lua-filter /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmarkdown/lua/latex-div.lua --standalone --section-divs --template /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --include-before-body /tmp/RtmppLo3dF/rmarkdown-str248f62517137ff.html --variable navbar=1 --variable body_padding=51 --variable header_padding=56 --variable 'theme:bootstrap' --include-in-header /tmp/RtmppLo3dF/rmarkdown-str248f626ecfe8ef.html --mathjax --variable 'mathjax-url:https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' 
-
-Rendering: site/nl/money.Rmd
-  |                                                                              |                                                                      |   0%  |                                                                              |.....                                                                 |   8%
-  ordinary text without R code
-
-  |                                                                              |...........                                                           |  15%
-label: global (with options) 
-List of 4
- $ include: logi FALSE
- $ echo   : symbol F
- $ context: chr "setup"
- $ results: chr "hide"
-
-  |                                                                              |................                                                      |  23%
-  ordinary text without R code
-
-  |                                                                              |......................                                                |  31%
-label: unnamed-chunk-1 (with options) 
-List of 1
- $ out.width: chr "100%"
-
-  |                                                                              |...........................                                           |  38%
-  ordinary text without R code
-
-  |                                                                              |................................                                      |  46%
-label: unnamed-chunk-2 (with options) 
-List of 1
- $ out.width: chr "100%"
-
-Error in eval(lhs, parent, parent) : object 'spending_loc' not found
-Calls: <Anonymous> ... withCallingHandlers -> withVisible -> eval -> eval -> %>% -> eval -> eval
-
-Execution halted
-── Attaching packages ─────────────────────────────────────── tidyverse 1.3.0 ──
-✔ ggplot2 3.3.2     ✔ purrr   0.3.4
-✔ tibble  3.0.4     ✔ dplyr   1.0.2
-✔ tidyr   1.1.2     ✔ stringr 1.4.0
-✔ readr   1.4.0     ✔ forcats 0.5.0
-── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-✖ dplyr::filter()   masks stats::filter()
-✖ purrr::is_empty() masks git2r::is_empty()
-✖ dplyr::lag()      masks stats::lag()
-✖ dplyr::pull()     masks git2r::pull()
-✖ purrr::when()     masks git2r::when()
-ℹ Using ',' as decimal and '.' as grouping mark. Use `read_delim()` for more control.
-
-── Column specification ────────────────────────────────────────────────────────
-cols(
-  text_id = col_character(),
-  english = col_character(),
-  dutch = col_character()
-)
-
-1. Load and Clean Data
-2. Deploy App
-
-Rendering: site/en/impressions.Rmd
-  |                                                                              |                                                                      |   0%  |                                                                              |....                                                                  |   5%
-  ordinary text without R code
-
-  |                                                                              |.......                                                               |  11%
-label: global (with options) 
-List of 4
- $ include: logi FALSE
- $ echo   : symbol F
- $ context: chr "setup"
- $ results: chr "hide"
-
-  |                                                                              |...........                                                           |  16%
-  ordinary text without R code
-
-  |                                                                              |...............                                                       |  21%
-label: unnamed-chunk-1
-  |                                                                              |..................                                                    |  26%
-  ordinary text without R code
-
-  |                                                                              |......................                                                |  32%
-label: unnamed-chunk-2
-  |                                                                              |..........................                                            |  37%
-  ordinary text without R code
-
-  |                                                                              |.............................                                         |  42%
-label: unnamed-chunk-3
-  |                                                                              |.................................                                     |  47%
-  ordinary text without R code
-
-  |                                                                              |.....................................                                 |  53%
-label: unnamed-chunk-4
-  |                                                                              |.........................................                             |  58%
-  ordinary text without R code
-
-  |                                                                              |............................................                          |  63%
-label: unnamed-chunk-5
-  |                                                                              |................................................                      |  68%
-  ordinary text without R code
-
-  |                                                                              |....................................................                  |  74%
-label: unnamed-chunk-6
-  |                                                                              |.......................................................               |  79%
-  ordinary text without R code
-
-  |                                                                              |...........................................................           |  84%
-label: unnamed-chunk-7
-  |                                                                              |...............................................................       |  89%
-  ordinary text without R code
-
-  |                                                                              |..................................................................    |  95%
-label: unnamed-chunk-8
-  |                                                                              |......................................................................| 100%
-  ordinary text without R code
-
-
-/usr/lib/rstudio-server/bin/pandoc/pandoc +RTS -K512m -RTS impressions.utf8.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output impressions.html --lua-filter /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmarkdown/lua/latex-div.lua --standalone --section-divs --table-of-contents --toc-depth 3 --variable toc_float=1 --variable toc_selectors=h1,h2,h3 --variable toc_print=1 --template /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --include-before-body /tmp/Rtmpouq8sW/rmarkdown-str2493ca19d1caa.html --variable navbar=1 --variable body_padding=51 --variable header_padding=56 --variable 'theme:bootstrap' --include-in-header /tmp/Rtmpouq8sW/rmarkdown-str2493ca5479ae77.html --mathjax --variable 'mathjax-url:https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' 
-
-Rendering: site/en/index.Rmd
-  |                                                                              |                                                                      |   0%  |                                                                              |......................................................................| 100%
-  ordinary text without R code
-
-
-/usr/lib/rstudio-server/bin/pandoc/pandoc +RTS -K512m -RTS index.utf8.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output index.html --lua-filter /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmarkdown/lua/latex-div.lua --standalone --section-divs --template /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --include-before-body /tmp/Rtmpouq8sW/rmarkdown-str2493ca4aca0132.html --variable navbar=1 --variable body_padding=51 --variable header_padding=56 --variable 'theme:bootstrap' --include-in-header /tmp/Rtmpouq8sW/rmarkdown-str2493ca6644d801.html --mathjax --variable 'mathjax-url:https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' 
-
-Rendering: site/en/money.Rmd
-  |                                                                              |                                                                      |   0%  |                                                                              |.....                                                                 |   8%
-  ordinary text without R code
-
-  |                                                                              |...........                                                           |  15%
-label: global (with options) 
-List of 4
- $ include: logi FALSE
- $ echo   : symbol F
- $ context: chr "setup"
- $ results: chr "hide"
-
-  |                                                                              |................                                                      |  23%
-  ordinary text without R code
-
-  |                                                                              |......................                                                |  31%
-label: unnamed-chunk-1 (with options) 
-List of 1
- $ out.width: chr "100%"
-
-  |                                                                              |...........................                                           |  38%
-  ordinary text without R code
-
-  |                                                                              |................................                                      |  46%
-label: unnamed-chunk-2 (with options) 
-List of 1
- $ out.width: chr "100%"
-
-  |                                                                              |......................................                                |  54%
-  ordinary text without R code
-
-  |                                                                              |...........................................                           |  62%
-label: unnamed-chunk-3
-  |                                                                              |................................................                      |  69%
-  ordinary text without R code
-
-  |                                                                              |......................................................                |  77%
-label: unnamed-chunk-4 (with options) 
-List of 1
- $ out.width: chr "100%"
-
-  |                                                                              |...........................................................           |  85%
-  ordinary text without R code
-
-  |                                                                              |.................................................................     |  92%
-label: unnamed-chunk-5
-  |                                                                              |......................................................................| 100%
-  ordinary text without R code
-
-
-/usr/lib/rstudio-server/bin/pandoc/pandoc +RTS -K512m -RTS money.utf8.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output money.html --lua-filter /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmarkdown/lua/latex-div.lua --standalone --section-divs --table-of-contents --toc-depth 3 --variable toc_float=1 --variable toc_selectors=h1,h2,h3 --variable toc_print=1 --template /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --include-before-body /tmp/Rtmpouq8sW/rmarkdown-str2493ca6200d405.html --variable navbar=1 --variable body_padding=51 --variable header_padding=56 --variable 'theme:bootstrap' --include-in-header /tmp/Rtmpouq8sW/rmarkdown-str2493ca71f54c8b.html --mathjax --variable 'mathjax-url:https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' 
-
-Rendering: site/en/number_of_ads.Rmd
-  |                                                                              |                                                                      |   0%  |                                                                              |......                                                                |   9%
-  ordinary text without R code
-
-  |                                                                              |.............                                                         |  18%
-label: global (with options) 
-List of 4
- $ include: logi FALSE
- $ echo   : symbol F
- $ context: chr "setup"
- $ results: chr "hide"
-
-  |                                                                              |...................                                                   |  27%
-  ordinary text without R code
-
-  |                                                                              |.........................                                             |  36%
-label: unnamed-chunk-1
-  |                                                                              |................................                                      |  45%
-  ordinary text without R code
-
-  |                                                                              |......................................                                |  55%
-label: unnamed-chunk-2
-  |                                                                              |.............................................                         |  64%
-  ordinary text without R code
-
-  |                                                                              |...................................................                   |  73%
-label: unnamed-chunk-3
-  |                                                                              |.........................................................             |  82%
-  ordinary text without R code
-
-  |                                                                              |................................................................      |  91%
-label: unnamed-chunk-4
-  |                                                                              |......................................................................| 100%
-  ordinary text without R code
-
-
-/usr/lib/rstudio-server/bin/pandoc/pandoc +RTS -K512m -RTS number_of_ads.utf8.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output number_of_ads.html --lua-filter /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmarkdown/lua/latex-div.lua --standalone --section-divs --table-of-contents --toc-depth 3 --variable toc_float=1 --variable toc_selectors=h1,h2,h3 --variable toc_print=1 --template /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --include-before-body /tmp/Rtmpouq8sW/rmarkdown-str2493ca5729a279.html --variable navbar=1 --variable body_padding=51 --variable header_padding=56 --variable 'theme:bootstrap' --include-in-header /tmp/Rtmpouq8sW/rmarkdown-str2493ca2cddfb9d.html --mathjax --variable 'mathjax-url:https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' 
-
-Rendering: site/en/targeting.Rmd
-  |                                                                              |                                                                      |   0%  |                                                                              |...                                                                   |   5%
-  ordinary text without R code
-
-  |                                                                              |.......                                                               |  10%
-label: global (with options) 
-List of 4
- $ include: logi FALSE
- $ echo   : symbol F
- $ context: chr "setup"
- $ results: chr "hide"
-
-  |                                                                              |..........                                                            |  14%
-  ordinary text without R code
-
-  |                                                                              |.............                                                         |  19%
-label: unnamed-chunk-1 (with options) 
-List of 2
- $ out.width : chr "100%"
- $ fig.height: num 15
-
-  |                                                                              |.................                                                     |  24%
-  ordinary text without R code
-
-  |                                                                              |....................                                                  |  29%
-label: unnamed-chunk-2 (with options) 
-List of 2
- $ out.width : chr "100%"
- $ fig.height: num 15
-
-  |                                                                              |.......................                                               |  33%
-  ordinary text without R code
-
-  |                                                                              |...........................                                           |  38%
-label: unnamed-chunk-3
-  |                                                                              |..............................                                        |  43%
-  ordinary text without R code
-
-  |                                                                              |.................................                                     |  48%
-label: unnamed-chunk-4
-  |                                                                              |.....................................                                 |  52%
-  ordinary text without R code
-
-  |                                                                              |........................................                              |  57%
-label: unnamed-chunk-5 (with options) 
-List of 3
- $ out.width : chr "100%"
- $ fig.height: num 15
- $ fig.width : num 10
-
-  |                                                                              |...........................................                           |  62%
-  ordinary text without R code
-
-  |                                                                              |...............................................                       |  67%
-label: unnamed-chunk-6
-  |                                                                              |..................................................                    |  71%
-  ordinary text without R code
-
-  |                                                                              |.....................................................                 |  76%
-label: unnamed-chunk-7
-  |                                                                              |.........................................................             |  81%
-  ordinary text without R code
-
-  |                                                                              |............................................................          |  86%
-label: unnamed-chunk-8
-  |                                                                              |...............................................................       |  90%
-  ordinary text without R code
-
-  |                                                                              |...................................................................   |  95%
-label: unnamed-chunk-9 (with options) 
-List of 3
- $ out.width : chr "100%"
- $ fig.height: num 6
- $ fig.width : num 8
-
-  |                                                                              |......................................................................| 100%
-  ordinary text without R code
-
-
-/usr/lib/rstudio-server/bin/pandoc/pandoc +RTS -K512m -RTS targeting.utf8.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output targeting.html --lua-filter /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmarkdown/lua/latex-div.lua --standalone --section-divs --table-of-contents --toc-depth 3 --variable toc_float=1 --variable toc_selectors=h1,h2,h3 --variable toc_print=1 --template /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --include-before-body /tmp/Rtmpouq8sW/rmarkdown-str2493ca2eba6ad6.html --variable navbar=1 --variable body_padding=51 --variable header_padding=56 --variable 'theme:bootstrap' --include-in-header /tmp/Rtmpouq8sW/rmarkdown-str2493ca7520a38f.html --mathjax --variable 'mathjax-url:https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' 
-
-Output created: ../../docs/en/index.html
-Warning messages:
-1: `mutate_()` is deprecated as of dplyr 0.7.0.
-Please use `mutate()` instead.
-See vignette('programming') for more help
-This warning is displayed once every 8 hours.
-Call `lifecycle::last_warnings()` to see where this warning was generated. 
-2: `group_by_()` is deprecated as of dplyr 0.7.0.
-Please use `group_by()` instead.
-See vignette('programming') for more help
-This warning is displayed once every 8 hours.
-Call `lifecycle::last_warnings()` to see where this warning was generated. 
-3: Removed 1 rows containing non-finite values (stat_boxplot). 
-
-Rendering: site/nl/impressions.Rmd
-  |                                                                              |                                                                      |   0%  |                                                                              |....                                                                  |   5%
-  ordinary text without R code
-
-  |                                                                              |.......                                                               |  11%
-label: global (with options) 
-List of 4
- $ include: logi FALSE
- $ echo   : symbol F
- $ context: chr "setup"
- $ results: chr "hide"
-
-  |                                                                              |...........                                                           |  16%
-  ordinary text without R code
-
-  |                                                                              |...............                                                       |  21%
-label: unnamed-chunk-1
-  |                                                                              |..................                                                    |  26%
-  ordinary text without R code
-
-  |                                                                              |......................                                                |  32%
-label: unnamed-chunk-2
-  |                                                                              |..........................                                            |  37%
-  ordinary text without R code
-
-  |                                                                              |.............................                                         |  42%
-label: unnamed-chunk-3
-  |                                                                              |.................................                                     |  47%
-  ordinary text without R code
-
-  |                                                                              |.....................................                                 |  53%
-label: unnamed-chunk-4
-  |                                                                              |.........................................                             |  58%
-  ordinary text without R code
-
-  |                                                                              |............................................                          |  63%
-label: unnamed-chunk-5
-  |                                                                              |................................................                      |  68%
-  ordinary text without R code
-
-  |                                                                              |....................................................                  |  74%
-label: unnamed-chunk-6
-  |                                                                              |.......................................................               |  79%
-  ordinary text without R code
-
-  |                                                                              |...........................................................           |  84%
-label: unnamed-chunk-7
-  |                                                                              |...............................................................       |  89%
-  ordinary text without R code
-
-  |                                                                              |..................................................................    |  95%
-label: unnamed-chunk-8
-  |                                                                              |......................................................................| 100%
-  ordinary text without R code
-
-
-/usr/lib/rstudio-server/bin/pandoc/pandoc +RTS -K512m -RTS impressions.utf8.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output impressions.html --lua-filter /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmarkdown/lua/latex-div.lua --standalone --section-divs --table-of-contents --toc-depth 3 --variable toc_float=1 --variable toc_selectors=h1,h2,h3 --variable toc_print=1 --template /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --include-before-body /tmp/Rtmpouq8sW/rmarkdown-str2493ca7898c60d.html --variable navbar=1 --variable body_padding=51 --variable header_padding=56 --variable 'theme:bootstrap' --include-in-header /tmp/Rtmpouq8sW/rmarkdown-str2493cad8a9fce.html --mathjax --variable 'mathjax-url:https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' 
-
-Rendering: site/nl/index.Rmd
-  |                                                                              |                                                                      |   0%  |                                                                              |......................................................................| 100%
-  ordinary text without R code
-
-
-/usr/lib/rstudio-server/bin/pandoc/pandoc +RTS -K512m -RTS index.utf8.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output index.html --lua-filter /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmarkdown/lua/latex-div.lua --standalone --section-divs --template /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --include-before-body /tmp/Rtmpouq8sW/rmarkdown-str2493ca35cb277d.html --variable navbar=1 --variable body_padding=51 --variable header_padding=56 --variable 'theme:bootstrap' --include-in-header /tmp/Rtmpouq8sW/rmarkdown-str2493ca11fdf557.html --mathjax --variable 'mathjax-url:https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' 
-
-Rendering: site/nl/money.Rmd
-  |                                                                              |                                                                      |   0%  |                                                                              |.....                                                                 |   8%
-  ordinary text without R code
-
-  |                                                                              |...........                                                           |  15%
-label: global (with options) 
-List of 4
- $ include: logi FALSE
- $ echo   : symbol F
- $ context: chr "setup"
- $ results: chr "hide"
-
-  |                                                                              |................                                                      |  23%
-  ordinary text without R code
-
-  |                                                                              |......................                                                |  31%
-label: unnamed-chunk-1 (with options) 
-List of 1
- $ out.width: chr "100%"
-
-  |                                                                              |...........................                                           |  38%
-  ordinary text without R code
-
-  |                                                                              |................................                                      |  46%
-label: unnamed-chunk-2 (with options) 
-List of 1
- $ out.width: chr "100%"
-
-  |                                                                              |......................................                                |  54%
-  ordinary text without R code
-
-  |                                                                              |...........................................                           |  62%
-label: unnamed-chunk-3
-  |                                                                              |................................................                      |  69%
-  ordinary text without R code
-
-  |                                                                              |......................................................                |  77%
-label: unnamed-chunk-4 (with options) 
-List of 1
- $ out.width: chr "100%"
-
-  |                                                                              |...........................................................           |  85%
-  ordinary text without R code
-
-  |                                                                              |.................................................................     |  92%
-label: unnamed-chunk-5
-  |                                                                              |......................................................................| 100%
-  ordinary text without R code
-
-
-/usr/lib/rstudio-server/bin/pandoc/pandoc +RTS -K512m -RTS money.utf8.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output money.html --lua-filter /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmarkdown/lua/latex-div.lua --standalone --section-divs --table-of-contents --toc-depth 3 --variable toc_float=1 --variable toc_selectors=h1,h2,h3 --variable toc_print=1 --template /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --include-before-body /tmp/Rtmpouq8sW/rmarkdown-str2493ca673dbac1.html --variable navbar=1 --variable body_padding=51 --variable header_padding=56 --variable 'theme:bootstrap' --include-in-header /tmp/Rtmpouq8sW/rmarkdown-str2493ca5b96b6bb.html --mathjax --variable 'mathjax-url:https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' 
-
-Rendering: site/nl/number_of_ads.Rmd
-  |                                                                              |                                                                      |   0%  |                                                                              |......                                                                |   9%
-  ordinary text without R code
-
-  |                                                                              |.............                                                         |  18%
-label: global (with options) 
-List of 4
- $ include: logi FALSE
- $ echo   : symbol F
- $ context: chr "setup"
- $ results: chr "hide"
-
-  |                                                                              |...................                                                   |  27%
-  ordinary text without R code
-
-  |                                                                              |.........................                                             |  36%
-label: unnamed-chunk-1
-  |                                                                              |................................                                      |  45%
-  ordinary text without R code
-
-  |                                                                              |......................................                                |  55%
-label: unnamed-chunk-2
-  |                                                                              |.............................................                         |  64%
-  ordinary text without R code
-
-  |                                                                              |...................................................                   |  73%
-label: unnamed-chunk-3
-  |                                                                              |.........................................................             |  82%
-  ordinary text without R code
-
-  |                                                                              |................................................................      |  91%
-label: unnamed-chunk-4
-  |                                                                              |......................................................................| 100%
-  ordinary text without R code
-
-
-/usr/lib/rstudio-server/bin/pandoc/pandoc +RTS -K512m -RTS number_of_ads.utf8.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output number_of_ads.html --lua-filter /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmarkdown/lua/latex-div.lua --standalone --section-divs --table-of-contents --toc-depth 3 --variable toc_float=1 --variable toc_selectors=h1,h2,h3 --variable toc_print=1 --template /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --include-before-body /tmp/Rtmpouq8sW/rmarkdown-str2493ca6fdbc19e.html --variable navbar=1 --variable body_padding=51 --variable header_padding=56 --variable 'theme:bootstrap' --include-in-header /tmp/Rtmpouq8sW/rmarkdown-str2493ca777d4d7a.html --mathjax --variable 'mathjax-url:https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' 
-
-Rendering: site/nl/targeting.Rmd
-  |                                                                              |                                                                      |   0%  |                                                                              |...                                                                   |   5%
-  ordinary text without R code
-
-  |                                                                              |.......                                                               |  10%
-label: global (with options) 
-List of 4
- $ include: logi FALSE
- $ echo   : symbol F
- $ context: chr "setup"
- $ results: chr "hide"
-
-  |                                                                              |..........                                                            |  14%
-  ordinary text without R code
-
-  |                                                                              |.............                                                         |  19%
-label: unnamed-chunk-1 (with options) 
-List of 2
- $ out.width : chr "100%"
- $ fig.height: num 15
-
-  |                                                                              |.................                                                     |  24%
-  ordinary text without R code
-
-  |                                                                              |....................                                                  |  29%
-label: unnamed-chunk-2 (with options) 
-List of 2
- $ out.width : chr "100%"
- $ fig.height: num 15
-
-  |                                                                              |.......................                                               |  33%
-  ordinary text without R code
-
-  |                                                                              |...........................                                           |  38%
-label: unnamed-chunk-3
-  |                                                                              |..............................                                        |  43%
-  ordinary text without R code
-
-  |                                                                              |.................................                                     |  48%
-label: unnamed-chunk-4
-  |                                                                              |.....................................                                 |  52%
-  ordinary text without R code
-
-  |                                                                              |........................................                              |  57%
-label: unnamed-chunk-5 (with options) 
-List of 3
- $ out.width : chr "100%"
- $ fig.height: num 15
- $ fig.width : num 10
-
-  |                                                                              |...........................................                           |  62%
-  ordinary text without R code
-
-  |                                                                              |...............................................                       |  67%
-label: unnamed-chunk-6
-  |                                                                              |..................................................                    |  71%
-  ordinary text without R code
-
-  |                                                                              |.....................................................                 |  76%
-label: unnamed-chunk-7
-  |                                                                              |.........................................................             |  81%
-  ordinary text without R code
-
-  |                                                                              |............................................................          |  86%
-label: unnamed-chunk-8
-  |                                                                              |...............................................................       |  90%
-  ordinary text without R code
-
-  |                                                                              |...................................................................   |  95%
-label: unnamed-chunk-9 (with options) 
-List of 3
- $ out.width : chr "100%"
- $ fig.height: num 6
- $ fig.width : num 8
-
-  |                                                                              |......................................................................| 100%
-  ordinary text without R code
-
-
-/usr/lib/rstudio-server/bin/pandoc/pandoc +RTS -K512m -RTS targeting.utf8.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output targeting.html --lua-filter /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmarkdown/lua/latex-div.lua --standalone --section-divs --table-of-contents --toc-depth 3 --variable toc_float=1 --variable toc_selectors=h1,h2,h3 --variable toc_print=1 --template /home/fabio/R/x86_64-pc-linux-gnu-library/3.6/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --include-before-body /tmp/Rtmpouq8sW/rmarkdown-str2493ca652a1a50.html --variable navbar=1 --variable body_padding=51 --variable header_padding=56 --variable 'theme:bootstrap' --include-in-header /tmp/Rtmpouq8sW/rmarkdown-str2493cae4e7e7b.html --mathjax --variable 'mathjax-url:https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' 
-
-Output created: ../../docs/nl/index.html
-Warning message:
-Removed 1 rows containing non-finite values (stat_boxplot). 
-sh: 1: /h: not found
-On branch main
-Your branch is up to date with 'origin/main'.
-
-Changes not staged for commit:
-  (use "git add <file>..." to update what will be committed)
-  (use "git restore <file>..." to discard changes in working directory)
-	modified:   R/launch.R
-	modified:   R/launch.log
-	modified:   R/launch2.R
-	modified:   docs/en/impressions.html
-	modified:   docs/en/index.html
-	modified:   docs/en/money.html
-	modified:   docs/en/number_of_ads.html
-	modified:   docs/en/targeting.html
-	modified:   docs/nl/impressions.html
-	modified:   docs/nl/index.html
-	modified:   docs/nl/money.html
-	modified:   docs/nl/number_of_ads.html
-	modified:   docs/nl/targeting.html
-	modified:   site/en/_site.yml
-	modified:   site/en/money.Rmd
-	modified:   site/nl/_site.yml
-	modified:   site/nl/money.Rmd
-
-Untracked files:
-  (use "git add <file>..." to include in what will be committed)
-	R/launch2.log
-
-no changes added to commit (use "git add" and/or "git commit -a")
-[1] "ae909ed1d58e412f8785a9e395b84f54352fd688"
