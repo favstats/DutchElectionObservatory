@@ -985,7 +985,7 @@ party_texts <- fb_dat %>%
   filter(advertiser_name %in% color_dat$advertiser_name) %>% 
   mutate(text = paste0(ad_creative_body, " ", ad_creative_link_title)) %>% 
   distinct(text, .keep_all = T) %>% 
-  unnest_tokens(word, text) %>% 
+  tidytext::unnest_tokens(word, text) %>% 
   count(advertiser_name, word, sort = T)
 
 party_texts  %>% 
