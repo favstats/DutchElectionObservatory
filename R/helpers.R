@@ -573,7 +573,7 @@ chart_maps2 <- function(x, download_data = T, mapdata, trans_internal, value_to_
       minColor = "white",
       maxColor = unique(x$colorful),
       min = 0,
-      max = max
+      max = max(x$percentage)+0.1
     )%>% 
     hc_title(
       text = unique(x$advertiser_name)

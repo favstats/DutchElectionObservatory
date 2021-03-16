@@ -194,11 +194,11 @@ mapdata <- readRDS("../data/mapdata.RDS")
 #   mutate(name = ifelse(region == "North Brabant", "Noord-Brabant", region)) %>% 
 #   ungroup()
       
-report_spending_loc_budget_share <-  fb_aggr$report_spending_loc %>%
+report_spending_loc_budget_share <- fb_aggr$report_spending_loc %>%
   filter(advertiser_name %in% dutch_parties_fb) %>%
   rename(date_range_start = date_range_started) %>%
   group_by(advertiser_name, region) %>%
-  summarize(amount_spent_eur = sum(amount_spent_eur)) %>%
+  summarize(amount_spent_eur = sum(amount_spent_eur, na.rm = T)) %>%
   ungroup() %>%
   complete(advertiser_name, region,
            fill = list(amount_spent_eur = 0))  %>% 
@@ -271,20 +271,24 @@ For Google platforms, data accessed via the [Google Transparency Report](https:/
 
 ### Facebook Platforms (incl. Instagram) {.tabset .tabset-fade .tabset-pills}
 
+
+
 ```{r, out.width="100%"}
 gg_spending_time <- fb_aggr$report_spending %>% 
+  # spending %>% 
   # count(advertiser_name)
   filter(type == "after") %>%
   # select(-type) %>% 
   ggplot(aes(date_range_start, cum_spent, color = advertiser_name)) +
-  geom_ribbon(aes(ymin = spent_lower_bound, ymax = spent_upper_bound), fill = "lightgrey", alpha = .5, linetype = "dashed") +
+  # geom_ribbon(aes(ymin = spent_lower_bound, ymax = spent_upper_bound), fill = "lightgrey", alpha = .5, linetype = "dashed") +
   geom_line() +
+  scale_y_continuous(labels = scales::comma_format()) +
   # facet_wrap(~advertiser_name) +
   
   scale_color_manual(values = unique(color_dat$colors)) +
   theme_minimal() +
   theme(legend.position = "top") +
-  labs(y = "Euros spent on Facebook ads", x = "Date")
+  labs(y = "Cumulative Euros spent on Facebook ads\n", x = "Date")
 
 
 gg_spending_time %>% 
@@ -299,6 +303,8 @@ gg_spending_time %>%
     y = 1.1
     )
   ) 
+
+
 ```
 The API does not provide aggregate statistics per advertiser. Instead, it only provides very broad boundaries of money spent. For this reason, the data displayed here is from the [Facebook Ad Library Report
 ](https://www.facebook.com/ads/library/report) which does provide money statistics aggregated by advertiser. This data is retrieved daily but it's possible that days are missing sometimes because the script fails to download it (or because Facebook does not provide data on that day). This may lead to *lower* numbers than from what you can see in the Ad Library Report yourself. In addition, if a party spends less than 100 Euros in a day it will not show the exact amount. In that case we show confidence intervals around the spending amount.

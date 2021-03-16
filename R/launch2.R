@@ -3,8 +3,8 @@
 library(git2r)
 library(tidyverse)
 
-setwd("/home/fabio/main/DutchElectionObservatory")
-Sys.setenv(RSTUDIO_PANDOC="/usr/lib/rstudio-server/bin/pandoc")
+# setwd("/home/fabio/main/DutchElectionObservatory")
+# Sys.setenv(RSTUDIO_PANDOC="/usr/lib/rstudio-server/bin/pandoc")
 
 # Git commit.
 gitcommit <- function(msg = "commit from Rstudio", dir = getwd()){

@@ -1,7 +1,9 @@
 
-setwd("/home/fabio/main/DutchElectionObservatory")
+# setwd("/home/fabio/main/DutchElectionObservatory")
+setwd("C:/Users/favoo/Downloads/DutchElectionObservatory/DutchElectionObservatory")
 
-Sys.setenv(RSTUDIO_PANDOC="/usr/lib/rstudio-server/bin/pandoc")
+
+# Sys.setenv(RSTUDIO_PANDOC="/usr/lib/rstudio-server/bin/pandoc")
 
 library(git2r)
 # sudo systemctl restart shiny-server.service

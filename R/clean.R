@@ -81,7 +81,7 @@ color_dat <- tibble(
   advertiser_name = c("D66", "GroenLinks", "VVD", "CDA", "SP", "PvdA", "FvD", "ChristenUnie"))
 
 
-ggl_ads <- data.table::fread("data/google-political-ads-transparency-bundle/google-political-ads-creative-stats.csv") %>% 
+ggl_ads <- read_csv("data/google-political-ads-transparency-bundle/google-political-ads-creative-stats.csv", locale = locale("nl")) %>% 
   filter(str_detect(Regions, "NL")) %>%
   janitor::clean_names() %>% 
   # filter(advertiser_name %in% dutch_parties) %>%
@@ -110,7 +110,7 @@ advertiser_ids_ggl <- ggl_ads %>%
   select(advertiser_name, advertiser_id)  
 
 
-weekly_spend <- read_csv("data/google-political-ads-transparency-bundle/google-political-ads-advertiser-weekly-spend.csv")
+weekly_spend <- read_csv("data/google-political-ads-transparency-bundle/google-political-ads-advertiser-weekly-spend.csv", locale = locale("nl"))
 
 weekly_spend_ggl <- weekly_spend  %>% 
   janitor::clean_names() %>% 
@@ -655,6 +655,7 @@ age_gender_targeted_raw <- fb_dat %>%
 
 cat("\n\nFB Data: Get age/gender II\n\n")  
 
+unnest_dems <- possibly(unnest_dems, otherwise = NULL, quiet = F)
 
 age_gender_targeted <- age_gender_targeted_raw %>% 
   mutate(row_number = 1:n()) %>% 
@@ -662,21 +663,27 @@ age_gender_targeted <- age_gender_targeted_raw %>%
   map_dfr(unnest_dems) %>% 
   right_join(age_gender_targeted_raw)
 
+
 cat("\n\nFB Data: Get age/gender III\n\n")  
+
+### Facebook setup
+dutch_parties_fb <- c("VVD", "D66", "FvD", "SP", "GroenLinks", "Volt Nederland", "PvdA", "CDA", "PvdD", "ChristenUnie", "SGP", "DENK", "50PLUS", "BIJ1", "Ja21")
 
 
 fb_gender <- age_gender_targeted  %>% 
-  # filter(advertiser_name %in% dutch_parties) %>% 
+  # filter(advertiser_name %in% dutch_parties_fb) %>%
   mutate(percentage = as.numeric(percentage)) %>% 
   mutate(gender_age = paste(gender, age)) %>% 
   filter(!str_detect(gender_age, "unknown")) %>% 
   filter(!str_detect(gender_age, "13-17")) %>% 
   filter(!str_detect(gender_age, "All")) %>% 
   drop_na(gender) %>% 
-  complete(gender, advertiser_name, age, fill = list(percentage = 0)) %>% 
+  group_by(advertiser_name) %>% 
+  complete(id, gender, advertiser_name, age, fill = list(percentage = 0)) %>% 
+  ungroup() %>% 
   group_by(id, gender, advertiser_name) %>% 
   summarize(percentage = sum(percentage)) %>% 
-  ungroup()%>% 
+  ungroup() %>% 
   mutate(percentage = round(percentage * 100, 2)) %>% 
   left_join(batch_id_dat) %>% 
   group_by(advertiser_name, batch_id, gender) %>%
@@ -689,8 +696,26 @@ fb_gender <- age_gender_targeted  %>%
   left_join(facebook_id_dat)  #%>% 
 # filter(advertiser_name == "PvdA")
 
-# fb_gender %>% 
-#   count(batch_id, sort = T)
+# fb_gender  %>%
+#   filter(advertiser_name == "GroenLinks") %>% 
+#   ggplot(aes(gender, percentage)) +
+#   geom_boxplot()
+#   mutate(percentage = as.numeric(percentage)) %>% 
+#   mutate(gender_age = paste(gender, age)) %>% 
+#   filter(!str_detect(gender_age, "unknown")) %>% 
+#   filter(!str_detect(gender_age, "13-17")) %>% 
+#   filter(!str_detect(gender_age, "All")) %>% 
+#   drop_na(gender) %>% 
+#   complete(id,gender, advertiser_name, age, fill = list(percentage = 0)) %>% 
+#   group_by(id, gender, advertiser_name) %>% 
+#   summarize(percentage = sum(percentage)) %>% 
+#   ungroup() %>% 
+#   mutate(percentage = round(percentage * 100, 2)) %>% 
+#   left_join(batch_id_dat) %>% 
+#   filter(batch_id == "1158_1_1112457630") %>% View
+#   group_by(advertiser_name, batch_id, gender) %>%
+#   summarise(percentage = median(percentage)) %>% 
+#   ungroup()
 
 #   fb_gender %>% 
 #     group_by(advertiser_name) %>% 
@@ -702,8 +727,11 @@ fb_gender <- age_gender_targeted  %>%
 # fb_gender %>% 
 #   filter(advertiser_name == "PvdA") %>% View
 # 
-# age_gender_targeted %>% 
-#   filter(id == "960301371113512") %>% View
+  # fb_gender %>%
+  #   count(batch_id, advertiser_name, sort = T) %>% 
+  #   count(batch_id) %>% 
+  #   arrange(n)
+  # filter(batch_id == "1158_1_1112457630") %>% View
 # 
 # batch_id_dat %>% 
 #   filter(batch_id == "2014_1_6732740374")
@@ -718,7 +746,9 @@ fb_age <- age_gender_targeted  %>%
   filter(!str_detect(gender_age, "unknown")) %>% 
   filter(!str_detect(gender_age, "13-17")) %>% 
   filter(!str_detect(gender_age, "All")) %>% 
-  complete(gender, age, advertiser_name, fill = list(percentage = 0)) %>% 
+  group_by(advertiser_name) %>% 
+  complete(id, gender, advertiser_name, age, fill = list(percentage = 0)) %>% 
+  ungroup() %>% 
   group_by(id, age, advertiser_name) %>% 
   summarize(percentage = sum(percentage)) %>% 
   ungroup() %>% 
@@ -734,6 +764,8 @@ fb_age <- age_gender_targeted  %>%
   left_join(facebook_id_dat) 
 
 cat("\n\nFB Data: Get geo I\n\n")    
+
+unnest_geos <- possibly(unnest_geos, otherwise = NULL, quiet = F)
 
 geo_targeted <- age_gender_targeted_raw %>% 
   mutate(row_number = 1:n()) %>% 
@@ -808,7 +840,7 @@ dir("../../../data/spending/daily", full.names = T) %>%
 
 read_in_spend <- function(x) {
   read_csv(x) %>%
-    mutate(date_range_start = str_remove_all(x, "data/fb_spending//FacebookAdLibraryReport_|_NL_last_90_days_advertisers.csv|_NL_yesterday.csv|data/fb_spending/90days/FacebookAdLibraryReport_") %>% lubridate::as_date()
+    mutate(date_range_start = str_remove_all(x, "data/fb_spending//FacebookAdLibraryReport_|data/fb_spending/FacebookAdLibraryReport_|_NL_last_90_days_advertisers.csv|_NL_yesterday.csv|data/fb_spending/90days/FacebookAdLibraryReport_") %>% lubridate::as_date()
     ) %>% 
     janitor::clean_names()  %>% 
     rename(advertiser_name = page_name) %>% 
@@ -822,18 +854,50 @@ read_in_spend <- function(x) {
     ))
 }
 
+detect_ge <- function(x) {
+  
+   
+   yes100 <- parse_number(x) == 100
+   
+   str_count(x) == 4 & str_detect(x, "100") & yes100
+}
+  
+  
+
+# detect_ge("100")
+
+
 ### Data Since September 1st
 
 sepfirst <- read_in_spend("data/fb_spending/90days/FacebookAdLibraryReport_2020-12-01_NL_last_90_days_advertisers.csv") %>% 
   rename(spent_since_sepfirst = amount_spent_eur) %>%
   ## treat spent under 100 as NA
-  mutate(spent_since_sepfirst = ifelse(spent_since_sepfirst == "≤100", NA,
+  mutate(spent_since_sepfirst = ifelse(detect_ge(spent_since_sepfirst), NA,
                                        as.numeric(spent_since_sepfirst))) %>% 
-  ## group by advertiser name because sometimes they appear twice (with different disclaimer)
+  mutate(advertiser_name = case_when(
+    str_detect(disclaimer, "CDA") ~ "CDA",
+    str_detect(disclaimer, "GroenLinks") ~ "GroenLinks",
+    str_detect(disclaimer, "PvdA|Partij van de Arbeid") ~ "PvdA",
+    str_detect(disclaimer, "D66") ~ "D66",
+    str_detect(disclaimer, "SP") ~ "SP",
+    str_detect(disclaimer, "ChristenUnie") ~ "ChristenUnie",
+    str_detect(disclaimer, "VVD") ~ "VVD",
+    str_detect(disclaimer, "FvD|FVD") ~ "FvD",
+    str_detect(disclaimer, "JA21|Ja21") ~ "Ja21",
+    str_detect(disclaimer, "Partij voor de Dieren|PvdD") ~ "PvdD",
+    str_detect(disclaimer, "Libertaire Partij") ~ "Libertaire Partij (LP)",
+    str_detect(disclaimer, "Code Oranje") ~ "Code Oranje",
+    str_detect(disclaimer, "DENK") ~ "DENK",
+    str_detect(disclaimer, "BIJ1") ~ "BIJ1",
+    str_detect(disclaimer, "SGP") ~ "SGP",
+    str_detect(disclaimer, "Volt") ~ "Volt Nederland",
+    str_detect(disclaimer, "50PLUS") ~ "50PLUS",
+    T ~ NA_character_
+  )) %>% 
   group_by(advertiser_name, date_range_start) %>%
   summarize(n_below_100 = sum(is.na(spent_since_sepfirst)),
             spent_since_sepfirst = sum(spent_since_sepfirst, na.rm = T)) %>% 
-  ungroup() %>% 
+  ungroup()  %>%
   bind_rows(
     tibble(advertiser_name = c("50PLUS", "BIJ1", "Ja21", "Volt Nederland"),
            date_range_start = c(lubridate::as_date("2020-12-01"),
@@ -854,9 +918,30 @@ daily_spend_fb <- dir("data/fb_spending/", full.names = T) %>%
   # select(-advertiser_id, -disclaimer)%>%
   complete(advertiser_name, date_range_start = seq.Date(min(date_range_start), max(date_range_start), by="day"),
            fill = list(amount_spent_eur = 0, number_of_ads_in_library = 0)) %>%
-  mutate(amount_spent_eur = ifelse(amount_spent_eur == "≤100", 50,
+  # filter(detect_ge(amount_spent_eur)) %>% 
+  mutate(amount_spent_eur = ifelse(detect_ge(amount_spent_eur), 50,
                                    as.numeric(amount_spent_eur))) %>% 
   # filter(advertiser_name == "DENK")# %>%
+  mutate(advertiser_name = case_when(
+    str_detect(disclaimer, "CDA") ~ "CDA",
+    str_detect(disclaimer, "GroenLinks") ~ "GroenLinks",
+    str_detect(disclaimer, "PvdA|Partij van de Arbeid") ~ "PvdA",
+    str_detect(disclaimer, "D66") ~ "D66",
+    str_detect(disclaimer, "SP") ~ "SP",
+    str_detect(disclaimer, "ChristenUnie") ~ "ChristenUnie",
+    str_detect(disclaimer, "VVD") ~ "VVD",
+    str_detect(disclaimer, "FvD|FVD") ~ "FvD",
+    str_detect(disclaimer, "JA21|Ja21") ~ "Ja21",
+    str_detect(disclaimer, "Partij voor de Dieren|PvdD") ~ "PvdD",
+    str_detect(disclaimer, "Libertaire Partij") ~ "Libertaire Partij (LP)",
+    str_detect(disclaimer, "Code Oranje") ~ "Code Oranje",
+    str_detect(disclaimer, "DENK") ~ "DENK",
+    str_detect(disclaimer, "BIJ1") ~ "BIJ1",
+    str_detect(disclaimer, "SGP") ~ "SGP",
+    str_detect(disclaimer, "Volt") ~ "Volt Nederland",
+    str_detect(disclaimer, "50PLUS") ~ "50PLUS",
+    T ~ NA_character_
+  )) %>% 
   group_by(advertiser_name, date_range_start) %>%
   summarize( n_below_100 = sum(amount_spent_eur==50),
              amount_spent_eur = sum(amount_spent_eur, na.rm = T),
@@ -878,6 +963,8 @@ sepfirst_merger <- sepfirst %>%
 
 ### Combine Spending data
 
+# spending %>%
+#   filter(advertiser_name == "50PLUS") %>% View
 
 
 spend_times_data <- sepfirst %>% 
@@ -913,6 +1000,8 @@ spend_times_data <- sepfirst %>%
   select(-amount_spent_eur, -spent) %>% 
   bind_rows(sepfirst_merger)
 
+
+
 spending <- spend_times_data %>% 
   distinct(advertiser_name, .keep_all = T) %>% 
   ## estimate daily growth data with mean
@@ -942,11 +1031,12 @@ read_in_spend_loc <- function(x) {
 
 fb_spend_locs <- dir("data/fb_spending/regions", full.names = T) %>% map_dfr(read_in_spend_loc)
 
+
 spending_loc <- fb_spend_locs %>% 
   mutate(date_region = str_remove_all(path, "data/fb_spending/regions/FacebookAdLibraryReport_|_NL_yesterday|.csv")) %>% 
   separate(date_region, into = c("date_range_started", "region"), sep = "_") %>% 
   mutate(date_range_started = lubridate::as_date(date_range_started)) %>% 
-  mutate(amount_spent_eur = ifelse(amount_spent_eur == "≤100", sample(1:100, length(.)),
+  mutate(amount_spent_eur = ifelse(detect_ge(amount_spent_eur), sample(1:100, length(.)),
                                    as.numeric(amount_spent_eur))) %>% 
   arrange(desc(amount_spent_eur))  %>%
   rename(advertiser_name = page_name) %>% 
@@ -957,9 +1047,37 @@ spending_loc <- fb_spend_locs %>%
     advertiser_name == 'Forum voor Democratie -FVD' ~ "FvD",
     advertiser_name == '50PLUSpartij' ~ "50PLUS",
     T ~ advertiser_name
-  )) 
+  )) %>% 
+  mutate(advertiser_name = case_when(
+    str_detect(disclaimer, "CDA") ~ "CDA",
+    str_detect(disclaimer, "GroenLinks") ~ "GroenLinks",
+    str_detect(disclaimer, "PvdA|Partij van de Arbeid") ~ "PvdA",
+    str_detect(disclaimer, "D66") ~ "D66",
+    str_detect(disclaimer, "SP") ~ "SP",
+    str_detect(disclaimer, "ChristenUnie") ~ "ChristenUnie",
+    str_detect(disclaimer, "VVD") ~ "VVD",
+    str_detect(disclaimer, "FvD|FVD") ~ "FvD",
+    str_detect(disclaimer, "JA21|Ja21") ~ "Ja21",
+    str_detect(disclaimer, "Partij voor de Dieren|PvdD") ~ "PvdD",
+    str_detect(disclaimer, "Libertaire Partij") ~ "Libertaire Partij (LP)",
+    str_detect(disclaimer, "Code Oranje") ~ "Code Oranje",
+    str_detect(disclaimer, "DENK") ~ "DENK",
+    str_detect(disclaimer, "BIJ1") ~ "BIJ1",
+    str_detect(disclaimer, "SGP") ~ "SGP",
+    str_detect(disclaimer, "Volt") ~ "Volt Nederland",
+    str_detect(disclaimer, "50PLUS") ~ "50PLUS",
+    T ~ NA_character_
+  ))
+
+# fb_spend_locs %>% 
+#   filter(str_detect(disclaimer,"50PLUS")) %>% View
 
 # fb_aggr <- readRDS("site/data/fb_aggr.rds")
+# 
+# fb_aggr$report_spending <- spending
+# fb_aggr$report_spending_loc <- spending_loc
+
+# saveRDS(fb_aggr, "site/data/fb_aggr.rds")
 
 fb_aggr <- list(total = fb_total, times = fb_times,
                 geo = fb_geo, gender = fb_gender,
@@ -974,32 +1092,64 @@ color_dat <- tibble(
   advertiser_name = c("D66", "GroenLinks", "VVD", "CDA", "FvD", "PvdA", "SP", "PvdD", "ChristenUnie", "Volt Nederland", "SGP", "DENK", "50PLUS", "BIJ1", "Ja21")) %>% 
   mutate(advertiser_name = as.factor(advertiser_name))
 
-extrastop <- c(lsa::stopwords_nl, "https", "een", "http", "te", "deze", "lid.php", "fvd.nl", "www.stemvolt.nl", "50pluspartij.nl", "ja", "bit.ly", "youtu.be")
+extrastop <- c(lsa::stopwords_nl, "https", "een", 
+               "http", "te", "deze", "lid.php", "fvd.nl",
+               "www.stemvolt.nl", "50pluspartij.nl", "ja", 
+               "bit.ly", "youtu.be", "17", "16", "15")
 
 
 
 party_colors <- color_dat$color
 names(party_colors) <- color_dat$advertiser_name
 
+party_names <- c("CDA", "GroenLinks", "Partij van de Arbeid (PvdA)", "D66", "SP", "VVD", "ChristenUnie", "Forum voor Democratie -FVD", "Partij voor de Dieren", "JA21.nl", "Libertaire Partij - LP", "Code Oranje", "SGP", "DENK", "BIJ1", "Volt Nederland", "Partij van de Arbeid", "PvDA", "FvD", "FVD", "JA21", "Ja21", "PvdD", "50PLUS") %>% 
+  paste0(collapse = "|")
+
+
 party_texts <- fb_dat %>% 
-  filter(advertiser_name %in% color_dat$advertiser_name) %>% 
-  mutate(text = paste0(ad_creative_body, " ", ad_creative_link_title)) %>% 
+  filter(str_detect(funding_entity, party_names)) %>%
+  mutate(party = case_when(
+    str_detect(funding_entity, "CDA") ~ "CDA",
+    str_detect(funding_entity, "GroenLinks") ~ "GroenLinks",
+    str_detect(funding_entity, "PvdA|Partij van de Arbeid") ~ "PvdA",
+    str_detect(funding_entity, "D66") ~ "D66",
+    str_detect(funding_entity, "SP") ~ "SP",
+    str_detect(funding_entity, "ChristenUnie") ~ "ChristenUnie",
+    str_detect(funding_entity, "VVD") ~ "VVD",
+    str_detect(funding_entity, "FvD|FVD") ~ "FvD",
+    str_detect(funding_entity, "JA21|Ja21") ~ "Ja21",
+    str_detect(funding_entity, "Partij voor de Dieren|PvdD") ~ "PvdD",
+    str_detect(funding_entity, "Libertaire Partij") ~ "Libertaire Partij (LP)",
+    str_detect(funding_entity, "Code Oranje") ~ "Code Oranje",
+    str_detect(funding_entity, "DENK") ~ "DENK",
+    str_detect(funding_entity, "BIJ1") ~ "BIJ1",
+    str_detect(funding_entity, "SGP") ~ "SGP",
+    str_detect(funding_entity, "Volt") ~ "Volt Nederland",
+    str_detect(funding_entity, "50PLUS") ~ "50PLUS",
+    T ~ NA_character_
+  )) %>% 
+  # filter(advertiser_name %in% color_dat$advertiser_name) %>% 
+  mutate(text = paste0(ad_creative_body)) 
+
+
+party_texts %>% 
+  # filter(party == "50PLUS") %>%   distinct(text, .keep_all = T) %>% 
+  # select(text) %>% View
+  filter(!party %in% c("Code Oranje", "Libertaire Partij (LP)")) %>% 
   distinct(text, .keep_all = T) %>% 
   tidytext::unnest_tokens(word, text) %>% 
-  count(advertiser_name, word, sort = T)
-
-party_texts  %>% 
+  count(party, word, sort = T) %>% 
   filter(!word %in% extrastop) %>% 
-  group_by(advertiser_name) %>% 
+  group_by(party) %>% 
   arrange(desc(n)) %>% 
   slice(1:10) %>% 
   # mutate(word = fct_reorder2(word, n, advertiser_name)) %>% 
-  mutate(word = reorder_within(word, n, advertiser_name))  %>% 
-  mutate(advertiser_name = as.factor(advertiser_name)) %>% 
-  ggplot(aes(word, n, fill = advertiser_name)) +
+  mutate(word = reorder_within(word, n, party))  %>% 
+  mutate(party = as.factor(party)) %>% 
+  ggplot(aes(word, n, fill = party)) +
   geom_col() +
   scale_x_reordered() +
-  facet_wrap(~advertiser_name, scales = "free", ncol = 3) +
+  facet_wrap(~party, scales = "free", ncol = 3) +
   coord_flip() +
   scale_fill_manual(values = party_colors) +
   theme_minimal() +
@@ -1016,27 +1166,30 @@ saveRDS(fb_aggr, "app/staging/data/fb_aggr.rds")
 saveRDS(fb_aggr, file = "site/data/fb_aggr.rds")
 
 
-party_bigrams <- fb_dat %>% 
-  filter(advertiser_name %in% color_dat$advertiser_name) %>% 
-  mutate(text = paste0(ad_creative_body, " ", ad_creative_link_title)) %>% 
+party_bigrams <- party_texts %>% 
+  filter(str_detect(funding_entity, party_names)) %>%
+  mutate(text = paste0(ad_creative_body)) %>% 
   distinct(text, .keep_all = T) %>% 
-  unnest_tokens(bigram, text, token = "ngrams", n = 2) %>% 
-  count(advertiser_name, bigram, sort = T)
+  # slice(1:10) %>% 
+  select(text, party) %>% 
+  tidytext::unnest_tokens(bigram, text, token = "ngrams", n = 2) %>% 
+  count(party, bigram, sort = T)
 
 bigramstops <- c("https 50pluspartij.nl", "50pluspartij.nl actueel", "meer https", "leer meer", "meer over", "bij1 org", "fvd.nl ja", "https ja21", "ja21 nl", "bigram lid.php", "https www.partijvordedieren.nl", "www.stemvolt.nl na", "weten www.stemvolt.nl")
 
 party_bigrams  %>% 
   filter(!bigram %in% bigramstops) %>% 
-  group_by(advertiser_name) %>% 
+  filter(!party %in% c("Code Oranje", "Libertaire Partij (LP)")) %>% 
+  group_by(party) %>% 
   arrange(desc(n)) %>% 
   slice(1:10) %>% 
   # mutate(bigram = fct_reorder2(bigram, n, advertiser_name)) %>% 
-  mutate(bigram = reorder_within(bigram, n, advertiser_name))  %>% 
-  mutate(advertiser_name = as.factor(advertiser_name)) %>% 
-  ggplot(aes(bigram, n, fill = advertiser_name)) +
+  mutate(bigram = reorder_within(bigram, n, party))  %>% 
+  mutate(party = as.factor(party)) %>% 
+  ggplot(aes(bigram, n, fill = party)) +
   geom_col() +
   scale_x_reordered() +
-  facet_wrap(~advertiser_name, scales = "free", ncol = 3) +
+  facet_wrap(~party, scales = "free", ncol = 3) +
   coord_flip() +
   scale_fill_manual(values = party_colors) +
   theme_minimal() +
