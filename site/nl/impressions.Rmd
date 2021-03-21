@@ -33,13 +33,12 @@ library(shinyWidgets)
 
 # snap_ads <- readRDS("data/snap_ads.RDS")
 # 
-trans <- readRDS("../data/trans_dutch.rds")
-# trans <- readRDS("../data/trans_eng.rds")
+trans <- readRDS(here::here("site", "data" ,"trans_dutch.rds"))
 
 
-source("../../R/helpers.R")
+source(here::here("R", "helpers.R"))
 
-source("../../R/dashboard_data.R")
+source(here::here("R", "dashboard_data.R"))
 
 
 

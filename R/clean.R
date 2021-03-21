@@ -32,7 +32,7 @@ assign_colors <- function(dat, n = 12) {
 unnest_geos <- function(x) {
   # cat(glue::glue("{x$row_number} out of {nrow(age_gender_targeted_raw)} ({round(100*x$row_number/nrow(age_gender_targeted_raw), 2)}%)\n\n"))
   x %>% 
-    pull(region_distribution) %>% 
+    dplyr::pull(region_distribution) %>% 
     flatten() %>% 
     map_dfr(flatten) %>% 
     mutate(id = x$id)%>% 
@@ -43,7 +43,7 @@ unnest_geos <- function(x) {
 unnest_dems <- function(x) {
   # cat(glue::glue("{x$row_number} out of {nrow(age_gender_targeted_raw)} ({round(100*x$row_number/nrow(age_gender_targeted_raw), 2)}%)\n\n"))
   x %>% 
-    pull(demographic_distribution) %>% 
+    dplyr::pull(demographic_distribution) %>% 
     flatten() %>% 
     map_dfr(flatten) %>% 
     mutate(id = x$id)
@@ -474,7 +474,7 @@ fb_dat <- df_imp %>%
 
 saveRDS(fb_dat, "fb_dat/fb_dat.rds")
 
-fb_dat %>% dplyr::filter(advertiser_name == "BIJ1")
+# fb_dat %>% dplyr::filter(advertiser_name == "BIJ1")
 
 # saveRDS(fb_dat, "fb_dat/fb_dat_old.rds")
 
@@ -658,6 +658,7 @@ cat("\n\nFB Data: Get age/gender II\n\n")
 unnest_dems <- possibly(unnest_dems, otherwise = NULL, quiet = F)
 
 age_gender_targeted <- age_gender_targeted_raw %>% 
+  # slice(1) %>% 
   mutate(row_number = 1:n()) %>% 
   split(1:nrow(.)) %>% 
   map_dfr(unnest_dems) %>% 
@@ -778,7 +779,7 @@ cat("\n\nFB Data: Get geo II\n\n")
 
 dutch_regions <- geo_targeted %>% 
   count(region, sort = T) %>% 
-  slice(1:12) %>% pull(region)
+  slice(1:12) %>% dplyr::pull(region)
 
 geo_targeted_dat <- geo_targeted  %>% 
   filter(start_time >= as.Date("2020-09-01")) %>% 
@@ -834,9 +835,9 @@ fb_reach <- total_times  %>%
   left_join(facebook_id_dat)
 
 ## Extract Spending data from report
-dir("../../../data/spending/daily", full.names = T) %>% 
-  # discard(~str_detect(.x, "2020-11")) %>%
-  walk(~unzip(.x, exdir = "data/fb_spending", overwrite = T))
+# dir("../../../data/spending/daily", full.names = T) %>% 
+#   # discard(~str_detect(.x, "2020-11")) %>%
+#   walk(~unzip(.x, exdir = "data/fb_spending", overwrite = T))
 
 read_in_spend <- function(x) {
   read_csv(x) %>%

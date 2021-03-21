@@ -1,11 +1,13 @@
 
 library(tidyverse)
 
-ggl_aggr <- readRDS("../data/ggl_aggr.rds")
-fb_aggr <- readRDS("../data/fb_aggr.rds") 
+# print(here::here("site", "data", "ggl_aggr.rds"))
+
+ggl_aggr <- readRDS(here::here("site", "data", "ggl_aggr.rds"))
+fb_aggr <- readRDS(here::here("site", "data", "fb_aggr.rds"))
 
 
-update_time <- read_lines("../data/last_updated.txt") %>% 
+update_time <- read_lines(here::here("site", "data", "last_updated.txt")) %>% 
   .[length(.)]
 
 
@@ -31,14 +33,13 @@ dutch_parties <- c("D66", "VVD",
                    "BIJ1", "Ja21")
 
 advertiser_names_ggl <- ggl_aggr$total %>%
-  pull(advertiser_name) %>% 
-  keep(~magrittr::is_in(.x, dutch_parties))  %>% 
-  discard(~magrittr::is_in(.x, c( "FvD")))
+  dplyr::pull(advertiser_name) %>% 
+  keep(~magrittr::is_in(.x, dutch_parties)) # %>% 
+  # discard(~magrittr::is_in(.x, c( "FvD")))
 
 
 defaults_ggl <- advertiser_names_ggl %>% 
   keep(~magrittr::is_in(.x, dutch_parties))
-
 
 color_dat <- tibble(
   color = c("#00b13d", "#80c31c", "#cd503e", "#008067", "#6f2421", "#e3101c", "#e01003", "#036b2c", "#02a6e9", "#562883", "#eeaa00", "#34c1c4", "#92107d", "#202122", "#242b57"),

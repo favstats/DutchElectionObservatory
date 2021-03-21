@@ -31,14 +31,14 @@ library(shinyWidgets)
 
 
 # snap_ads <- readRDS("data/snap_ads.RDS")
-# 
+# setwd("C:/Users/favoo/Downloads/DutchElectionObservatory/DutchElectionObservatory/site/en")
 # trans <- readRDS("../data/trans_dutch.rds")
-trans <- readRDS("../data/trans_eng.rds")
+trans <- readRDS(here::here("site", "data" ,"trans_eng.rds"))
 
 
-source("../../R/helpers.R")
+source(here::here("R", "helpers.R"))
 
-source("../../R/dashboard_data.R")
+source(here::here("R", "dashboard_data.R"))
 
 
 
@@ -82,10 +82,10 @@ The Facebook Ad library only provides very broad “lower” and “upper bounds
 #### Minimum
 
 ```{r}
-  fb_aggr %>% 
+  ggl_aggr %>% 
     hc_plotter(filters = dutch_parties,
            plot_type = unlist_it(trans$choices, 3),
-           plot_type_sub = unlist_it(trans$total_text, 2),
+           plot_type_sub = unlist_it(trans$total_text, 1),
            platform = "Google",
            trans_internal = trans,
            last_updated = update_time, minmax = "Minimum"
@@ -95,10 +95,10 @@ The Facebook Ad library only provides very broad “lower” and “upper bounds
 #### Maximum
 
 ```{r}
-  fb_aggr %>% 
+  ggl_aggr %>% 
     hc_plotter(filters = dutch_parties,
            plot_type = unlist_it(trans$choices, 3),
-           plot_type_sub = unlist_it(trans$total_text, 2),
+           plot_type_sub = unlist_it(trans$total_text, 1),
            platform = "Google",
            trans_internal = trans,
            last_updated = update_time, minmax = "Maximum"
@@ -153,7 +153,7 @@ These very broad ranges lead to some severe difficulties if one wants to give im
 #### Minimum
 
 ```{r}
-  fb_aggr %>% 
+  ggl_aggr %>% 
     hc_plotter(filters = dutch_parties,
            plot_type = unlist_it(trans$choices, 3),
            plot_type_sub = unlist_it(trans$total_text, 2),
@@ -166,7 +166,7 @@ These very broad ranges lead to some severe difficulties if one wants to give im
 #### Maximum
 
 ```{r}
-  fb_aggr %>% 
+  ggl_aggr %>% 
     hc_plotter(filters = dutch_parties,
            plot_type = unlist_it(trans$choices, 3),
            plot_type_sub = unlist_it(trans$total_text, 2),

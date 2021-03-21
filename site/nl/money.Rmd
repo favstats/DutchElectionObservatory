@@ -34,13 +34,13 @@ library(shinyWidgets)
 
 # snap_ads <- readRDS("data/snap_ads.RDS")
 # 
-trans <- readRDS("../data/trans_dutch.rds")
-# trans <- readRDS("../data/trans_eng.rds")
+trans <- readRDS(here::here("site", "data" ,"trans_dutch.rds"))
 
 
-    
-source("../../R/helpers.R")
-source("../../R/dashboard_data.R")
+source(here::here("R", "helpers.R"))
+
+source(here::here("R", "dashboard_data.R"))
+
 
 last_updated <- update_time
 
@@ -107,10 +107,10 @@ color_dat <- fb_aggr$reach %>%
 
 
 
-latest_spending_dat <- fb_aggr$report_spending %>% 
-  # count(advertiser_name)
-  filter(type == "after") %>% 
-  filter(date_range_start == max(date_range_start)) 
+latest_spending_dat <- fb_aggr$report_spending  %>% 
+  group_by(advertiser_name) %>% 
+  filter(date_range_start == max(date_range_start)) %>% 
+  ungroup()
 
         lvls <- latest_spending_dat %>% 
           mutate(advertiser_name = fct_reorder(advertiser_name, cum_spent)) %>% 
@@ -122,7 +122,6 @@ latest_spending_dat <- fb_aggr$report_spending %>%
     href_text <- "https://www.facebook.com/ads/library/"
 
 latest_spending_dat %>% 
-  filter(date_range_start == max(date_range_start))  %>% 
       hchart(
         type = "bar",
         hcaes(

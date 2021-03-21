@@ -5,6 +5,7 @@ library(tidyverse)
 
 # setwd("/home/fabio/main/DutchElectionObservatory")
 # Sys.setenv(RSTUDIO_PANDOC="/usr/lib/rstudio-server/bin/pandoc")
+# setwd("C:/Users/favoo/Downloads/DutchElectionObservatory/DutchElectionObservatory")
 
 # Git commit.
 gitcommit <- function(msg = "commit from Rstudio", dir = getwd()){
@@ -46,7 +47,7 @@ gitpush <- function(dir = getwd()){
 }
 
 ## translation
-translation <- read_csv2("site/data/translation.csv")  
+translation <- read_csv2(here::here("site", "data", "translation.csv"))  
 
 trans_dutch <- translation %>%
   select(text_id, contains("dutch")) %>%
@@ -55,7 +56,7 @@ trans_dutch <- translation %>%
   mutate_all(str_trim)%>%
   mutate_all(~str_replace_all(.x, ", ", ","))
 
-saveRDS(trans_dutch, file = "data/trans_dutch.rds")
+saveRDS(trans_dutch, file = here::here("data", "trans_dutch.rds"))
 
 trans_eng <- translation %>%
   select(text_id, contains("english")) %>%
@@ -64,7 +65,7 @@ trans_eng <- translation %>%
   mutate_all(str_trim)%>%
   mutate_all(~str_replace_all(.x, ", ", ","))
 
-saveRDS(trans_eng, file = "data/trans_eng.rds")
+saveRDS(trans_eng, file = here::here("data", "trans_eng.rds"))
 
 
 
@@ -79,8 +80,8 @@ saveRDS(trans_eng, file = "data/trans_eng.rds")
   cat("2. Deploy App\n")
   
   
-  rmarkdown::render_site("site/en")
-  rmarkdown::render_site("site/nl")
+  rmarkdown::render_site(here::here("site", "en"))
+  rmarkdown::render_site(here::here("site", "nl"))
   
   
   c('<script type="text/javascript" src="links.js"></script>') %>% 
@@ -91,11 +92,9 @@ saveRDS(trans_eng, file = "data/trans_eng.rds")
   git2r::config(user.name = "favstats", user.email = "fabio.votta@gmail.com")
   
   
-  # Check git status.
-  gitstatus()
-  
+
   # Add and commit changes. 
-  gitadd()
+  gert::git_add(".")
   
   # NEED TO PUSH ONCE AND DO THIS BEFORE THIS WORKS
   # git config --global credential.helper 'cache --timeout=10000000'

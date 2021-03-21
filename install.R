@@ -1,1 +1,0 @@
-devtools::install_github("bnosac/taskscheduleR", build_vignettes = TRUE)
